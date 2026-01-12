@@ -1,0 +1,107 @@
+# StarTracker Import Tool — Cursor Rules
+
+## Project Overview
+This is a standalone React web app that classifies StarTracker CSV exports for import into Bravo (a tour bus leasing management system). It runs entirely in the browser with no backend.
+
+## Tech Stack
+- React 18 with hooks
+- Vite for build
+- Tailwind CSS for styling
+- Lucide React for icons
+- localStorage for batch history persistence
+
+## Key Concepts
+
+### Classification Categories
+- **READY**: Can be imported to Bravo automatically
+- **FLAGGED**: Importable but needs human review first
+- **BLOCKED**: Cannot be imported — missing Bravo feature
+- **EXCLUDED**: Should not be imported (internal/test data)
+
+### Business Terms
+- **TourID**: Unique quote identifier in StarTracker
+- **Short-Term Lease**: Days/weeks, daily rates, usually includes driver
+- **Long-Term Lease**: 6+ months, monthly rates, often no driver
+- **Vehicle Swap**: When a bus is replaced mid-tour due to maintenance
+
+## File Structure
+- `src/App.jsx` — The entire application (classification + UI)
+- `CONTEXT.md` — Detailed business rules and edge cases (READ THIS FIRST)
+
+## Classification Rules Summary
+
+### EXCLUDED
+- Status = "Other"
+- CustomerName = "Celebrity Coaches" or "TEST CLIENT"
+
+### BLOCKED
+- DiscountedDays > 0
+- Same vehicle appears 2+ times in tour (swap)
+- 2+ rows with $0 budget in same tour
+
+### FLAGGED  
+- $0 BusRate with mileage > 0
+- DriverDays > (TourDays + DriverDHF + DriverDHR)
+- AdminTotal > 0
+
+### READY
+- Passes all above checks
+
+## Code Patterns
+
+### Parsing CSV
+The CSV parser handles quoted fields with commas. Don't use simple split(',').
+
+### Grouping by TourID
+Multiple rows can share the same TourID (multi-vehicle quotes). Always group before classifying.
+
+### Classification Return Shape
+```javascript
+{
+  tourId: string,
+  customer: string,
+  tourName: string,
+  status: string,
+  rows: array,           // Original CSV rows for this tour
+  classification: string, // READY|FLAGGED|BLOCKED|EXCLUDED
+  reasons: array,        // Human-readable explanation strings
+  totalBudget: number,
+  vehicleCount: number,
+  leaseType: string      // SHORT_TERM|LONG_TERM
+}
+```
+
+### localStorage Keys
+- `startracker_import_history` — Array of batch records
+
+## When Making Changes
+
+1. **Read CONTEXT.md first** — It has all the business rules
+2. **Preserve classification logic** — Don't change rules without explicit instruction
+3. **Keep it browser-only** — No backend, no API calls (for now)
+4. **TourID is primary key** — Always display it prominently
+5. **Test with real data** — Classification edge cases matter
+
+## Common Tasks
+
+### Adding a new classification rule
+1. Add detection logic in `classifyTour()` function
+2. Add reason string to `results.reasons` array
+3. Update the Rules Reference section in UI
+4. Document in CONTEXT.md
+
+### Adding a new export format
+1. Create `generateXXXCSV()` function following existing patterns
+2. Add download button to export actions section
+3. Ensure TourID is first column
+
+### Modifying UI
+- Use Tailwind utility classes
+- Follow existing color conventions (green=ready, yellow=flagged, red=blocked, gray=excluded)
+- Keep mobile-responsive patterns
+
+## Don't
+- Don't add backend/API without explicit instruction
+- Don't change classification rules without business justification
+- Don't remove batch history functionality
+- Don't break CSV parsing for edge cases (quoted commas, etc.)

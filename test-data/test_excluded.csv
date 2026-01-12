@@ -1,0 +1,6 @@
+TourID,CustomerName,TourName,Status,BusTrailer,StartDate,EndDate,Driver,TourDays,BusDays,BilledDays,DiscountedDays,BusRate,TourBudget,DriverDays,DriverDHF,DriverDHR,PerDiemTotal,AdminTotal,TotalMileage,BilledMonths
+60001,Celebrity Coaches,Internal Move,Contract - Committed,Hauler,3/5/2025,3/6/2025,.,1,1,1,0,0,0,0,0,0,0,0,50,0
+60002,TEST CLIENT,Test Quote 1,Quote - Active,TestBus,1/1/2025,1/5/2025,Test Driver,4,4,4,0,100,400,4,0,0,200,0,100,0
+60003,Maintenance Record,Out of Service - DEF Issue,Other,Jester,4/10/2025,4/15/2025,.,5,0,0,0,0,0,0,0,0,0,0,0,0
+60004,Shop Work,Floor Remodel,Other,Manhattan,5/1/2025,5/20/2025,.,19,0,0,0,0,0,0,0,0,0,0,0,0
+60005,Celebrity Coaches,Repo from Dallas,Contract - Committed,Ranger,6/1/2025,6/2/2025,Staff Jim,1,1,1,0,0,0,1,0,0,50,0,300,0

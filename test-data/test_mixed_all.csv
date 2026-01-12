@@ -1,0 +1,19 @@
+TourID,CustomerName,TourName,Status,BusTrailer,StartDate,EndDate,Driver,TourDays,BusDays,BilledDays,DiscountedDays,BusRate,TourBudget,DriverDays,DriverDHF,DriverDHR,PerDiemTotal,AdminTotal,TotalMileage,BilledMonths
+30001,Acme Tours,Spring Tour 2025,Contract - Committed,Silverado,3/1/2025,3/15/2025,Smith John,14,14,14,0,450,6300,16,1,1,800,0,2500,0
+60001,Celebrity Coaches,Internal Move,Contract - Committed,Hauler,3/5/2025,3/6/2025,.,1,1,1,0,0,0,0,0,0,0,0,50,0
+40001,Flagged Co Alpha,Driver Override Tour,Contract - Committed,Ranger,5/1/2025,5/10/2025,Johnson Tim,9,9,9,0,450,4050,14,1,1,700,0,1800,0
+50001,Blocked Inc Alpha,Discount Days Tour,Contract - Committed,Horizon,4/1/2025,4/30/2025,White Steve,30,27,27,3,450,12150,29,1,1,1450,0,5000,0
+30002,Beta Productions,Summer Run,Contract - Signed,Maverick,6/1/2025,6/20/2025,Jones Mary,19,19,19,0,500,9500,21,1,1,1050,0,3200,0
+60002,TEST CLIENT,Test Quote 1,Quote - Active,TestBus,1/1/2025,1/5/2025,Test Driver,4,4,4,0,100,400,4,0,0,200,0,100,0
+50002,Blocked Inc Beta,Vehicle Swap Tour,Contract - Signed,Stallion,5/1/2025,5/31/2025,Green Lisa,30,30,30,0,500,15000,32,1,1,1600,0,6000,0
+50002,Blocked Inc Beta,Vehicle Swap Tour,Contract - Signed,Stallion,5/15/2025,5/31/2025,Green Lisa,16,16,16,0,0,0,18,1,1,900,0,3000,0
+40002,Flagged Co Beta,Admin Fee Tour,Contract - Signed,Scout,6/15/2025,6/25/2025,Anderson Sue,10,10,10,0,500,5000,12,1,1,600,250.50,2200,0
+60003,Maintenance Record,Out of Service - DEF Issue,Other,Jester,4/10/2025,4/15/2025,.,5,0,0,0,0,0,0,0,0,0,0,0,0
+30003,Gamma Entertainment,Fall Festival,Quote - Closed,Phoenix,9/10/2025,9/25/2025,Williams Bob,15,15,15,0,475,7125,17,1,1,850,0,2800,0
+50003,Blocked Inc Gamma,Multi Zero Budget,Contract - Committed,Charger,6/1/2025,6/30/2025,Brown Mike,29,29,29,0,475,13775,31,1,1,1550,0,5500,0
+50003,Blocked Inc Gamma,Multi Zero Budget,Contract - Committed,Trailer-101,6/1/2025,6/30/2025,.,29,0,0,0,0,0,0,0,0,0,0,0,0
+50003,Blocked Inc Gamma,Multi Zero Budget,Contract - Committed,Trailer-102,6/10/2025,6/25/2025,.,15,0,0,0,0,0,0,0,0,0,0,0,0
+40003,Flagged Co Gamma,Zero Rate With Mileage,Contract - Committed,Nomad,7/1/2025,7/20/2025,Peters Jack,19,19,19,0,0,0,21,1,1,1050,0,4500,0
+30004,Delta Music Group,Winter Showcase,Contract - Committed,Thunder,12/1/2025,12/10/2025,Davis Carol,9,9,9,0,525,4725,11,1,1,550,0,1500,0
+60004,Shop Work,Floor Remodel,Other,Manhattan,5/1/2025,5/20/2025,.,19,0,0,0,0,0,0,0,0,0,0,0,0
+30005,Echo Records,Club Tour,Contract - Signed,Lightning,4/5/2025,4/12/2025,Miller Dave,7,7,7,0,400,2800,9,1,1,450,0,1200,0

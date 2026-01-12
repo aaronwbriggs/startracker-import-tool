@@ -39,7 +39,7 @@ git commit -m "Initial commit"
 **Now replace YOUR_GITHUB_USERNAME below with your actual GitHub username:**
 
 ```bash
-git remote add origin https://github.com/YOUR_GITHUB_USERNAME/startracker-import-tool.git
+git remote add origin https://github.com/aaronwbriggs/startracker-import-tool.git
 ```
 
 ```bash

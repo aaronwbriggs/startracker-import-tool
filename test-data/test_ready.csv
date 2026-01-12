@@ -1,0 +1,6 @@
+TourID,CustomerName,TourName,Status,BusTrailer,StartDate,EndDate,Driver,TourDays,BusDays,BilledDays,DiscountedDays,BusRate,TourBudget,DriverDays,DriverDHF,DriverDHR,PerDiemTotal,AdminTotal,TotalMileage,BilledMonths
+30001,Acme Tours,Spring Tour 2025,Contract - Committed,Silverado,3/1/2025,3/15/2025,Smith John,14,14,14,0,450,6300,16,1,1,800,0,2500,0
+30002,Beta Productions,Summer Run,Contract - Signed,Maverick,6/1/2025,6/20/2025,Jones Mary,19,19,19,0,500,9500,21,1,1,1050,0,3200,0
+30003,Gamma Entertainment,Fall Festival,Quote - Closed,Phoenix,9/10/2025,9/25/2025,Williams Bob,15,15,15,0,475,7125,17,1,1,850,0,2800,0
+30004,Delta Music Group,Winter Showcase,Contract - Committed,Thunder,12/1/2025,12/10/2025,Davis Carol,9,9,9,0,525,4725,11,1,1,550,0,1500,0
+30005,Echo Records,Club Tour,Contract - Signed,Lightning,4/5/2025,4/12/2025,Miller Dave,7,7,7,0,400,2800,9,1,1,450,0,1200,0

@@ -1,0 +1,5 @@
+TourID,CustomerName,TourName,Status,BusTrailer,StartDate,EndDate,Driver,TourDays,BusDays,BilledDays,DiscountedDays,BusRate,TourBudget,DriverDays,DriverDHF,DriverDHR,PerDiemTotal,AdminTotal,TotalMileage,BilledMonths
+40001,Flagged Co Alpha,Driver Override Tour,Contract - Committed,Ranger,5/1/2025,5/10/2025,Johnson Tim,9,9,9,0,450,4050,14,1,1,700,0,1800,0
+40002,Flagged Co Beta,Admin Fee Tour,Contract - Signed,Scout,6/15/2025,6/25/2025,Anderson Sue,10,10,10,0,500,5000,12,1,1,600,250.50,2200,0
+40003,Flagged Co Gamma,Zero Rate With Mileage,Contract - Committed,Nomad,7/1/2025,7/20/2025,Peters Jack,19,19,19,0,0,0,21,1,1,1050,0,4500,0
+40004,Flagged Co Delta,Multiple Flags,Contract - Signed,Voyager,8/5/2025,8/20/2025,Clark Amy,15,15,15,0,475,7125,22,2,2,1100,175.00,3000,0
