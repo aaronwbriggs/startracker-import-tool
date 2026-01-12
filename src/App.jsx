@@ -132,6 +132,9 @@ const classifyTour = (rows) => {
 
     const hasAdminFee = rows.some(r => cleanNum(r.AdminTotal) > 0);
     if (hasAdminFee) {
+      if (results.classification === 'READY') {
+        results.classification = 'FLAGGED';
+      }
       const adminTotal = rows.reduce((sum, r) => sum + cleanNum(r.AdminTotal), 0);
       results.reasons.push(`Has Admin Fee: $${adminTotal.toFixed(2)} (will map to flat Admin Fee line item)`);
     }
