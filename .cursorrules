@@ -105,3 +105,74 @@ Multiple rows can share the same TourID (multi-vehicle quotes). Always group bef
 - Don't change classification rules without business justification
 - Don't remove batch history functionality
 - Don't break CSV parsing for edge cases (quoted commas, etc.)
+
+## Supabase Access
+
+This project uses Supabase MCP servers for database access. Three servers are configured in `~/.cursor/mcp.json`, but only ONE should be enabled at a time via Settings → Tools toggles.
+
+**For all database operations:**
+1. Ensure the correct MCP server is enabled in Cursor Settings → Tools:
+   - `supabase-DEV` for development work (default)
+   - `supabase-PROD-readonly` for production queries
+   - `supabase-PROD-WRITE` for production migrations (use with caution)
+
+2. Use MCP tools directly:
+   - `execute_sql` for queries
+   - `apply_migration` for schema changes
+   - `list_tables` for schema inspection
+
+Always use Supabase MCP tools for database operations in Cursor:
+
+- **Queries:** Use `execute_sql` tool via natural language
+- **Schema inspection:** Use `list_tables`, `list_migrations` tools
+- **Migrations:** Use `apply_migration` tool
+
+## Environment Awareness
+
+Before ANY database operation, confirm which MCP server is enabled:
+
+| Server | Environment | Can Write? |
+|--------|-------------|------------|
+| `supabase-DEV` | celebrity-coaches-dev | ✅ Yes |
+| `supabase-PROD-readonly` | celebrity-coaches-prod | ❌ No |
+| `supabase-PROD-WRITE` | celebrity-coaches-prod | ✅ Yes |
+
+**Verification method:** 
+
+1. **Primary:** Ask user to confirm which MCP server is enabled in Settings → Tools
+2. **Secondary:** User can verify by checking the Supabase Dashboard:
+   - Open the appropriate project (celebrity-coaches-dev or celebrity-coaches-prod)
+   - Check record counts in key tables (quotes, tours, leases) to confirm you're connected to the expected environment
+3. **Connection test:** Run a simple query to confirm connection works:
+   ```sql
+   SELECT current_database(), version();
+   ```
+   This confirms connectivity but doesn't distinguish environments (both return `postgres`).
+
+**Note:** Do not rely on data counts or patterns for verification - they change over time. Always confirm with the user which MCP server is enabled.
+
+## Production Safety
+
+### For READ operations on production:
+1. User explicitly requests production data
+2. Instruct user to enable `supabase-PROD-readonly` in Settings → Tools
+3. Confirm user has verified the correct project in Supabase Dashboard (celebrity-coaches-prod)
+4. Proceed with read-only operations
+
+### For WRITE operations on production (migrations):
+1. User explicitly requests production migration
+2. Confirm the SQL has been tested on DEV first
+3. **Check if `supabase-PROD-WRITE` is enabled**
+   - If DISABLED: **STOP** and instruct user to enable it in Settings → Tools
+   - **DO NOT** fall back to `run-migration-prod.js` script
+   - **WAIT** for user to enable and confirm
+4. Confirm user has verified the correct project in Supabase Dashboard (celebrity-coaches-prod)
+5. Get explicit confirmation before executing
+6. Use MCP `apply_migration` tool (NOT the fallback script)
+7. After completion, instruct user to switch back to `supabase-DEV`
+
+**NEVER** run DDL (CREATE, ALTER, DROP) or DML (INSERT, UPDATE, DELETE) against production without:
+- Explicit user request
+- Environment verification (MCP server enabled and verified)
+- User confirmation
+- **NEVER** use fallback scripts when MCP servers are intentionally disabled - require enablement instead
