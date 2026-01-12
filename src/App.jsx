@@ -176,6 +176,32 @@ const saveHistory = (history) => {
   catch (e) { console.error('Failed to save history:', e); }
 };
 
+// Storage size helpers
+const getStorageSize = () => {
+  try {
+    let total = 0;
+    for (let key in localStorage) {
+      if (localStorage.hasOwnProperty(key)) {
+        total += localStorage[key].length + key.length;
+      }
+    }
+    return total;
+  } catch { return 0; }
+};
+
+const getStorageSizeMB = () => {
+  return getStorageSize() / (1024 * 1024);
+};
+
+const estimateBatchSize = (batch) => {
+  try {
+    return JSON.stringify(batch).length;
+  } catch { return 0; }
+};
+
+const STORAGE_LIMIT_MB = 5;
+const STORAGE_WARN_THRESHOLD_MB = 4.5;
+
 export default function StarTrackerImportDashboard() {
   const [rawData, setRawData] = useState(null);
   const [fileName, setFileName] = useState('');
@@ -186,8 +212,18 @@ export default function StarTrackerImportDashboard() {
   const [currentBatchId, setCurrentBatchId] = useState(null);
   const [batchNotes, setBatchNotes] = useState('');
   const [expandedHistory, setExpandedHistory] = useState(null);
+  const [storageSizeMB, setStorageSizeMB] = useState(0);
 
-  useEffect(() => { setBatchHistory(loadHistory()); }, []);
+  useEffect(() => { 
+    setBatchHistory(loadHistory());
+    setStorageSizeMB(getStorageSizeMB());
+  }, []);
+
+  useEffect(() => {
+    if (showHistory) {
+      setStorageSizeMB(getStorageSizeMB());
+    }
+  }, [showHistory]);
 
   const processedData = useMemo(() => {
     if (!rawData) return null;
@@ -218,15 +254,16 @@ export default function StarTrackerImportDashboard() {
       setRawData(parsed);
       setSelectedFilter('ALL');
       setBatchNotes('');
-      setCurrentBatchId(`batch_${Date.now()}`);
+      setCurrentBatchId(crypto.randomUUID());
     };
     reader.readAsText(file);
   };
 
   const saveBatchToHistory = () => {
     if (!processedData || !fileName) return;
+    
     const batch = {
-      id: currentBatchId || `batch_${Date.now()}`,
+      id: currentBatchId || crypto.randomUUID(),
       timestamp: new Date().toISOString(),
       fileName,
       totalRows: processedData.totalRows,
@@ -243,11 +280,37 @@ export default function StarTrackerImportDashboard() {
         blocked: processedData.blockedTourIds,
         excluded: processedData.excludedTourIds
       },
-      notes: batchNotes
+      notes: batchNotes,
+      data: processedData.all // Store full classified data
     };
+    
+    // Check storage size before saving
+    const currentSizeMB = getStorageSizeMB();
+    const batchSize = estimateBatchSize(batch);
+    
+    // Check if we're replacing an existing batch
+    const existingBatch = batchHistory.find(b => b.id === batch.id);
+    const existingBatchSize = existingBatch ? estimateBatchSize(existingBatch) : 0;
+    
+    // Calculate new size: current size - old batch size + new batch size
+    const sizeDiff = batchSize - existingBatchSize;
+    const newSizeMB = currentSizeMB + (sizeDiff / (1024 * 1024));
+    
+    if (newSizeMB > STORAGE_LIMIT_MB) {
+      alert(`Cannot save batch: Storage would exceed ${STORAGE_LIMIT_MB}MB limit. Please delete old batches first.`);
+      return;
+    }
+    
+    if (currentSizeMB >= STORAGE_WARN_THRESHOLD_MB && sizeDiff > 0) {
+      if (!confirm(`Warning: Storage is at ${currentSizeMB.toFixed(1)}MB / ${STORAGE_LIMIT_MB}MB. Continue saving this batch?`)) {
+        return;
+      }
+    }
+    
     const newHistory = [batch, ...batchHistory.filter(b => b.id !== batch.id)];
     setBatchHistory(newHistory);
     saveHistory(newHistory);
+    setStorageSizeMB(getStorageSizeMB());
     alert('Batch saved to history!');
   };
 
@@ -256,6 +319,7 @@ export default function StarTrackerImportDashboard() {
       const newHistory = batchHistory.filter(b => b.id !== batchId);
       setBatchHistory(newHistory);
       saveHistory(newHistory);
+      setStorageSizeMB(getStorageSizeMB());
     }
   };
 
@@ -263,6 +327,7 @@ export default function StarTrackerImportDashboard() {
     if (confirm('Clear ALL batch history? This cannot be undone.')) {
       setBatchHistory([]);
       saveHistory([]);
+      setStorageSizeMB(getStorageSizeMB());
     }
   };
 
@@ -319,6 +384,44 @@ export default function StarTrackerImportDashboard() {
     URL.revokeObjectURL(url);
   };
 
+  // Helper functions for batch downloads
+  const getBatchToursByClassification = (batch, classification) => {
+    if (!batch.data) return [];
+    return batch.data.filter(t => t.classification === classification);
+  };
+
+  const handleBatchDownload = (batch, type, classification = null) => {
+    if (!batch.data) {
+      alert('This batch does not have saved data. Please re-upload the file.');
+      return;
+    }
+    
+    let tours = [];
+    let filename = '';
+    
+    if (type === 'ready-summary') {
+      tours = getBatchToursByClassification(batch, 'READY');
+      filename = `batch_${batch.id}_ready.csv`;
+      downloadCSV(generateExportCSV(tours), filename);
+    } else if (type === 'ready-detailed') {
+      tours = getBatchToursByClassification(batch, 'READY');
+      filename = `batch_${batch.id}_ready_detailed.csv`;
+      downloadCSV(generateDetailedCSV(tours), filename);
+    } else if (type === 'flagged') {
+      tours = getBatchToursByClassification(batch, 'FLAGGED');
+      filename = `batch_${batch.id}_flagged.csv`;
+      downloadCSV(generateExportCSV(tours), filename);
+    } else if (type === 'blocked') {
+      tours = getBatchToursByClassification(batch, 'BLOCKED');
+      filename = `batch_${batch.id}_blocked.csv`;
+      downloadCSV(generateExportCSV(tours), filename);
+    } else if (type === 'full') {
+      tours = batch.data;
+      filename = `batch_${batch.id}_full_detailed.csv`;
+      downloadCSV(generateDetailedCSV(tours), filename);
+    }
+  };
+
   const filteredTours = useMemo(() => {
     if (!processedData) return [];
     if (selectedFilter === 'ALL') return processedData.all;
@@ -365,7 +468,14 @@ export default function StarTrackerImportDashboard() {
         {showHistory && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Batch History</h2>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Batch History</h2>
+                {batchHistory.length > 0 && (
+                  <div className="text-sm text-gray-500 mt-1">
+                    Storage: {storageSizeMB.toFixed(1)} MB / {STORAGE_LIMIT_MB} MB
+                  </div>
+                )}
+              </div>
               {batchHistory.length > 0 && (
                 <button onClick={clearAllHistory} className="text-sm text-red-600 hover:text-red-800">Clear All</button>
               )}
@@ -413,7 +523,7 @@ export default function StarTrackerImportDashboard() {
                             <div className="text-sm text-blue-900">{batch.notes}</div>
                           </div>
                         )}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                           <div>
                             <div className="text-sm font-medium text-gray-700 mb-2">Ready TourIDs ({batch.counts.ready})</div>
                             <div className="text-xs text-gray-600 max-h-32 overflow-y-auto bg-gray-50 p-2 rounded font-mono">
@@ -439,6 +549,50 @@ export default function StarTrackerImportDashboard() {
                             </div>
                           </div>
                         </div>
+                        
+                        {/* Download buttons */}
+                        {batch.data ? (
+                          <div className="pt-4 border-t border-gray-200">
+                            <div className="text-sm font-medium text-gray-700 mb-3">Download CSVs:</div>
+                            <div className="flex flex-wrap gap-2">
+                              <button 
+                                onClick={() => handleBatchDownload(batch, 'ready-summary')}
+                                disabled={batch.counts.ready === 0}
+                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <Download className="w-3.5 h-3.5" />Ready ({batch.counts.ready})
+                              </button>
+                              <button 
+                                onClick={() => handleBatchDownload(batch, 'ready-detailed')}
+                                disabled={batch.counts.ready === 0}
+                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-green-100 text-green-700 border border-green-300 rounded hover:bg-green-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <Download className="w-3.5 h-3.5" />Ready Detailed
+                              </button>
+                              <button 
+                                onClick={() => handleBatchDownload(batch, 'flagged')}
+                                disabled={batch.counts.flagged === 0}
+                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-yellow-600 text-white rounded hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <Download className="w-3.5 h-3.5" />Flagged ({batch.counts.flagged})
+                              </button>
+                              <button 
+                                onClick={() => handleBatchDownload(batch, 'blocked')}
+                                disabled={batch.counts.blocked === 0}
+                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <Download className="w-3.5 h-3.5" />Blocked ({batch.counts.blocked})
+                              </button>
+                              <button 
+                                onClick={() => handleBatchDownload(batch, 'full')}
+                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-gray-600 text-white rounded hover:bg-gray-700">
+                                <Download className="w-3.5 h-3.5" />Full Report
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="pt-4 border-t border-gray-200">
+                            <div className="text-sm text-gray-500 italic">
+                              This batch was saved before data storage was added. Please re-upload the file to download CSVs.
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
