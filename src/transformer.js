@@ -121,9 +121,29 @@ export const isLongTerm = (rows) => {
 
 /**
  * Map StarTracker status to Bravo status
+ *
+ * StarTracker statuses:
+ *   - "Quote - Active" → Draft (still being worked on)
+ *   - "Quote - Closed" → Declined (quote not converted)
+ *   - "Contract - Signed" → Approved (ready for manual lease conversion)
+ *   - "Contract - Verbal" → Approved
+ *   - "Contract - Committed" → Approved
  */
 export const mapStatus = (starTrackerStatus) => {
-  // All imports start as Draft for review
+  if (!starTrackerStatus) return 'Draft';
+
+  if (starTrackerStatus === 'Quote - Active') {
+    return 'Draft';
+  }
+  if (starTrackerStatus === 'Quote - Closed') {
+    return 'Declined';
+  }
+  if (starTrackerStatus.startsWith('Contract')) {
+    // Contract - Signed, Contract - Verbal, Contract - Committed
+    return 'Approved';
+  }
+
+  // Default fallback for any unknown status
   return 'Draft';
 };
 
