@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Upload, FileText, CheckCircle, AlertTriangle, XCircle, MinusCircle, Download, ChevronDown, ChevronRight, History, Trash2, Calendar, ArrowRight, Package } from 'lucide-react';
 import { transformAll, generateCSVs } from './transformer';
+import JSZip from 'jszip';
 
 // CSV Parser utility
 const parseCSV = (text) => {
@@ -474,26 +475,45 @@ export default function StarTrackerImportDashboard() {
     setTransformedData(result);
   };
 
+  // Helper to get base filename without extension
+  const getBaseFilename = () => {
+    if (!fileName) return 'export';
+    // Remove .csv or .xlsx extension if present
+    return fileName.replace(/\.(csv|xlsx?)$/i, '');
+  };
+
   // Download transformed CSVs
-  const downloadTransformedCSV = (type) => {
+  const downloadTransformedCSV = async (type) => {
     if (!transformedData) return;
     const csvs = generateCSVs(transformedData);
+    const baseName = getBaseFilename();
 
-    const timestamp = new Date().toISOString().split('T')[0];
     const fileMap = {
-      quotes: { data: csvs.quotes, name: `bravo_quotes_${timestamp}.csv` },
-      coaches: { data: csvs.quoteCoaches, name: `bravo_quote_coaches_${timestamp}.csv` },
-      trailers: { data: csvs.quoteTrailers, name: `bravo_quote_trailers_${timestamp}.csv` },
-      lineItems: { data: csvs.lineItems, name: `bravo_line_items_${timestamp}.csv` },
+      quotes: { data: csvs.quotes, name: `quotes.csv` },
+      coaches: { data: csvs.quoteCoaches, name: `quote_coaches.csv` },
+      trailers: { data: csvs.quoteTrailers, name: `quote_trailers.csv` },
+      lineItems: { data: csvs.lineItems, name: `line_items.csv` },
     };
 
     if (type === 'all') {
-      Object.values(fileMap).forEach(({ data, name }) => {
-        if (data) downloadCSV(data, name);
+      // Create a zip file with all CSVs
+      const zip = new JSZip();
+      Object.entries(fileMap).forEach(([key, { data, name }]) => {
+        if (data) {
+          zip.file(name, data);
+        }
       });
+
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${baseName}_bravo.zip`;
+      a.click();
+      URL.revokeObjectURL(url);
     } else {
       const file = fileMap[type];
-      if (file) downloadCSV(file.data, file.name);
+      if (file) downloadCSV(file.data, `${baseName}_${file.name}`);
     }
   };
 
