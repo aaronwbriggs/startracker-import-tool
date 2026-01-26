@@ -89,12 +89,30 @@ export const cleanNum = (val) => {
 };
 
 /**
+ * Column alias helper - handles different column names between export formats
+ * Sample data uses: Notes, BusMonths, PerDeimTotal, TravelDaysIn/Out, AddDriverDays
+ * Synthetic uses: TourNotes, BilledMonths, PerDiemTotal, BusDHF/BusDHR
+ */
+export const getField = (row, ...aliases) => {
+  for (const alias of aliases) {
+    if (row[alias] !== undefined && row[alias] !== '') {
+      return row[alias];
+    }
+  }
+  return '';
+};
+
+export const getNumField = (row, ...aliases) => {
+  return cleanNum(getField(row, ...aliases));
+};
+
+/**
  * Detect if quote is Long Term
  */
 export const isLongTerm = (rows) => {
   return rows.some(r => {
     const busRate = cleanNum(r.BusRate);
-    const billedMonths = cleanNum(r.BilledMonths);
+    const billedMonths = getNumField(r, 'BilledMonths', 'BusMonths');
     const tourDays = cleanNum(r.TourDays);
     const driverDays = cleanNum(r.DriverDays);
     return busRate >= 2000 || billedMonths >= 6 || (driverDays === 0 && tourDays > 60);
@@ -150,7 +168,8 @@ export const transformTour = (classifiedTour) => {
   const firstRow = rows[0];
   const longTerm = leaseType === 'LONG_TERM';
 
-  // Build quote record
+  // Build quote record - using getField/getNumField for aliased columns
+  const billedMonths = getNumField(firstRow, 'BilledMonths', 'BusMonths');
   const quote = {
     external_id: String(tourId),
     seq_number: parseInt(tourId) || null,
@@ -165,19 +184,19 @@ export const transformTour = (classifiedTour) => {
     tour_end_date: parseDate(firstRow.EndDate),
     quoted_lease_days: cleanNum(firstRow.TourDays),
     tour_days: cleanNum(firstRow.TourDays),
-    billed_bus_days: cleanNum(firstRow.BusDays || firstRow.BilledDays),
+    billed_bus_days: getNumField(firstRow, 'BusDays', 'BilledDays'),
     main_driver_days: cleanNum(firstRow.DriverDays),
     billed_driver_days: cleanNum(firstRow.DriverDays),
     total_estimated_miles: cleanNum(firstRow.TotalMileage),
     driver_deadhead_front_days: cleanNum(firstRow.DriverDHF),
     driver_deadhead_rear_days: cleanNum(firstRow.DriverDHR),
-    bus_deadhead_front_days: cleanNum(firstRow.TravelDaysIn || firstRow.BusDHF) || 0,
-    bus_deadhead_rear_days: cleanNum(firstRow.TravelDaysOut || firstRow.BusDHR) || 0,
+    bus_deadhead_front_days: getNumField(firstRow, 'TravelDaysIn', 'BusDHF'),
+    bus_deadhead_rear_days: getNumField(firstRow, 'TravelDaysOut', 'BusDHR'),
     co_driver_days: cleanNum(firstRow.AddDriverDays) || 0,
     main_driver_overdrives: 0,
-    quoted_lease_months: longTerm ? cleanNum(firstRow.BilledMonths) : null,
-    tour_months: longTerm ? cleanNum(firstRow.BilledMonths) : null,
-    notes: firstRow.TourNotes || null,
+    quoted_lease_months: longTerm ? billedMonths : null,
+    tour_months: longTerm ? billedMonths : null,
+    notes: getField(firstRow, 'Notes', 'TourNotes') || null,
     _startracker_status: status, // Preserve original for reference
     _is_contract: isContract(status),
   };
@@ -216,7 +235,7 @@ export const transformTour = (classifiedTour) => {
         vehicleData.custom_tour_end_date = thisEnd;
         vehicleData.custom_total_estimated_miles = cleanNum(row.TotalMileage);
         vehicleData.custom_tour_days = cleanNum(row.TourDays);
-        vehicleData.custom_billed_bus_days = cleanNum(row.BusDays || row.BilledDays);
+        vehicleData.custom_billed_bus_days = getNumField(row, 'BusDays', 'BilledDays');
         vehicleData.custom_main_driver_days = cleanNum(row.DriverDays);
       }
     }
@@ -237,8 +256,8 @@ export const transformTour = (classifiedTour) => {
 
     // --- Vehicle Rate ---
     const busRate = cleanNum(row.BusRate);
-    const busDays = cleanNum(row.BusDays || row.BilledDays);
-    const billedMonths = cleanNum(row.BilledMonths);
+    const busDays = getNumField(row, 'BusDays', 'BilledDays');
+    const rowBilledMonths = getNumField(row, 'BilledMonths', 'BusMonths');
 
     if (busRate > 0) {
       if (vehicleIsTrailer) {
@@ -247,7 +266,7 @@ export const transformTour = (classifiedTour) => {
           vehicle_name: vehicleName,
           vehicle_index: vehicleIdx,
           item_type: longTerm ? QUOTE_ITEM_TYPES.TRAILER_RATE_MONTHLY : QUOTE_ITEM_TYPES.TRAILER_RATE_DAILY,
-          quantity: longTerm ? billedMonths : busDays,
+          quantity: longTerm ? rowBilledMonths : busDays,
           rate: busRate,
           unit_type: longTerm ? 'Per Month' : 'Per Day',
           billing_category: 'Contracted',
@@ -258,7 +277,7 @@ export const transformTour = (classifiedTour) => {
           vehicle_name: vehicleName,
           vehicle_index: vehicleIdx,
           item_type: longTerm ? QUOTE_ITEM_TYPES.COACH_RATE_MONTHLY : QUOTE_ITEM_TYPES.COACH_RATE_DAILY,
-          quantity: longTerm ? billedMonths : busDays,
+          quantity: longTerm ? rowBilledMonths : busDays,
           rate: busRate,
           unit_type: longTerm ? 'Per Month' : 'Per Day',
           billing_category: 'Contracted',
@@ -272,10 +291,24 @@ export const transformTour = (classifiedTour) => {
       const tourDays = cleanNum(row.TourDays);
       const dhf = cleanNum(row.DriverDHF);
       const dhr = cleanNum(row.DriverDHR);
-      const perDiemTotal = cleanNum(row.PerDiemTotal);
 
-      if (driverDays > 0 && perDiemTotal > 0) {
-        const driverRate = perDiemTotal / driverDays;
+      // Sample data has DriverRate directly; synthetic may use PerDiemTotal / DriverDays
+      let driverRate = cleanNum(row.DriverRate);
+      const driverTotal = cleanNum(row.DriverTotal);
+
+      // Fallback: calculate from DriverTotal if DriverRate not available
+      if (driverRate === 0 && driverTotal > 0 && driverDays > 0) {
+        driverRate = driverTotal / driverDays;
+      }
+      // Second fallback: synthetic data may use PerDiemTotal (though this seems wrong based on sample)
+      if (driverRate === 0) {
+        const perDiemTotal = getNumField(row, 'PerDiemTotal', 'PerDeimTotal');
+        if (perDiemTotal > 0 && driverDays > 0) {
+          driverRate = perDiemTotal / driverDays;
+        }
+      }
+
+      if (driverDays > 0 && driverRate > 0) {
         const baseDriverDays = tourDays + dhf + dhr;
         const additionalDays = driverDays - baseDriverDays;
 
@@ -314,7 +347,7 @@ export const transformTour = (classifiedTour) => {
           vehicle_name: vehicleName,
           vehicle_index: vehicleIdx,
           item_type: longTerm ? QUOTE_ITEM_TYPES.SATELLITE_MONTHLY : QUOTE_ITEM_TYPES.SATELLITE_DAILY,
-          quantity: longTerm ? billedMonths : busDays,
+          quantity: longTerm ? rowBilledMonths : busDays,
           rate: satelliteRate,
           unit_type: longTerm ? 'Per Month' : 'Per Day',
           billing_category: 'Contracted',
@@ -329,7 +362,7 @@ export const transformTour = (classifiedTour) => {
           vehicle_name: vehicleName,
           vehicle_index: vehicleIdx,
           item_type: longTerm ? QUOTE_ITEM_TYPES.INTERNET_MONTHLY : QUOTE_ITEM_TYPES.INTERNET_DAILY,
-          quantity: longTerm ? billedMonths : busDays,
+          quantity: longTerm ? rowBilledMonths : busDays,
           rate: internetRate,
           unit_type: longTerm ? 'Per Month' : 'Per Day',
           billing_category: 'Contracted',
@@ -344,7 +377,7 @@ export const transformTour = (classifiedTour) => {
           vehicle_name: vehicleName,
           vehicle_index: vehicleIdx,
           item_type: longTerm ? QUOTE_ITEM_TYPES.INSURANCE_MONTHLY : QUOTE_ITEM_TYPES.INSURANCE_DAILY,
-          quantity: longTerm ? billedMonths : busDays,
+          quantity: longTerm ? rowBilledMonths : busDays,
           rate: insuranceRate,
           unit_type: longTerm ? 'Per Month' : 'Per Day',
           billing_category: 'Contracted',
@@ -359,7 +392,7 @@ export const transformTour = (classifiedTour) => {
           vehicle_name: vehicleName,
           vehicle_index: vehicleIdx,
           item_type: longTerm ? QUOTE_ITEM_TYPES.IFTA_DOT_MONTHLY : QUOTE_ITEM_TYPES.IFTA_DOT_DAILY,
-          quantity: longTerm ? billedMonths : busDays,
+          quantity: longTerm ? rowBilledMonths : busDays,
           rate: dotRate,
           unit_type: longTerm ? 'Per Month' : 'Per Day',
           billing_category: 'Contracted',

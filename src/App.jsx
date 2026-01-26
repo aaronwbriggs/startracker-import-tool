@@ -43,6 +43,22 @@ const cleanNum = (val) => {
   return parseFloat(cleaned) || 0;
 };
 
+// Column alias helper - handles different column names between export formats
+// Sample data uses: Notes, BusMonths, PerDeimTotal, TravelDaysIn/Out
+// Synthetic uses: TourNotes, BilledMonths, PerDiemTotal, BusDHF/BusDHR
+const getField = (row, ...aliases) => {
+  for (const alias of aliases) {
+    if (row[alias] !== undefined && row[alias] !== '') {
+      return row[alias];
+    }
+  }
+  return '';
+};
+
+const getNumField = (row, ...aliases) => {
+  return cleanNum(getField(row, ...aliases));
+};
+
 // Classification Engine
 const classifyTour = (rows) => {
   const tourId = rows[0]?.TourID;
@@ -147,7 +163,7 @@ const classifyTour = (rows) => {
   // Long-term lease detection
   const isLongTerm = rows.some(r => {
     const busRate = cleanNum(r.BusRate);
-    const billedMonths = cleanNum(r.BilledMonths);
+    const billedMonths = getNumField(r, 'BilledMonths', 'BusMonths');
     const tourDays = cleanNum(r.TourDays);
     const driverDays = cleanNum(r.DriverDays);
     return busRate >= 2000 || billedMonths >= 6 || (driverDays === 0 && tourDays > 60);

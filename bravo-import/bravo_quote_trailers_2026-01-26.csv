@@ -1,0 +1,2 @@
+external_id,vehicle_name,vehicle_index,use_custom_tour_data,custom_tour_start_date,custom_tour_end_date,custom_total_estimated_miles,custom_tour_days,custom_billed_bus_days,custom_main_driver_days
+40006,CC9033,1,false,,,,,,

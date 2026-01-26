@@ -1,0 +1,139 @@
+external_id,vehicle_name,vehicle_index,item_type,quantity,rate,unit_type,billing_category
+40001,Silverado,0,"Coach Rate, Daily",14,450,Per Day,Contracted
+40001,Silverado,0,"Driver Rate, Daily",16,50,Per Day,Contracted
+40001,Silverado,0,"Satellite Service, Daily",14,25,Per Day,Contracted
+40001,Silverado,0,"Internet Service, Daily",14,15,Per Day,Contracted
+40001,Silverado,0,"Insurance, Daily",14,35,Per Day,Contracted
+40001,Silverado,0,"IFTA/DOT Fee, Daily",14,10,Per Day,Contracted
+40001,Silverado,0,Fuel Estimate,2500,0.45,Per Mile,Contracted
+40001,Silverado,0,Engine Services,2500,0.02,Per Mile,Contracted
+40001,Silverado,0,Interior Cleanings,2,75,Per Week,Contracted
+40001,Silverado,0,Bus Washes,2,50,Per Week,Contracted
+40001,Silverado,0,Linen Cleanings,2,40,Per Week,Contracted
+40001,Silverado,0,Generator Services,2,100,Per Week,Contracted
+40001,Silverado,0,End of Tour Cleaning,1,150,Flat Rate,Contracted
+40001,Silverado,0,Tolls,1,200,Flat Rate,Contracted
+40002,Maverick,0,"Coach Rate, Daily",19,500,Per Day,Contracted
+40002,Maverick,0,"Driver Rate, Daily",21,50,Per Day,Contracted
+40002,Maverick,0,"Satellite Service, Daily",19,25,Per Day,Contracted
+40002,Maverick,0,"Internet Service, Daily",19,15,Per Day,Contracted
+40002,Maverick,0,"Insurance, Daily",19,35,Per Day,Contracted
+40002,Maverick,0,"IFTA/DOT Fee, Daily",19,10,Per Day,Contracted
+40002,Maverick,0,Fuel Estimate,3200,0.45,Per Mile,Contracted
+40002,Maverick,0,Engine Services,3200,0.02,Per Mile,Contracted
+40002,Maverick,0,Interior Cleanings,2,75,Per Week,Contracted
+40002,Maverick,0,Bus Washes,2,50,Per Week,Contracted
+40002,Maverick,0,Linen Cleanings,2,40,Per Week,Contracted
+40002,Maverick,0,Generator Services,2,100,Per Week,Contracted
+40002,Maverick,0,End of Tour Cleaning,1,175,Flat Rate,Contracted
+40002,Maverick,0,Tolls,1,250,Flat Rate,Contracted
+40002,,,Admin Fee,1,50,Flat Rate,Contracted
+40003,Backdraft,0,"Coach Rate, Daily",15,475,Per Day,Contracted
+40003,Backdraft,0,"Driver Rate, Daily",17,50,Per Day,Contracted
+40003,Backdraft,0,"Satellite Service, Daily",15,25,Per Day,Contracted
+40003,Backdraft,0,"Internet Service, Daily",15,15,Per Day,Contracted
+40003,Backdraft,0,"Insurance, Daily",15,35,Per Day,Contracted
+40003,Backdraft,0,"IFTA/DOT Fee, Daily",15,10,Per Day,Contracted
+40003,Backdraft,0,Fuel Estimate,2800,0.45,Per Mile,Contracted
+40003,Backdraft,0,Engine Services,2800,0.02,Per Mile,Contracted
+40003,Backdraft,0,Interior Cleanings,2,75,Per Week,Contracted
+40003,Backdraft,0,Bus Washes,2,50,Per Week,Contracted
+40003,Backdraft,0,Linen Cleanings,2,40,Per Week,Contracted
+40003,Backdraft,0,Generator Services,2,100,Per Week,Contracted
+40003,Backdraft,0,Upholstery Cleaning,1,200,Flat Rate,Contracted
+40003,Backdraft,0,End of Tour Cleaning,1,150,Flat Rate,Contracted
+40003,Backdraft,0,Bed Kit Install / Bunk Change Fee,1,75,Flat Rate,Contracted
+40003,Backdraft,0,Tolls,1,150,Flat Rate,Contracted
+40003,,,Miscellaneous,1,100,Flat Rate,Contracted
+40004,Freedom,0,"Coach Rate, Monthly",12,8500,Per Month,Contracted
+40004,Freedom,0,"Satellite Service, Monthly",12,150,Per Month,Contracted
+40004,Freedom,0,"Internet Service, Monthly",12,100,Per Month,Contracted
+40004,Freedom,0,"Insurance, Monthly",12,200,Per Month,Contracted
+40004,Freedom,0,"IFTA/DOT Fee, Monthly",12,75,Per Month,Contracted
+40005,Cobra,0,"Coach Rate, Daily",19,525,Per Day,Contracted
+40005,Cobra,0,"Driver Rate, Daily",21,50,Per Day,Contracted
+40005,Cobra,0,"Satellite Service, Daily",19,25,Per Day,Contracted
+40005,Cobra,0,"Internet Service, Daily",19,15,Per Day,Contracted
+40005,Cobra,0,"Insurance, Daily",19,35,Per Day,Contracted
+40005,Cobra,0,"IFTA/DOT Fee, Daily",19,10,Per Day,Contracted
+40005,Cobra,0,Fuel Estimate,3500,0.45,Per Mile,Contracted
+40005,Cobra,0,Engine Services,3500,0.02,Per Mile,Contracted
+40005,Cobra,0,Interior Cleanings,2,75,Per Week,Contracted
+40005,Cobra,0,Bus Washes,2,50,Per Week,Contracted
+40005,Cobra,0,Linen Cleanings,2,40,Per Week,Contracted
+40005,Cobra,0,Generator Services,2,100,Per Week,Contracted
+40005,Cobra,0,End of Tour Cleaning,1,175,Flat Rate,Contracted
+40005,Cobra,0,Tolls,1,200,Flat Rate,Contracted
+40005,Viper,1,"Coach Rate, Daily",19,525,Per Day,Contracted
+40005,Viper,1,"Driver Rate, Daily",21,50,Per Day,Contracted
+40005,Viper,1,"Satellite Service, Daily",19,25,Per Day,Contracted
+40005,Viper,1,"Internet Service, Daily",19,15,Per Day,Contracted
+40005,Viper,1,"Insurance, Daily",19,35,Per Day,Contracted
+40005,Viper,1,"IFTA/DOT Fee, Daily",19,10,Per Day,Contracted
+40005,Viper,1,Fuel Estimate,3500,0.45,Per Mile,Contracted
+40005,Viper,1,Engine Services,3500,0.02,Per Mile,Contracted
+40005,Viper,1,Interior Cleanings,2,75,Per Week,Contracted
+40005,Viper,1,Bus Washes,2,50,Per Week,Contracted
+40005,Viper,1,Linen Cleanings,2,40,Per Week,Contracted
+40005,Viper,1,Generator Services,2,100,Per Week,Contracted
+40005,Viper,1,End of Tour Cleaning,1,175,Flat Rate,Contracted
+40005,Viper,1,Tolls,1,200,Flat Rate,Contracted
+40006,Stallion,0,"Coach Rate, Daily",14,450,Per Day,Contracted
+40006,Stallion,0,"Driver Rate, Daily",16,50,Per Day,Contracted
+40006,Stallion,0,"Satellite Service, Daily",14,25,Per Day,Contracted
+40006,Stallion,0,"Internet Service, Daily",14,15,Per Day,Contracted
+40006,Stallion,0,"Insurance, Daily",14,35,Per Day,Contracted
+40006,Stallion,0,"IFTA/DOT Fee, Daily",14,10,Per Day,Contracted
+40006,Stallion,0,Fuel Estimate,2200,0.45,Per Mile,Contracted
+40006,Stallion,0,Engine Services,2200,0.02,Per Mile,Contracted
+40006,Stallion,0,Interior Cleanings,2,75,Per Week,Contracted
+40006,Stallion,0,Bus Washes,2,50,Per Week,Contracted
+40006,Stallion,0,Linen Cleanings,2,40,Per Week,Contracted
+40006,Stallion,0,Generator Services,2,100,Per Week,Contracted
+40006,Stallion,0,End of Tour Cleaning,1,150,Flat Rate,Contracted
+40006,Stallion,0,Tolls,1,175,Flat Rate,Contracted
+40006,CC9033,1,"Trailer Rate, Daily",14,150,Per Day,Contracted
+40007,Mustang,0,"Coach Rate, Daily",9,475,Per Day,Contracted
+40007,Mustang,0,"Driver Rate, Daily",11,50,Per Day,Contracted
+40007,Mustang,0,Additional Driver Days,3,50,Per Quantity,Contracted
+40007,Mustang,0,"Satellite Service, Daily",9,25,Per Day,Contracted
+40007,Mustang,0,"Internet Service, Daily",9,15,Per Day,Contracted
+40007,Mustang,0,"Insurance, Daily",9,35,Per Day,Contracted
+40007,Mustang,0,"IFTA/DOT Fee, Daily",9,10,Per Day,Contracted
+40007,Mustang,0,Fuel Estimate,1800,0.45,Per Mile,Contracted
+40007,Mustang,0,Engine Services,1800,0.02,Per Mile,Contracted
+40007,Mustang,0,Interior Cleanings,1,75,Per Week,Contracted
+40007,Mustang,0,Bus Washes,1,50,Per Week,Contracted
+40007,Mustang,0,Linen Cleanings,1,40,Per Week,Contracted
+40007,Mustang,0,Generator Services,1,100,Per Week,Contracted
+40007,Mustang,0,End of Tour Cleaning,1,125,Flat Rate,Contracted
+40007,Mustang,0,Tolls,1,100,Flat Rate,Contracted
+40008,Charger,0,"Coach Rate, Daily",16,450,Per Day,Contracted
+40008,Charger,0,"Driver Rate, Daily",18,50,Per Day,Contracted
+40008,Charger,0,"Satellite Service, Daily",16,25,Per Day,Contracted
+40008,Charger,0,"Internet Service, Daily",16,15,Per Day,Contracted
+40008,Charger,0,"Insurance, Daily",16,35,Per Day,Contracted
+40008,Charger,0,"IFTA/DOT Fee, Daily",16,10,Per Day,Contracted
+40008,Charger,0,Fuel Estimate,2600,0.45,Per Mile,Contracted
+40008,Charger,0,Engine Services,2600,0.02,Per Mile,Contracted
+40008,Charger,0,Interior Cleanings,2,75,Per Week,Contracted
+40008,Charger,0,Bus Washes,2,50,Per Week,Contracted
+40008,Charger,0,Linen Cleanings,2,40,Per Week,Contracted
+40008,Charger,0,Generator Services,2,100,Per Week,Contracted
+40008,Charger,0,End of Tour Cleaning,1,150,Flat Rate,Contracted
+40008,Charger,0,Tolls,1,175,Flat Rate,Contracted
+40009,Challenger,0,"Coach Rate, Daily",13,500,Per Day,Contracted
+40009,Challenger,0,"Driver Rate, Daily",15,50,Per Day,Contracted
+40009,Challenger,0,"Satellite Service, Daily",13,25,Per Day,Contracted
+40009,Challenger,0,"Internet Service, Daily",13,15,Per Day,Contracted
+40009,Challenger,0,"Insurance, Daily",13,35,Per Day,Contracted
+40009,Challenger,0,"IFTA/DOT Fee, Daily",13,10,Per Day,Contracted
+40009,Challenger,0,Fuel Estimate,2100,0.45,Per Mile,Contracted
+40009,Challenger,0,Engine Services,2100,0.02,Per Mile,Contracted
+40009,Challenger,0,Interior Cleanings,1,75,Per Week,Contracted
+40009,Challenger,0,Bus Washes,1,50,Per Week,Contracted
+40009,Challenger,0,Linen Cleanings,1,40,Per Week,Contracted
+40009,Challenger,0,Generator Services,1,100,Per Week,Contracted
+40009,Challenger,0,End of Tour Cleaning,1,150,Flat Rate,Contracted
+40009,Challenger,0,Tolls,1,150,Flat Rate,Contracted
+40009,,,Admin Fee,1,195,Flat Rate,Contracted
