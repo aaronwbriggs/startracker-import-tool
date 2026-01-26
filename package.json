@@ -1,14 +1,21 @@
 {
   "name": "startracker-import-tool",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "import": "node scripts/import-to-supabase.js",
+    "import:dev": "node scripts/import-to-supabase.js --env=dev",
+    "import:dev:dry": "node scripts/import-to-supabase.js --env=dev --dry-run",
+    "import:prod": "node scripts/import-to-supabase.js --env=prod",
+    "import:prod:dry": "node scripts/import-to-supabase.js --env=prod --dry-run"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "csv-parse": "^5.5.3",
     "lucide-react": "^0.263.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

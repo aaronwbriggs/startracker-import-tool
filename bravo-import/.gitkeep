@@ -1,0 +1,6 @@
+# Place exported Bravo CSVs here before running the import script
+# Files expected:
+# - bravo_quotes_YYYY-MM-DD.csv
+# - bravo_quote_coaches_YYYY-MM-DD.csv
+# - bravo_quote_trailers_YYYY-MM-DD.csv
+# - bravo_line_items_YYYY-MM-DD.csv

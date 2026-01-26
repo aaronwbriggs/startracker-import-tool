@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Upload, FileText, CheckCircle, AlertTriangle, XCircle, MinusCircle, Download, ChevronDown, ChevronRight, History, Trash2, Calendar } from 'lucide-react';
+import { Upload, FileText, CheckCircle, AlertTriangle, XCircle, MinusCircle, Download, ChevronDown, ChevronRight, History, Trash2, Calendar, ArrowRight, Package } from 'lucide-react';
+import { transformAll, generateCSVs } from './transformer';
 
 // CSV Parser utility
 const parseCSV = (text) => {
@@ -77,13 +78,6 @@ const classifyTour = (rows) => {
   }
 
   // BLOCKED checks
-  const hasDiscountDays = rows.some(r => cleanNum(r.DiscountedDays) > 0);
-  if (hasDiscountDays) {
-    results.classification = 'BLOCKED';
-    const discountDays = rows.reduce((sum, r) => sum + cleanNum(r.DiscountedDays), 0);
-    results.reasons.push(`Uses Discount Days (${discountDays} days) - feature not in Bravo`);
-  }
-
   // Vehicle swap detection
   const vehicleCounts = {};
   rows.forEach(r => {
@@ -109,9 +103,19 @@ const classifyTour = (rows) => {
 
   // FLAGGED checks (only if not already BLOCKED)
   if (results.classification !== 'BLOCKED' && results.classification !== 'EXCLUDED') {
+    // Discount Days - now supported in Bravo, flag for review
+    const hasDiscountDays = rows.some(r => cleanNum(r.DiscountedDays) > 0);
+    if (hasDiscountDays) {
+      results.classification = 'FLAGGED';
+      const discountDays = rows.reduce((sum, r) => sum + cleanNum(r.DiscountedDays), 0);
+      results.reasons.push(`Uses Discount Days (${discountDays} days) - verify mapping in Bravo`);
+    }
+
     const hasSingleZeroBusRate = rows.some(r => cleanNum(r.BusRate) === 0 && cleanNum(r.TotalMileage) > 0);
     if (hasSingleZeroBusRate) {
-      results.classification = 'FLAGGED';
+      if (results.classification === 'READY') {
+        results.classification = 'FLAGGED';
+      }
       results.reasons.push('$0 BusRate with mileage - may be tour within long-term lease');
     }
 
@@ -213,6 +217,9 @@ export default function StarTrackerImportDashboard() {
   const [batchNotes, setBatchNotes] = useState('');
   const [expandedHistory, setExpandedHistory] = useState(null);
   const [storageSizeMB, setStorageSizeMB] = useState(0);
+  const [activeTab, setActiveTab] = useState('classify'); // 'classify' or 'transform'
+  const [transformedData, setTransformedData] = useState(null);
+  const [selectedForTransform, setSelectedForTransform] = useState(new Set());
 
   useEffect(() => { 
     setBatchHistory(loadHistory());
@@ -428,6 +435,74 @@ export default function StarTrackerImportDashboard() {
     return processedData.all.filter(t => t.classification === selectedFilter);
   }, [processedData, selectedFilter]);
 
+  // Get tours available for transformation (READY + FLAGGED)
+  const transformableTours = useMemo(() => {
+    if (!processedData) return [];
+    return processedData.all.filter(t =>
+      t.classification === 'READY' || t.classification === 'FLAGGED'
+    );
+  }, [processedData]);
+
+  // Handle transform action
+  const handleTransform = () => {
+    const toursToTransform = selectedForTransform.size > 0
+      ? transformableTours.filter(t => selectedForTransform.has(t.tourId))
+      : transformableTours;
+
+    if (toursToTransform.length === 0) {
+      alert('No tours selected for transformation.');
+      return;
+    }
+
+    const result = transformAll(toursToTransform);
+    setTransformedData(result);
+  };
+
+  // Download transformed CSVs
+  const downloadTransformedCSV = (type) => {
+    if (!transformedData) return;
+    const csvs = generateCSVs(transformedData);
+
+    const timestamp = new Date().toISOString().split('T')[0];
+    const fileMap = {
+      quotes: { data: csvs.quotes, name: `bravo_quotes_${timestamp}.csv` },
+      coaches: { data: csvs.quoteCoaches, name: `bravo_quote_coaches_${timestamp}.csv` },
+      trailers: { data: csvs.quoteTrailers, name: `bravo_quote_trailers_${timestamp}.csv` },
+      lineItems: { data: csvs.lineItems, name: `bravo_line_items_${timestamp}.csv` },
+    };
+
+    if (type === 'all') {
+      Object.values(fileMap).forEach(({ data, name }) => {
+        if (data) downloadCSV(data, name);
+      });
+    } else {
+      const file = fileMap[type];
+      if (file) downloadCSV(file.data, file.name);
+    }
+  };
+
+  // Toggle tour selection for transform
+  const toggleTourSelection = (tourId) => {
+    setSelectedForTransform(prev => {
+      const next = new Set(prev);
+      if (next.has(tourId)) {
+        next.delete(tourId);
+      } else {
+        next.add(tourId);
+      }
+      return next;
+    });
+  };
+
+  // Select/deselect all transformable tours
+  const toggleAllSelection = () => {
+    if (selectedForTransform.size === transformableTours.length) {
+      setSelectedForTransform(new Set());
+    } else {
+      setSelectedForTransform(new Set(transformableTours.map(t => t.tourId)));
+    }
+  };
+
   const classificationColors = {
     READY: 'bg-green-100 text-green-800 border-green-200',
     FLAGGED: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -451,7 +526,7 @@ export default function StarTrackerImportDashboard() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 mb-2">StarTracker → Bravo Import Tool</h1>
               <p className="text-gray-600">Upload a StarTracker export CSV to classify and prepare quotes for Bravo import.</p>
@@ -462,6 +537,33 @@ export default function StarTrackerImportDashboard() {
               <span>History ({batchHistory.length})</span>
             </button>
           </div>
+          {/* Tabs */}
+          {processedData && (
+            <div className="flex gap-2 border-t border-gray-200 pt-4">
+              <button
+                onClick={() => setActiveTab('classify')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeTab === 'classify'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                <FileText className="w-4 h-4" />
+                Classify
+              </button>
+              <button
+                onClick={() => setActiveTab('transform')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeTab === 'transform'
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                <ArrowRight className="w-4 h-4" />
+                Transform ({transformableTours.length} available)
+              </button>
+            </div>
+          )}
         </div>
 
         {/* History Panel */}
@@ -631,7 +733,7 @@ export default function StarTrackerImportDashboard() {
         </div>
 
         {/* Results */}
-        {processedData && (
+        {processedData && activeTab === 'classify' && (
           <>
             {/* Summary Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -799,6 +901,245 @@ export default function StarTrackerImportDashboard() {
           </>
         )}
 
+        {/* Transform Tab */}
+        {processedData && activeTab === 'transform' && (
+          <div className="space-y-6">
+            {/* Transform Controls */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">Transform to Bravo Format</h2>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {selectedForTransform.size > 0
+                      ? `${selectedForTransform.size} of ${transformableTours.length} tours selected`
+                      : `All ${transformableTours.length} READY/FLAGGED tours will be transformed`}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={toggleAllSelection}
+                    className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
+                  >
+                    {selectedForTransform.size === transformableTours.length ? 'Deselect All' : 'Select All'}
+                  </button>
+                  <button
+                    onClick={handleTransform}
+                    disabled={transformableTours.length === 0}
+                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <ArrowRight className="w-4 h-4" />
+                    Transform {selectedForTransform.size > 0 ? `(${selectedForTransform.size})` : `All (${transformableTours.length})`}
+                  </button>
+                </div>
+              </div>
+
+              {/* Tour selection list */}
+              <div className="border border-gray-200 rounded-lg max-h-64 overflow-y-auto">
+                {transformableTours.map(tour => (
+                  <label
+                    key={tour.tourId}
+                    className="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedForTransform.has(tour.tourId)}
+                      onChange={() => toggleTourSelection(tour.tourId)}
+                      className="w-4 h-4 text-purple-600 rounded"
+                    />
+                    <span className="font-mono text-sm text-blue-600">{tour.tourId}</span>
+                    <span className="text-sm text-gray-900 flex-grow">{tour.customer}</span>
+                    <span className="text-sm text-gray-500 truncate max-w-xs">{tour.tourName}</span>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                      tour.classification === 'READY'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {tour.classification}
+                    </span>
+                  </label>
+                ))}
+                {transformableTours.length === 0 && (
+                  <div className="p-8 text-center text-gray-500">
+                    No READY or FLAGGED tours available for transformation.
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Transform Results */}
+            {transformedData && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      <Package className="w-5 h-5 text-purple-600" />
+                      Transformation Results
+                    </h2>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Ready to export as Bravo-compatible CSVs
+                    </p>
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                  <div className="bg-purple-50 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-purple-700">{transformedData.stats.quotesCount}</div>
+                    <div className="text-xs text-purple-600">Quotes</div>
+                  </div>
+                  <div className="bg-blue-50 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-blue-700">{transformedData.stats.coachesCount}</div>
+                    <div className="text-xs text-blue-600">Coaches</div>
+                  </div>
+                  <div className="bg-cyan-50 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-cyan-700">{transformedData.stats.trailersCount}</div>
+                    <div className="text-xs text-cyan-600">Trailers</div>
+                  </div>
+                  <div className="bg-green-50 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-green-700">{transformedData.stats.lineItemsCount}</div>
+                    <div className="text-xs text-green-600">Line Items</div>
+                  </div>
+                  <div className={`rounded-lg p-3 text-center ${transformedData.stats.errorsCount > 0 ? 'bg-red-50' : 'bg-gray-50'}`}>
+                    <div className={`text-2xl font-bold ${transformedData.stats.errorsCount > 0 ? 'text-red-700' : 'text-gray-400'}`}>
+                      {transformedData.stats.errorsCount}
+                    </div>
+                    <div className={`text-xs ${transformedData.stats.errorsCount > 0 ? 'text-red-600' : 'text-gray-500'}`}>Errors</div>
+                  </div>
+                </div>
+
+                {/* Errors */}
+                {transformedData.errors.length > 0 && (
+                  <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <h3 className="text-sm font-medium text-red-800 mb-2">Transformation Errors:</h3>
+                    <ul className="text-sm text-red-700 space-y-1">
+                      {transformedData.errors.map((err, i) => (
+                        <li key={i}>TourID {err.tourId}: {err.error}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Download Buttons */}
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={() => downloadTransformedCSV('all')}
+                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download All CSVs
+                  </button>
+                  <button
+                    onClick={() => downloadTransformedCSV('quotes')}
+                    className="flex items-center gap-2 px-3 py-2 bg-purple-100 text-purple-700 border border-purple-300 rounded-lg hover:bg-purple-200"
+                  >
+                    <Download className="w-4 h-4" />
+                    Quotes ({transformedData.stats.quotesCount})
+                  </button>
+                  <button
+                    onClick={() => downloadTransformedCSV('coaches')}
+                    className="flex items-center gap-2 px-3 py-2 bg-blue-100 text-blue-700 border border-blue-300 rounded-lg hover:bg-blue-200"
+                  >
+                    <Download className="w-4 h-4" />
+                    Coaches ({transformedData.stats.coachesCount})
+                  </button>
+                  <button
+                    onClick={() => downloadTransformedCSV('trailers')}
+                    disabled={transformedData.stats.trailersCount === 0}
+                    className="flex items-center gap-2 px-3 py-2 bg-cyan-100 text-cyan-700 border border-cyan-300 rounded-lg hover:bg-cyan-200 disabled:opacity-50"
+                  >
+                    <Download className="w-4 h-4" />
+                    Trailers ({transformedData.stats.trailersCount})
+                  </button>
+                  <button
+                    onClick={() => downloadTransformedCSV('lineItems')}
+                    className="flex items-center gap-2 px-3 py-2 bg-green-100 text-green-700 border border-green-300 rounded-lg hover:bg-green-200"
+                  >
+                    <Download className="w-4 h-4" />
+                    Line Items ({transformedData.stats.lineItemsCount})
+                  </button>
+                </div>
+
+                {/* Preview Tables */}
+                <div className="mt-6 space-y-4">
+                  <details className="border border-gray-200 rounded-lg">
+                    <summary className="px-4 py-3 bg-gray-50 cursor-pointer font-medium text-gray-700 hover:bg-gray-100">
+                      Preview Quotes ({transformedData.quotes.length})
+                    </summary>
+                    <div className="p-4 overflow-x-auto">
+                      <table className="min-w-full text-xs">
+                        <thead>
+                          <tr className="bg-gray-100">
+                            <th className="px-2 py-1 text-left">external_id</th>
+                            <th className="px-2 py-1 text-left">artist_name</th>
+                            <th className="px-2 py-1 text-left">quote_name</th>
+                            <th className="px-2 py-1 text-left">type</th>
+                            <th className="px-2 py-1 text-left">start_date</th>
+                            <th className="px-2 py-1 text-left">end_date</th>
+                            <th className="px-2 py-1 text-right">tour_days</th>
+                            <th className="px-2 py-1 text-right">miles</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {transformedData.quotes.slice(0, 10).map((q, i) => (
+                            <tr key={i} className="border-t border-gray-100">
+                              <td className="px-2 py-1 font-mono text-blue-600">{q.external_id}</td>
+                              <td className="px-2 py-1">{q.artist_name}</td>
+                              <td className="px-2 py-1 max-w-xs truncate">{q.quote_name}</td>
+                              <td className="px-2 py-1">{q.type}</td>
+                              <td className="px-2 py-1">{q.quoted_lease_start_date}</td>
+                              <td className="px-2 py-1">{q.quoted_lease_end_date}</td>
+                              <td className="px-2 py-1 text-right">{q.tour_days}</td>
+                              <td className="px-2 py-1 text-right">{q.total_estimated_miles}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      {transformedData.quotes.length > 10 && (
+                        <p className="text-xs text-gray-500 mt-2">...and {transformedData.quotes.length - 10} more</p>
+                      )}
+                    </div>
+                  </details>
+
+                  <details className="border border-gray-200 rounded-lg">
+                    <summary className="px-4 py-3 bg-gray-50 cursor-pointer font-medium text-gray-700 hover:bg-gray-100">
+                      Preview Line Items ({transformedData.lineItems.length})
+                    </summary>
+                    <div className="p-4 overflow-x-auto">
+                      <table className="min-w-full text-xs">
+                        <thead>
+                          <tr className="bg-gray-100">
+                            <th className="px-2 py-1 text-left">external_id</th>
+                            <th className="px-2 py-1 text-left">vehicle</th>
+                            <th className="px-2 py-1 text-left">item_type</th>
+                            <th className="px-2 py-1 text-right">qty</th>
+                            <th className="px-2 py-1 text-right">rate</th>
+                            <th className="px-2 py-1 text-left">unit</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {transformedData.lineItems.slice(0, 20).map((li, i) => (
+                            <tr key={i} className="border-t border-gray-100">
+                              <td className="px-2 py-1 font-mono text-blue-600">{li.external_id}</td>
+                              <td className="px-2 py-1">{li.vehicle_name || '—'}</td>
+                              <td className="px-2 py-1">{li.item_type}</td>
+                              <td className="px-2 py-1 text-right">{li.quantity}</td>
+                              <td className="px-2 py-1 text-right">${li.rate?.toFixed(2)}</td>
+                              <td className="px-2 py-1">{li.unit_type}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      {transformedData.lineItems.length > 20 && (
+                        <p className="text-xs text-gray-500 mt-2">...and {transformedData.lineItems.length - 20} more</p>
+                      )}
+                    </div>
+                  </details>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {!processedData && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <Upload className="w-12 h-12 text-gray-300 mx-auto mb-4" />
@@ -822,7 +1163,6 @@ export default function StarTrackerImportDashboard() {
             <div>
               <div className="flex items-center gap-2 mb-2"><XCircle className="w-4 h-4 text-red-600" /><span className="font-medium text-gray-700">BLOCKED</span></div>
               <ul className="text-gray-600 space-y-1 ml-6">
-                <li>• DiscountedDays &gt; 0 (missing Bravo feature)</li>
                 <li>• Vehicle swap detected (same vehicle 2×)</li>
                 <li>• Multiple $0 budget rows (swap tracking)</li>
               </ul>
@@ -830,6 +1170,7 @@ export default function StarTrackerImportDashboard() {
             <div>
               <div className="flex items-center gap-2 mb-2"><AlertTriangle className="w-4 h-4 text-yellow-600" /><span className="font-medium text-gray-700">FLAGGED</span></div>
               <ul className="text-gray-600 space-y-1 ml-6">
+                <li>• DiscountedDays &gt; 0 (verify mapping)</li>
                 <li>• $0 BusRate with mileage (tour within LT lease)</li>
                 <li>• Driver days override detected</li>
                 <li>• Admin fee present</li>
