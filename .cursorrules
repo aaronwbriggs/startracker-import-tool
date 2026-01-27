@@ -82,6 +82,157 @@ Multiple rows can share the same TourID (multi-vehicle quotes). Always group bef
 4. **TourID is primary key** — Always display it prominently
 5. **Test with real data** — Classification edge cases matter
 
+## Import & Validation Workflow
+
+**Why status is applied separately:** Declined quotes in Bravo are locked and cannot be edited. By importing as Draft first, you can review totals, fix mismatches, and make manual adjustments before locking quotes with their final status.
+
+### Step 1: Transform StarTracker Data
+
+Use the web app UI (`npm run dev`) to:
+1. Upload StarTracker CSV export
+2. Review classification results
+3. Export transformed CSVs to `bravo-import/<batch-name>/`
+
+Output files:
+- `quotes.csv` - Quote data
+- `quote_coaches.csv` - Coach assignments
+- `quote_trailers.csv` - Trailer assignments
+- `line_items.csv` - Line items
+- `artists.csv` - Artist address data (Name, Address, City, State, Zip)
+- `contacts.csv` - Contact records (deduplicated by email)
+- `artist_contacts.csv` - Artist ↔ Contact links with roles
+
+### Step 2: Import to Supabase (as Draft)
+
+```bash
+# ALWAYS dry-run first
+node scripts/import-to-supabase.js --env=dev --dir=./bravo-import/<batch-name> --skip-status --dry-run
+
+# Then actual import (all quotes imported as Draft)
+node scripts/import-to-supabase.js --env=dev --dir=./bravo-import/<batch-name> --skip-status
+```
+
+**Required env vars:** `SUPABASE_DEV_URL`, `SUPABASE_DEV_SERVICE_KEY` (or PROD equivalents)
+
+**Flags:**
+- `--skip-status` — Import all quotes as Draft (recommended for review workflow)
+- `--dry-run` — Show what would happen without making changes
+
+### Step 3: Validate Import Results
+
+```bash
+node scripts/validate-import.js --source=<ORIGINAL-STARTRACKER-CSV> --env=dev
+```
+
+**CRITICAL:** The `--source` must be the ORIGINAL StarTracker export (with `TourBudget` column), NOT the transformed output CSVs.
+
+The script compares:
+- StarTracker `TourBudget` (from source CSV, keyed by `TourID`)
+- Bravo calculated total (SUM of qty × rate for non-deleted line items)
+
+Output categories:
+- **MATCH**: Difference < $0.01
+- **CLOSE**: Difference < $100 (likely rounding)
+- **MISMATCH**: Difference ≥ $100 (needs investigation)
+
+### Step 4: Investigate & Fix Mismatches
+
+Use Supabase MCP to drill into specific quotes:
+
+```sql
+-- Line item breakdown for a specific quote
+SELECT qit.item_name, qli.quantity, qli.rate,
+       ROUND(qli.quantity * qli.rate, 2) as line_total,
+       qli.user_deleted, qli.is_automatic
+FROM quote_line_items qli
+JOIN quotes q ON qli.quote_id = q.id
+LEFT JOIN quote_item_types qit ON qli.quote_item_type_id = qit.id
+WHERE q.external_id = '<TOUR_ID>'
+ORDER BY qli.user_deleted, qit.item_name;
+```
+
+See `scripts/validation-queries.sql` for more ready-to-use queries.
+
+**Make manual adjustments in Bravo UI while quotes are still Draft.**
+
+### Step 5: Apply Final Statuses
+
+After validation and any manual fixes:
+
+```bash
+# Dry-run first
+node scripts/apply-status.js --env=dev --dir=./bravo-import/<batch-name> --dry-run
+
+# Apply statuses
+node scripts/apply-status.js --env=dev --dir=./bravo-import/<batch-name>
+```
+
+This updates each quote's status to match the intended status from quotes.csv (Approved, Declined, etc.). Declined quotes will be assigned a default lost_reason_id.
+
+---
+
+## Transformation Rules
+
+### Rate Field Mapping (`src/transformer.js`)
+
+The `RATE_FIELD_MAPPING` table controls how StarTracker fields become Bravo line items:
+
+- **Short Term vs Long Term**: Some items only apply to one quote type
+- **$0 rates are intentional**: Create line items even when rate=$0 (waived charges)
+- **Variable expenses**: LT quotes show some items with qty=0 to display rates
+
+When adding a new mapping:
+```javascript
+FieldName: {
+  shortTerm: QUOTE_ITEM_TYPES.SOME_TYPE,  // null if N/A for ST
+  longTerm: QUOTE_ITEM_TYPES.SOME_TYPE,   // null if N/A for LT
+  unitType: { shortTerm: 'Per Day', longTerm: 'Per Month' },
+  quantitySource: { shortTerm: 'busDays', longTerm: 'billedMonths' },
+  // Optional:
+  isQuoteLevel: true,                     // Not vehicle-specific
+  longTermRequiresPositiveRate: true,     // Only create if rate > 0
+},
+```
+
+### Artist & Contact Mapping
+
+**StarTracker columns → Bravo tables:**
+
+| StarTracker Column | Bravo Field |
+|--------------------|-------------|
+| CustomerName | artists.name |
+| Name | artists.legal_name |
+| Address1 + Address2 | artists.address (concatenated with comma) |
+| City | artists.city |
+| State | artists.state_province_id |
+| Zip | artists.zip |
+| Contact1 | contacts.full_name (role parsed from name) |
+| Phone1 | contacts.phone |
+| EMail1 | contacts.email |
+| Contact2 | contacts.full_name (second contact) |
+| Phone2/EMail2 | contacts.phone/email |
+
+**Contact role parsing:**
+- Names like "Geoff Donkin - TM" → role = "Tour Manager"
+- Names like "Elaine Brown - Business Manager" → role = "Business Manager"
+- Names without role indicator → default role = "Business Manager"
+
+**Deduplication:**
+- Artists: by name (merges address data from multiple tours)
+- Contacts: by email (most reliable identifier)
+- Artist-Contact links: by artist_name + email + role
+
+### Key Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `scripts/import-to-supabase.js` | Import transformed CSVs to Supabase (use `--skip-status` for review workflow) |
+| `scripts/validate-import.js` | Compare Bravo totals to StarTracker source |
+| `scripts/apply-status.js` | Apply final statuses after review/fixes |
+| `scripts/validation-queries.sql` | SQL queries for investigating mismatches |
+
+---
+
 ## Common Tasks
 
 ### Adding a new classification rule
@@ -105,6 +256,10 @@ Multiple rows can share the same TourID (multi-vehicle quotes). Always group bef
 - Don't change classification rules without business justification
 - Don't remove batch history functionality
 - Don't break CSV parsing for edge cases (quoted commas, etc.)
+- Don't add columns to Bravo schema for import validation (use source CSV comparison)
+- Don't skip the dry-run step before actual imports
+- Don't import to prod without testing in dev first
+- Don't use transformed CSVs for validation (use original StarTracker export)
 
 ## Supabase Access
 

@@ -31,6 +31,9 @@ const QUOTE_ITEM_TYPES = {
   LINEN_CLEANINGS: 'Linen Cleanings',
   GENERATOR_SERVICES: 'Generator Services',
   DRIVER_PER_DIEM: 'Driver Per Diem',
+  CO_DRIVER_PER_DIEMS: 'Co-Driver Per Diems',
+  DRIVER_OVERDRIVES: 'Driver Overdrives',
+  DRIVER_HOTEL_BUY_OUTS: 'Driver Hotel Buy Outs',
   TOLLS: 'Tolls',
   END_OF_TOUR_CLEANING: 'End of Tour Cleaning',
   UPHOLSTERY_CLEANING: 'Upholstery Cleaning',
@@ -39,6 +42,276 @@ const QUOTE_ITEM_TYPES = {
 
 // Trailer prefixes (from Master Plan)
 const TRAILER_PREFIXES = ['CC', 'ML', 'LK', 'TA'];
+
+/**
+ * CONTACT_ROLE_MAPPING - Maps role abbreviations/keywords to Bravo contact roles
+ * Default role is 'Business Manager' when no role indicator is found
+ */
+const CONTACT_ROLE_PATTERNS = [
+  { pattern: /\bTM\b/i, role: 'Tour Manager' },
+  { pattern: /\bTour\s*Manager\b/i, role: 'Tour Manager' },
+  { pattern: /\bTour\s*Mgr\b/i, role: 'Tour Manager' },
+  { pattern: /\bPM\b/i, role: 'Production Manager' },
+  { pattern: /\bProduction\s*Manager\b/i, role: 'Production Manager' },
+  { pattern: /\bProd\s*Mgr\b/i, role: 'Production Manager' },
+  { pattern: /\bBusiness\s*Manager\b/i, role: 'Business Manager' },
+  { pattern: /\bBiz\s*Mgr\b/i, role: 'Business Manager' },
+  { pattern: /\bBilling\b/i, role: 'Billing Contact' },
+];
+
+const DEFAULT_CONTACT_ROLE = 'Business Manager';
+
+/**
+ * RATE_FIELD_MAPPING - Maps StarTracker fields to Bravo line item types by quote type
+ *
+ * This explicit mapping handles the ST/LT difference:
+ * - StarTracker has no ST/LT distinction - agents use $0 for both waived charges AND non-applicable items
+ * - Bravo enforces quote type constraints - certain items only valid for ST or LT
+ *
+ * For each StarTracker field:
+ *   shortTerm: Bravo item type for Short Term quotes (null = skip for ST)
+ *   longTerm:  Bravo item type for Long Term quotes (null = skip for LT)
+ *   unitType:  { shortTerm, longTerm } - unit types for each quote type
+ *   quantitySource: 'days' | 'months' | 'weeks' | 'mileage' | 'flat' - what to use for quantity
+ *
+ * CHECKPOINT: Review this mapping with Aaron before implementing the refactor.
+ */
+const RATE_FIELD_MAPPING = {
+  // --- Vehicle Rates ---
+  BusRate: {
+    shortTerm: QUOTE_ITEM_TYPES.COACH_RATE_DAILY,
+    longTerm: QUOTE_ITEM_TYPES.COACH_RATE_MONTHLY,
+    unitType: { shortTerm: 'Per Day', longTerm: 'Per Month' },
+    quantitySource: { shortTerm: 'busDays', longTerm: 'billedMonths' },
+  },
+  // Note: Trailer rate uses same BusRate field but different item type - handled specially in code
+
+  // --- Driver Services ---
+  DriverRate: {
+    // LT quotes show Driver Rate Daily as "variable expense" with qty=0
+    // This lets customers see the rate they'll pay when using driver services under their lease
+    shortTerm: QUOTE_ITEM_TYPES.DRIVER_RATE_DAILY,
+    longTerm: QUOTE_ITEM_TYPES.DRIVER_RATE_DAILY,
+    unitType: { shortTerm: 'Per Day', longTerm: 'Per Day' },
+    quantitySource: { shortTerm: 'driverDays', longTerm: 'zero' }, // LT uses qty=0
+  },
+
+  // --- Daily/Monthly Services (switch item type based on quote type) ---
+  SatelliteRate: {
+    shortTerm: QUOTE_ITEM_TYPES.SATELLITE_DAILY,
+    longTerm: QUOTE_ITEM_TYPES.SATELLITE_MONTHLY,
+    unitType: { shortTerm: 'Per Day', longTerm: 'Per Month' },
+    quantitySource: { shortTerm: 'busDays', longTerm: 'billedMonths' },
+  },
+  InternetRate: {
+    shortTerm: QUOTE_ITEM_TYPES.INTERNET_DAILY,
+    longTerm: QUOTE_ITEM_TYPES.INTERNET_MONTHLY,
+    unitType: { shortTerm: 'Per Day', longTerm: 'Per Month' },
+    quantitySource: { shortTerm: 'busDays', longTerm: 'billedMonths' },
+  },
+  InsuranceRate: {
+    shortTerm: QUOTE_ITEM_TYPES.INSURANCE_DAILY,
+    longTerm: QUOTE_ITEM_TYPES.INSURANCE_MONTHLY,
+    unitType: { shortTerm: 'Per Day', longTerm: 'Per Month' },
+    quantitySource: { shortTerm: 'busDays', longTerm: 'billedMonths' },
+  },
+  DOTRate: {
+    shortTerm: QUOTE_ITEM_TYPES.IFTA_DOT_DAILY,
+    longTerm: QUOTE_ITEM_TYPES.IFTA_DOT_MONTHLY,
+    unitType: { shortTerm: 'Per Day', longTerm: 'Per Month' },
+    quantitySource: { shortTerm: 'busDays', longTerm: 'billedMonths' },
+  },
+
+  // --- Mileage-Based Services ---
+  // LT quotes show these as "variable expense" with qty=0 so customer sees the rate
+  FuelRate: {
+    shortTerm: QUOTE_ITEM_TYPES.FUEL_ESTIMATE,
+    longTerm: QUOTE_ITEM_TYPES.FUEL_ESTIMATE,
+    unitType: { shortTerm: 'Per Mile', longTerm: 'Per Mile' },
+    quantitySource: { shortTerm: 'mileage', longTerm: 'zero' }, // LT uses qty=0
+  },
+  EngineRate: {
+    shortTerm: QUOTE_ITEM_TYPES.ENGINE_SERVICES,
+    longTerm: QUOTE_ITEM_TYPES.ENGINE_SERVICES,
+    unitType: { shortTerm: 'Per Mile', longTerm: 'Per Mile' },
+    quantitySource: { shortTerm: 'mileage', longTerm: 'zero' }, // LT uses qty=0
+  },
+
+  // --- Weekly Services (Short Term only) ---
+  InteriorCleaning: {
+    shortTerm: QUOTE_ITEM_TYPES.INTERIOR_CLEANINGS,
+    longTerm: null, // Not applicable to LT
+    unitType: { shortTerm: 'Per Week', longTerm: null },
+    quantitySource: { shortTerm: 'weeks', longTerm: null },
+  },
+  BusWashRate: {
+    shortTerm: QUOTE_ITEM_TYPES.BUS_WASHES,
+    longTerm: null, // Not applicable to LT
+    unitType: { shortTerm: 'Per Week', longTerm: null },
+    quantitySource: { shortTerm: 'weeks', longTerm: null },
+  },
+  LinenRate: {
+    shortTerm: QUOTE_ITEM_TYPES.LINEN_CLEANINGS,
+    longTerm: null, // Not applicable to LT
+    unitType: { shortTerm: 'Per Week', longTerm: null },
+    quantitySource: { shortTerm: 'weeks', longTerm: null },
+  },
+  GeneratorRate: {
+    // ST: "Weekly Generator Services" (per week)
+    // LT: "Generator Services" only if rate > 0 (shows as variable expense)
+    shortTerm: QUOTE_ITEM_TYPES.GENERATOR_SERVICES,
+    longTerm: QUOTE_ITEM_TYPES.GENERATOR_SERVICES,
+    unitType: { shortTerm: 'Per Week', longTerm: 'Per Week' },
+    quantitySource: { shortTerm: 'weeks', longTerm: 'zero' },
+    longTermRequiresPositiveRate: true, // Special: only create LT item if rate > 0
+  },
+
+  // --- Flat Rate Items (Short Term only) ---
+  CleaningTotal: {
+    shortTerm: QUOTE_ITEM_TYPES.END_OF_TOUR_CLEANING,
+    longTerm: null, // Not applicable to LT
+    unitType: { shortTerm: 'Flat Rate', longTerm: null },
+    quantitySource: { shortTerm: 'flat', longTerm: null },
+  },
+  Upholstery: {
+    shortTerm: QUOTE_ITEM_TYPES.UPHOLSTERY_CLEANING,
+    longTerm: null, // Not applicable to LT
+    unitType: { shortTerm: 'Flat Rate', longTerm: null },
+    quantitySource: { shortTerm: 'flat', longTerm: null },
+  },
+  BedKitTotal: {
+    shortTerm: QUOTE_ITEM_TYPES.BED_KIT_INSTALL,
+    longTerm: null, // Not applicable to LT
+    unitType: { shortTerm: 'Flat Rate', longTerm: null },
+    quantitySource: { shortTerm: 'flat', longTerm: null },
+  },
+  Tolls: {
+    shortTerm: QUOTE_ITEM_TYPES.TOLLS,
+    longTerm: null, // Not applicable to LT - no route to estimate tolls
+    unitType: { shortTerm: 'Flat Rate', longTerm: null },
+    quantitySource: { shortTerm: 'flat', longTerm: null },
+  },
+
+  // --- Quote-Level Items (both ST and LT, flat rate) ---
+  MiscTotal: {
+    shortTerm: QUOTE_ITEM_TYPES.MISCELLANEOUS,
+    longTerm: QUOTE_ITEM_TYPES.MISCELLANEOUS,
+    unitType: { shortTerm: 'Flat Rate', longTerm: 'Flat Rate' },
+    quantitySource: { shortTerm: 'flat', longTerm: 'flat' },
+    isQuoteLevel: true, // Not vehicle-specific
+  },
+  AdminTotal: {
+    shortTerm: QUOTE_ITEM_TYPES.ADMIN_FEE,
+    longTerm: QUOTE_ITEM_TYPES.ADMIN_FEE,
+    unitType: { shortTerm: 'Flat Rate', longTerm: 'Flat Rate' },
+    quantitySource: { shortTerm: 'flat', longTerm: 'flat' },
+    isQuoteLevel: true, // Not vehicle-specific
+  },
+};
+
+// Note: Per Diems (Driver Per Diem, Co-Driver Per Diems) are handled separately
+// because they have special logic around co_driver_days and rate derivation
+
+/**
+ * Check if a rate field exists in the source data (even if value is $0)
+ * Returns true if the field is present and not empty, false if absent/null/empty
+ */
+export const hasRateField = (row, fieldName) => {
+  const value = row[fieldName];
+  return value !== undefined && value !== null && value !== '';
+};
+
+/**
+ * Get the Bravo item type for a StarTracker field based on quote type
+ * Returns null if the field should be skipped for this quote type
+ */
+export const getItemTypeForQuoteType = (fieldName, isLongTerm, rate = 0) => {
+  const mapping = RATE_FIELD_MAPPING[fieldName];
+  if (!mapping) return null;
+
+  if (isLongTerm) {
+    // Special case: some LT items only created if rate > 0
+    if (mapping.longTermRequiresPositiveRate && rate <= 0) {
+      return null;
+    }
+    return mapping.longTerm;
+  }
+  return mapping.shortTerm;
+};
+
+/**
+ * Get the unit type for a StarTracker field based on quote type
+ */
+export const getUnitTypeForQuoteType = (fieldName, isLongTerm) => {
+  const mapping = RATE_FIELD_MAPPING[fieldName];
+  if (!mapping) return null;
+  return isLongTerm ? mapping.unitType.longTerm : mapping.unitType.shortTerm;
+};
+
+/**
+ * Get the quantity source for a StarTracker field based on quote type
+ */
+export const getQuantitySource = (fieldName, isLongTerm) => {
+  const mapping = RATE_FIELD_MAPPING[fieldName];
+  if (!mapping) return null;
+  return isLongTerm ? mapping.quantitySource.longTerm : mapping.quantitySource.shortTerm;
+};
+
+/**
+ * Check if a field is quote-level (not vehicle-specific)
+ */
+export const isQuoteLevelField = (fieldName) => {
+  const mapping = RATE_FIELD_MAPPING[fieldName];
+  return mapping?.isQuoteLevel === true;
+};
+
+/**
+ * Calculate quantity based on quantitySource
+ */
+export const calculateQuantity = (quantitySource, context) => {
+  const { busDays, billedMonths, driverDays, tourWeeks, mileage } = context;
+  switch (quantitySource) {
+    case 'busDays': return busDays;
+    case 'billedMonths': return billedMonths;
+    case 'driverDays': return driverDays;
+    case 'weeks': return tourWeeks;
+    case 'mileage': return mileage;
+    case 'flat': return 1;
+    case 'zero': return 0;
+    default: return 0;
+  }
+};
+
+/**
+ * Create a line item using the mapping table
+ * Returns the line item object or null if it should be skipped
+ */
+export const createMappedLineItem = (fieldName, rate, longTerm, context) => {
+  const { tourId, vehicleName, vehicleIdx } = context;
+
+  // Get item type for this quote type
+  const itemType = getItemTypeForQuoteType(fieldName, longTerm, rate);
+  if (!itemType) return null; // Skip - not applicable for this quote type
+
+  // Get unit type and quantity source
+  const unitType = getUnitTypeForQuoteType(fieldName, longTerm);
+  const quantitySource = getQuantitySource(fieldName, longTerm);
+  const quantity = calculateQuantity(quantitySource, context);
+
+  // For quote-level items, don't attach to a vehicle
+  const isQuoteLevel = isQuoteLevelField(fieldName);
+
+  return {
+    external_id: String(tourId),
+    vehicle_name: isQuoteLevel ? null : vehicleName,
+    vehicle_index: isQuoteLevel ? null : vehicleIdx,
+    item_type: itemType,
+    quantity: quantity,
+    rate: rate,
+    unit_type: unitType,
+    billing_category: 'Contracted',
+  };
+};
 
 /**
  * Check if a vehicle name is a trailer
@@ -165,6 +438,104 @@ export const mapBillingCategory = (starTrackerCategory) => {
 };
 
 /**
+ * Parse contact name and extract role if embedded
+ * e.g., "Geoff Donkin - TM" → { name: "Geoff Donkin", role: "Tour Manager" }
+ * e.g., "Elaine Brown - Business Manager" → { name: "Elaine Brown", role: "Business Manager" }
+ * e.g., "David Zeisler" → { name: "David Zeisler", role: "Business Manager" } (default)
+ */
+export const parseContactName = (rawName) => {
+  if (!rawName || !rawName.trim()) return null;
+
+  let name = rawName.trim();
+  let role = DEFAULT_CONTACT_ROLE;
+
+  // Check for role patterns in the name
+  for (const { pattern, role: mappedRole } of CONTACT_ROLE_PATTERNS) {
+    if (pattern.test(name)) {
+      role = mappedRole;
+      // Remove the role indicator from the name
+      // Handle patterns like "Name - TM" or "Name - Tour Manager"
+      name = name.replace(/\s*[-–]\s*.*$/, '').trim();
+      break;
+    }
+  }
+
+  // Also handle "Biz Mgr contact Name" prefix pattern
+  name = name.replace(/^Biz\s*Mgr\s*contact\s*/i, '').trim();
+
+  if (!name) return null;
+
+  return { name, role };
+};
+
+/**
+ * Build address string from Address1 and Address2
+ */
+export const buildAddress = (address1, address2) => {
+  const parts = [address1, address2].filter(p => p && p.trim());
+  return parts.join(', ') || null;
+};
+
+/**
+ * Extract artist data from a StarTracker row
+ */
+export const extractArtistData = (row) => {
+  const customerName = getField(row, 'CustomerName');
+  if (!customerName) return null;
+
+  return {
+    name: customerName,
+    legal_name: getField(row, 'Name') || null,
+    address: buildAddress(getField(row, 'Address1'), getField(row, 'Address2')),
+    city: getField(row, 'City') || null,
+    state: getField(row, 'State') || null,
+    zip: getField(row, 'Zip') || null,
+  };
+};
+
+/**
+ * Extract contacts from a StarTracker row (Contact1 and Contact2)
+ * Returns array of contact objects with artist_name for linking
+ */
+export const extractContacts = (row, artistName) => {
+  const contacts = [];
+
+  // Contact 1 (columns O-R)
+  const contact1Name = getField(row, 'Contact1');
+  if (contact1Name) {
+    const parsed = parseContactName(contact1Name);
+    if (parsed) {
+      contacts.push({
+        artist_name: artistName,
+        full_name: parsed.name,
+        role: parsed.role,
+        phone: getField(row, 'Phone1') || null,
+        email: getField(row, 'EMail1') || null,
+        is_primary: true, // First contact is primary
+      });
+    }
+  }
+
+  // Contact 2 (columns S-V)
+  const contact2Name = getField(row, 'Contact2');
+  if (contact2Name) {
+    const parsed = parseContactName(contact2Name);
+    if (parsed) {
+      contacts.push({
+        artist_name: artistName,
+        full_name: parsed.name,
+        role: parsed.role,
+        phone: getField(row, 'Phone2') || null,
+        email: getField(row, 'EMail2') || null,
+        is_primary: false,
+      });
+    }
+  }
+
+  return contacts;
+};
+
+/**
  * Generate a quote number slug from customer name
  */
 export const generateQuoteSlug = (customerName, tourId) => {
@@ -213,12 +584,13 @@ export const transformTour = (classifiedTour) => {
     bus_deadhead_front_days: getNumField(firstRow, 'TravelDaysIn', 'BusDHF'),
     bus_deadhead_rear_days: getNumField(firstRow, 'TravelDaysOut', 'BusDHR'),
     co_driver_days: cleanNum(firstRow.AddDriverDays) || 0,
-    main_driver_overdrives: 0,
+    main_driver_overdrives: getNumField(firstRow, 'DriverODQty') || 0,
     quoted_lease_months: longTerm ? billedMonths : null,
     tour_months: longTerm ? billedMonths : null,
     notes: getField(firstRow, 'Notes', 'TourNotes') || null,
     _startracker_status: status, // Preserve original for reference
     _is_contract: isContract(status),
+    _startracker_total: getNumField(firstRow, 'TourBudget') || 0, // For import validation
   };
 
   // Build vehicle assignments
@@ -274,12 +646,29 @@ export const transformTour = (classifiedTour) => {
     const vehicleName = normalizeVehicleName(row.BusTrailer || row.Bus);
     const vehicleIsTrailer = isTrailer(vehicleName);
 
-    // --- Vehicle Rate ---
-    const busRate = cleanNum(row.BusRate);
+    // Common context for line item creation
     const busDays = getNumField(row, 'BusDays', 'BilledDays');
     const rowBilledMonths = getNumField(row, 'BilledMonths', 'BusMonths');
+    const tourDays = cleanNum(row.TourDays);
+    const tourWeeks = Math.max(Math.floor(tourDays / 7), 1); // At least 1 week for weekly services
+    const totalMileage = cleanNum(row.TotalMileage);
+    const driverDays = cleanNum(row.DriverDays);
 
-    if (busRate > 0) {
+    const context = {
+      tourId,
+      vehicleName,
+      vehicleIdx,
+      busDays,
+      billedMonths: rowBilledMonths,
+      driverDays,
+      tourWeeks,
+      mileage: totalMileage,
+    };
+
+    // --- Vehicle Rate (Coach or Trailer) ---
+    // Note: Trailers use separate item types, handled specially
+    const busRate = cleanNum(row.BusRate);
+    if (hasRateField(row, 'BusRate')) {
       if (vehicleIsTrailer) {
         lineItems.push({
           external_id: String(tourId),
@@ -292,27 +681,18 @@ export const transformTour = (classifiedTour) => {
           billing_category: 'Contracted',
         });
       } else {
-        lineItems.push({
-          external_id: String(tourId),
-          vehicle_name: vehicleName,
-          vehicle_index: vehicleIdx,
-          item_type: longTerm ? QUOTE_ITEM_TYPES.COACH_RATE_MONTHLY : QUOTE_ITEM_TYPES.COACH_RATE_DAILY,
-          quantity: longTerm ? rowBilledMonths : busDays,
-          rate: busRate,
-          unit_type: longTerm ? 'Per Month' : 'Per Day',
-          billing_category: 'Contracted',
-        });
+        const lineItem = createMappedLineItem('BusRate', busRate, longTerm, context);
+        if (lineItem) lineItems.push(lineItem);
       }
     }
 
-    // --- Driver Rate (only for coaches) ---
+    // --- Coach-specific line items (not for trailers) ---
     if (!vehicleIsTrailer) {
-      const driverDays = cleanNum(row.DriverDays);
-      const tourDays = cleanNum(row.TourDays);
       const dhf = cleanNum(row.DriverDHF);
       const dhr = cleanNum(row.DriverDHR);
 
-      // Sample data has DriverRate directly; synthetic may use PerDiemTotal / DriverDays
+      // --- Driver Rate ---
+      // Special handling: has fallback rate derivation and Additional Driver Days logic
       let driverRate = cleanNum(row.DriverRate);
       const driverTotal = cleanNum(row.DriverTotal);
 
@@ -320,7 +700,7 @@ export const transformTour = (classifiedTour) => {
       if (driverRate === 0 && driverTotal > 0 && driverDays > 0) {
         driverRate = driverTotal / driverDays;
       }
-      // Second fallback: synthetic data may use PerDiemTotal (though this seems wrong based on sample)
+      // Second fallback: synthetic data may use PerDiemTotal
       if (driverRate === 0) {
         const perDiemTotal = getNumField(row, 'PerDiemTotal', 'PerDeimTotal');
         if (perDiemTotal > 0 && driverDays > 0) {
@@ -328,240 +708,142 @@ export const transformTour = (classifiedTour) => {
         }
       }
 
-      if (driverDays > 0 && driverRate > 0) {
-        const baseDriverDays = tourDays + dhf + dhr;
-        const additionalDays = driverDays - baseDriverDays;
+      // Create Driver Rate line item if field exists (even if $0)
+      if (hasRateField(row, 'DriverRate') || hasRateField(row, 'DriverTotal') || hasRateField(row, 'PerDiemTotal')) {
+        const itemType = getItemTypeForQuoteType('DriverRate', longTerm, driverRate);
+        if (itemType) {
+          if (longTerm) {
+            // LT: qty=0 as "variable expense"
+            lineItems.push({
+              external_id: String(tourId),
+              vehicle_name: vehicleName,
+              vehicle_index: vehicleIdx,
+              item_type: itemType,
+              quantity: 0,
+              rate: driverRate,
+              unit_type: 'Per Day',
+              billing_category: 'Contracted',
+            });
+          } else {
+            // ST: calculate base days and additional days
+            const baseDriverDays = tourDays + dhf + dhr;
+            const additionalDays = driverDays - baseDriverDays;
 
-        // Main driver rate
-        lineItems.push({
-          external_id: String(tourId),
-          vehicle_name: vehicleName,
-          vehicle_index: vehicleIdx,
-          item_type: QUOTE_ITEM_TYPES.DRIVER_RATE_DAILY,
-          quantity: additionalDays > 0 ? baseDriverDays : driverDays,
-          rate: driverRate,
-          unit_type: 'Per Day',
-          billing_category: 'Contracted',
-        });
+            lineItems.push({
+              external_id: String(tourId),
+              vehicle_name: vehicleName,
+              vehicle_index: vehicleIdx,
+              item_type: itemType,
+              quantity: additionalDays > 0 ? baseDriverDays : driverDays,
+              rate: driverRate,
+              unit_type: 'Per Day',
+              billing_category: 'Contracted',
+            });
 
-        // Additional driver days if override detected
-        if (additionalDays > 0) {
-          lineItems.push({
-            external_id: String(tourId),
-            vehicle_name: vehicleName,
-            vehicle_index: vehicleIdx,
-            item_type: QUOTE_ITEM_TYPES.ADDITIONAL_DRIVER_DAYS,
-            quantity: additionalDays,
-            rate: driverRate,
-            unit_type: 'Per Quantity',
-            billing_category: 'Contracted',
-          });
+            // Additional driver days if override detected
+            if (additionalDays > 0) {
+              lineItems.push({
+                external_id: String(tourId),
+                vehicle_name: vehicleName,
+                vehicle_index: vehicleIdx,
+                item_type: QUOTE_ITEM_TYPES.ADDITIONAL_DRIVER_DAYS,
+                quantity: additionalDays,
+                rate: driverRate,
+                unit_type: 'Per Quantity',
+                billing_category: 'Contracted',
+              });
+            }
+          }
         }
       }
 
-      // --- Satellite Service ---
-      const satelliteRate = cleanNum(row.SatelliteRate);
-      if (satelliteRate > 0) {
+      // --- Daily/Monthly Services (using mapping table) ---
+      const mappedFields = [
+        'SatelliteRate',
+        'InternetRate',
+        'InsuranceRate',
+        'DOTRate',
+        'FuelRate',
+        'EngineRate',
+        'GeneratorRate',
+      ];
+
+      mappedFields.forEach(fieldName => {
+        if (hasRateField(row, fieldName)) {
+          const rate = cleanNum(row[fieldName]);
+          const lineItem = createMappedLineItem(fieldName, rate, longTerm, context);
+          if (lineItem) lineItems.push(lineItem);
+        }
+      });
+
+      // --- Weekly Services (ST only, using mapping table) ---
+      const weeklyFields = ['InteriorCleaning', 'BusWashRate', 'LinenRate'];
+      weeklyFields.forEach(fieldName => {
+        if (hasRateField(row, fieldName)) {
+          const rate = cleanNum(row[fieldName]);
+          const lineItem = createMappedLineItem(fieldName, rate, longTerm, context);
+          if (lineItem) lineItems.push(lineItem);
+        }
+      });
+
+      // --- Flat Rate Items (ST only, using mapping table) ---
+      const flatRateFields = ['CleaningTotal', 'Upholstery', 'BedKitTotal', 'Tolls'];
+      flatRateFields.forEach(fieldName => {
+        if (hasRateField(row, fieldName)) {
+          const rate = cleanNum(row[fieldName]);
+          const lineItem = createMappedLineItem(fieldName, rate, longTerm, context);
+          if (lineItem) lineItems.push(lineItem);
+        }
+      });
+
+      // --- Driver Overdrives (ST only) ---
+      // StarTracker fields: DriverODQty, DriverODRate, DriverODTotal
+      const driverODQty = getNumField(row, 'DriverODQty');
+      const driverODRate = getNumField(row, 'DriverODRate');
+      if (driverODQty > 0 && !longTerm) {
         lineItems.push({
           external_id: String(tourId),
           vehicle_name: vehicleName,
           vehicle_index: vehicleIdx,
-          item_type: longTerm ? QUOTE_ITEM_TYPES.SATELLITE_MONTHLY : QUOTE_ITEM_TYPES.SATELLITE_DAILY,
-          quantity: longTerm ? rowBilledMonths : busDays,
-          rate: satelliteRate,
-          unit_type: longTerm ? 'Per Month' : 'Per Day',
+          item_type: QUOTE_ITEM_TYPES.DRIVER_OVERDRIVES,
+          quantity: driverODQty,
+          rate: driverODRate,
+          unit_type: 'Per Quantity',
           billing_category: 'Contracted',
         });
       }
 
-      // --- Internet Service ---
-      const internetRate = cleanNum(row.InternetRate);
-      if (internetRate > 0) {
+      // --- Driver Hotel Buy Outs (ST only) ---
+      // StarTracker fields: HotelBuyOutQty, HotelBuyOutRate, HotelBuyOutTotal
+      const hotelBuyOutQty = getNumField(row, 'HotelBuyOutQty');
+      const hotelBuyOutRate = getNumField(row, 'HotelBuyOutRate');
+      if (hotelBuyOutQty > 0 && !longTerm) {
         lineItems.push({
           external_id: String(tourId),
           vehicle_name: vehicleName,
           vehicle_index: vehicleIdx,
-          item_type: longTerm ? QUOTE_ITEM_TYPES.INTERNET_MONTHLY : QUOTE_ITEM_TYPES.INTERNET_DAILY,
-          quantity: longTerm ? rowBilledMonths : busDays,
-          rate: internetRate,
-          unit_type: longTerm ? 'Per Month' : 'Per Day',
+          item_type: QUOTE_ITEM_TYPES.DRIVER_HOTEL_BUY_OUTS,
+          quantity: hotelBuyOutQty,
+          rate: hotelBuyOutRate,
+          unit_type: 'Per Quantity',
           billing_category: 'Contracted',
         });
       }
 
-      // --- Insurance ---
-      const insuranceRate = cleanNum(row.InsuranceRate);
-      if (insuranceRate > 0) {
+      // --- Co-Driver Per Diems (ST only, when co_driver_days > 0) ---
+      // Created when AddDriverDays > 0 to show per diem for co-driver
+      const coDriverDays = cleanNum(row.AddDriverDays);
+      if (coDriverDays > 0 && !longTerm) {
+        // Use the same per diem rate as main driver, or default to $50/day
+        const coDriverPerDiemRate = driverRate > 0 ? 50 : 50; // Standard per diem rate
         lineItems.push({
           external_id: String(tourId),
           vehicle_name: vehicleName,
           vehicle_index: vehicleIdx,
-          item_type: longTerm ? QUOTE_ITEM_TYPES.INSURANCE_MONTHLY : QUOTE_ITEM_TYPES.INSURANCE_DAILY,
-          quantity: longTerm ? rowBilledMonths : busDays,
-          rate: insuranceRate,
-          unit_type: longTerm ? 'Per Month' : 'Per Day',
-          billing_category: 'Contracted',
-        });
-      }
-
-      // --- IFTA/DOT Fee ---
-      const dotRate = cleanNum(row.DOTRate);
-      if (dotRate > 0) {
-        lineItems.push({
-          external_id: String(tourId),
-          vehicle_name: vehicleName,
-          vehicle_index: vehicleIdx,
-          item_type: longTerm ? QUOTE_ITEM_TYPES.IFTA_DOT_MONTHLY : QUOTE_ITEM_TYPES.IFTA_DOT_DAILY,
-          quantity: longTerm ? rowBilledMonths : busDays,
-          rate: dotRate,
-          unit_type: longTerm ? 'Per Month' : 'Per Day',
-          billing_category: 'Contracted',
-        });
-      }
-
-      // --- Fuel Estimate (mileage-based) ---
-      const fuelRate = cleanNum(row.FuelRate);
-      const totalMileage = cleanNum(row.TotalMileage);
-      if (fuelRate > 0 && totalMileage > 0) {
-        lineItems.push({
-          external_id: String(tourId),
-          vehicle_name: vehicleName,
-          vehicle_index: vehicleIdx,
-          item_type: QUOTE_ITEM_TYPES.FUEL_ESTIMATE,
-          quantity: totalMileage,
-          rate: fuelRate,
-          unit_type: 'Per Mile',
-          billing_category: 'Contracted',
-        });
-      }
-
-      // --- Engine Services (mileage-based) ---
-      const engineRate = cleanNum(row.EngineRate);
-      if (engineRate > 0 && totalMileage > 0) {
-        lineItems.push({
-          external_id: String(tourId),
-          vehicle_name: vehicleName,
-          vehicle_index: vehicleIdx,
-          item_type: QUOTE_ITEM_TYPES.ENGINE_SERVICES,
-          quantity: totalMileage,
-          rate: engineRate,
-          unit_type: 'Per Mile',
-          billing_category: 'Contracted',
-        });
-      }
-
-      // --- Weekly Services ---
-      const tourWeeks = Math.floor(tourDays / 7);
-
-      const interiorRate = cleanNum(row.InteriorCleaning);
-      if (interiorRate > 0 && tourWeeks > 0) {
-        lineItems.push({
-          external_id: String(tourId),
-          vehicle_name: vehicleName,
-          vehicle_index: vehicleIdx,
-          item_type: QUOTE_ITEM_TYPES.INTERIOR_CLEANINGS,
-          quantity: tourWeeks,
-          rate: interiorRate,
-          unit_type: 'Per Week',
-          billing_category: 'Contracted',
-        });
-      }
-
-      const busWashRate = cleanNum(row.BusWashRate);
-      if (busWashRate > 0 && tourWeeks > 0) {
-        lineItems.push({
-          external_id: String(tourId),
-          vehicle_name: vehicleName,
-          vehicle_index: vehicleIdx,
-          item_type: QUOTE_ITEM_TYPES.BUS_WASHES,
-          quantity: tourWeeks,
-          rate: busWashRate,
-          unit_type: 'Per Week',
-          billing_category: 'Contracted',
-        });
-      }
-
-      const linenRate = cleanNum(row.LinenRate);
-      if (linenRate > 0 && tourWeeks > 0) {
-        lineItems.push({
-          external_id: String(tourId),
-          vehicle_name: vehicleName,
-          vehicle_index: vehicleIdx,
-          item_type: QUOTE_ITEM_TYPES.LINEN_CLEANINGS,
-          quantity: tourWeeks,
-          rate: linenRate,
-          unit_type: 'Per Week',
-          billing_category: 'Contracted',
-        });
-      }
-
-      const generatorRate = cleanNum(row.GeneratorRate);
-      if (generatorRate > 0) {
-        lineItems.push({
-          external_id: String(tourId),
-          vehicle_name: vehicleName,
-          vehicle_index: vehicleIdx,
-          item_type: QUOTE_ITEM_TYPES.GENERATOR_SERVICES,
-          quantity: Math.max(tourWeeks, 1),
-          rate: generatorRate,
-          unit_type: 'Per Week',
-          billing_category: 'Contracted',
-        });
-      }
-
-      // --- Flat Rate Items ---
-      const upholsteryTotal = cleanNum(row.Upholstery);
-      if (upholsteryTotal > 0) {
-        lineItems.push({
-          external_id: String(tourId),
-          vehicle_name: vehicleName,
-          vehicle_index: vehicleIdx,
-          item_type: QUOTE_ITEM_TYPES.UPHOLSTERY_CLEANING,
-          quantity: 1,
-          rate: upholsteryTotal,
-          unit_type: 'Flat Rate',
-          billing_category: 'Contracted',
-        });
-      }
-
-      const cleaningTotal = cleanNum(row.CleaningTotal);
-      if (cleaningTotal > 0) {
-        lineItems.push({
-          external_id: String(tourId),
-          vehicle_name: vehicleName,
-          vehicle_index: vehicleIdx,
-          item_type: QUOTE_ITEM_TYPES.END_OF_TOUR_CLEANING,
-          quantity: 1,
-          rate: cleaningTotal,
-          unit_type: 'Flat Rate',
-          billing_category: 'Contracted',
-        });
-      }
-
-      const bedKitTotal = cleanNum(row.BedKitTotal);
-      if (bedKitTotal > 0) {
-        lineItems.push({
-          external_id: String(tourId),
-          vehicle_name: vehicleName,
-          vehicle_index: vehicleIdx,
-          item_type: QUOTE_ITEM_TYPES.BED_KIT_INSTALL,
-          quantity: 1,
-          rate: bedKitTotal,
-          unit_type: 'Flat Rate',
-          billing_category: 'Contracted',
-        });
-      }
-
-      const tollsTotal = cleanNum(row.Tolls);
-      if (tollsTotal > 0) {
-        lineItems.push({
-          external_id: String(tourId),
-          vehicle_name: vehicleName,
-          vehicle_index: vehicleIdx,
-          item_type: QUOTE_ITEM_TYPES.TOLLS,
-          quantity: 1,
-          rate: tollsTotal,
-          unit_type: 'Flat Rate',
+          item_type: QUOTE_ITEM_TYPES.CO_DRIVER_PER_DIEMS,
+          quantity: coDriverDays,
+          rate: coDriverPerDiemRate,
+          unit_type: 'Per Day',
           billing_category: 'Contracted',
         });
       }
@@ -569,39 +851,47 @@ export const transformTour = (classifiedTour) => {
   });
 
   // --- Quote-level items (not vehicle-specific) ---
-  const adminTotal = rows.reduce((sum, r) => sum + cleanNum(r.AdminTotal), 0);
-  if (adminTotal > 0) {
-    lineItems.push({
-      external_id: String(tourId),
-      vehicle_name: null,
-      vehicle_index: null,
-      item_type: QUOTE_ITEM_TYPES.ADMIN_FEE,
-      quantity: 1,
-      rate: adminTotal,
-      unit_type: 'Flat Rate',
-      billing_category: 'Contracted',
-    });
+  // Context for quote-level items
+  const quoteLevelContext = {
+    tourId,
+    vehicleName: null,
+    vehicleIdx: null,
+    busDays: 0,
+    billedMonths: 0,
+    driverDays: 0,
+    tourWeeks: 0,
+    mileage: 0,
+  };
+
+  // Admin Fee - sum across all rows, check if any row has the field
+  const hasAdminField = rows.some(r => hasRateField(r, 'AdminTotal'));
+  if (hasAdminField) {
+    const adminTotal = rows.reduce((sum, r) => sum + cleanNum(r.AdminTotal), 0);
+    const lineItem = createMappedLineItem('AdminTotal', adminTotal, longTerm, quoteLevelContext);
+    if (lineItem) lineItems.push(lineItem);
   }
 
-  const miscTotal = rows.reduce((sum, r) => sum + cleanNum(r.MiscTotal), 0);
-  if (miscTotal > 0) {
-    lineItems.push({
-      external_id: String(tourId),
-      vehicle_name: null,
-      vehicle_index: null,
-      item_type: QUOTE_ITEM_TYPES.MISCELLANEOUS,
-      quantity: 1,
-      rate: miscTotal,
-      unit_type: 'Flat Rate',
-      billing_category: 'Contracted',
-    });
+  // Miscellaneous - sum across all rows, check if any row has the field
+  const hasMiscField = rows.some(r => hasRateField(r, 'MiscTotal'));
+  if (hasMiscField) {
+    const miscTotal = rows.reduce((sum, r) => sum + cleanNum(r.MiscTotal), 0);
+    const lineItem = createMappedLineItem('MiscTotal', miscTotal, longTerm, quoteLevelContext);
+    if (lineItem) lineItems.push(lineItem);
   }
+
+  // --- Extract Artist data (from first row) ---
+  const artist = extractArtistData(firstRow);
+
+  // --- Extract Contacts (from first row - contacts are per-customer not per-vehicle) ---
+  const contacts = extractContacts(firstRow, customer);
 
   return {
     quote,
     quoteCoaches,
     quoteTrailers,
     lineItems,
+    artist,
+    contacts,
   };
 };
 
@@ -618,6 +908,11 @@ export const transformAll = (classifiedTours) => {
   const lineItems = [];
   const errors = [];
 
+  // Track artists and contacts for deduplication
+  const artistMap = new Map(); // name -> artist data (keeps most complete record)
+  const contactMap = new Map(); // email -> contact data
+  const artistContactLinks = []; // { artist_name, contact_email, role, is_primary }
+
   classifiedTours.forEach(tour => {
     try {
       const transformed = transformTour(tour);
@@ -625,6 +920,54 @@ export const transformAll = (classifiedTours) => {
       quoteCoaches.push(...transformed.quoteCoaches);
       quoteTrailers.push(...transformed.quoteTrailers);
       lineItems.push(...transformed.lineItems);
+
+      // Collect artist data (dedupe by name, keep most complete record)
+      if (transformed.artist) {
+        const existing = artistMap.get(transformed.artist.name);
+        if (!existing) {
+          artistMap.set(transformed.artist.name, transformed.artist);
+        } else {
+          // Merge: prefer non-null values from new record
+          artistMap.set(transformed.artist.name, {
+            name: existing.name,
+            legal_name: existing.legal_name || transformed.artist.legal_name,
+            address: existing.address || transformed.artist.address,
+            city: existing.city || transformed.artist.city,
+            state: existing.state || transformed.artist.state,
+            zip: existing.zip || transformed.artist.zip,
+          });
+        }
+      }
+
+      // Collect contacts (dedupe by email)
+      for (const contact of transformed.contacts) {
+        if (!contact.email) continue; // Skip contacts without email (can't dedupe reliably)
+
+        const emailKey = contact.email.toLowerCase();
+        if (!contactMap.has(emailKey)) {
+          contactMap.set(emailKey, {
+            full_name: contact.full_name,
+            email: contact.email,
+            phone: contact.phone,
+          });
+        } else {
+          // Merge: prefer non-null values
+          const existing = contactMap.get(emailKey);
+          contactMap.set(emailKey, {
+            full_name: existing.full_name || contact.full_name,
+            email: existing.email,
+            phone: existing.phone || contact.phone,
+          });
+        }
+
+        // Track artist-contact link
+        artistContactLinks.push({
+          artist_name: contact.artist_name,
+          contact_email: contact.email.toLowerCase(),
+          role: contact.role,
+          is_primary: contact.is_primary,
+        });
+      }
     } catch (err) {
       errors.push({
         tourId: tour.tourId,
@@ -633,17 +976,36 @@ export const transformAll = (classifiedTours) => {
     }
   });
 
+  // Convert maps to arrays
+  const artists = Array.from(artistMap.values());
+  const contacts = Array.from(contactMap.values());
+
+  // Deduplicate artist-contact links (same artist + email + role)
+  const linkSet = new Set();
+  const artistContacts = artistContactLinks.filter(link => {
+    const key = `${link.artist_name}|${link.contact_email}|${link.role}`;
+    if (linkSet.has(key)) return false;
+    linkSet.add(key);
+    return true;
+  });
+
   return {
     quotes,
     quoteCoaches,
     quoteTrailers,
     lineItems,
+    artists,
+    contacts,
+    artistContacts,
     errors,
     stats: {
       quotesCount: quotes.length,
       coachesCount: quoteCoaches.length,
       trailersCount: quoteTrailers.length,
       lineItemsCount: lineItems.length,
+      artistsCount: artists.length,
+      contactsCount: contacts.length,
+      artistContactsCount: artistContacts.length,
       errorsCount: errors.length,
     },
   };
@@ -704,10 +1066,25 @@ export const generateCSVs = (transformedData) => {
     'quantity', 'rate', 'unit_type', 'billing_category'
   ];
 
+  const artistColumns = [
+    'name', 'legal_name', 'address', 'city', 'state', 'zip'
+  ];
+
+  const contactColumns = [
+    'full_name', 'email', 'phone'
+  ];
+
+  const artistContactColumns = [
+    'artist_name', 'contact_email', 'role', 'is_primary'
+  ];
+
   return {
     quotes: toCSV(transformedData.quotes, quoteColumns),
     quoteCoaches: toCSV(transformedData.quoteCoaches, coachColumns),
     quoteTrailers: toCSV(transformedData.quoteTrailers, trailerColumns),
     lineItems: toCSV(transformedData.lineItems, lineItemColumns),
+    artists: toCSV(transformedData.artists || [], artistColumns),
+    contacts: toCSV(transformedData.contacts || [], contactColumns),
+    artistContacts: toCSV(transformedData.artistContacts || [], artistContactColumns),
   };
 };

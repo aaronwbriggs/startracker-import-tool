@@ -1,0 +1,265 @@
+external_id,vehicle_name,vehicle_index,item_type,quantity,rate,unit_type,billing_category
+27946,Adrenaline,0,"Coach Rate, Daily",76,550,Per Day,Contracted
+27946,Adrenaline,0,"Driver Rate, Daily",76,425,Per Day,Contracted
+27946,Adrenaline,0,"Satellite Service, Daily",76,35,Per Day,Contracted
+27946,Adrenaline,0,"Internet Service, Daily",76,50,Per Day,Contracted
+27946,Adrenaline,0,"Insurance, Daily",76,50,Per Day,Contracted
+27946,Adrenaline,0,"IFTA/DOT Fee, Daily",76,50,Per Day,Contracted
+27946,Adrenaline,0,Fuel Estimate,18180,0.99,Per Mile,Contracted
+27946,Adrenaline,0,Engine Services,18180,0.5,Per Mile,Contracted
+27946,Adrenaline,0,Interior Cleanings,9,95,Per Week,Contracted
+27946,Adrenaline,0,Bus Washes,9,100,Per Week,Contracted
+27946,Adrenaline,0,Linen Cleanings,9,75,Per Week,Contracted
+27946,Adrenaline,0,Generator Services,9,195,Per Week,Contracted
+27946,Adrenaline,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+27946,Adrenaline,0,Tolls,1,883,Flat Rate,Contracted
+29230,Drifter,0,"Coach Rate, Daily",3,550,Per Day,Contracted
+29230,Drifter,0,"Driver Rate, Daily",3,450,Per Day,Contracted
+29230,Drifter,0,"Satellite Service, Daily",3,35,Per Day,Contracted
+29230,Drifter,0,"Internet Service, Daily",3,50,Per Day,Contracted
+29230,Drifter,0,"Insurance, Daily",3,50,Per Day,Contracted
+29230,Drifter,0,"IFTA/DOT Fee, Daily",3,50,Per Day,Contracted
+29230,Drifter,0,Fuel Estimate,1460,1.15,Per Mile,Contracted
+29230,Drifter,0,Engine Services,1460,0.5,Per Mile,Contracted
+29230,Drifter,0,Generator Services,1,195,Per Week,Contracted
+29230,Drifter,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29273,Aspen,0,"Coach Rate, Monthly",12,25000,Per Month,Contracted
+29273,Aspen,0,"Satellite Service, Monthly",12,350,Per Month,Contracted
+29273,Aspen,0,"Internet Service, Monthly",12,500,Per Month,Contracted
+29273,Aspen,0,"Insurance, Monthly",12,500,Per Month,Contracted
+29273,Aspen,0,"IFTA/DOT Fee, Monthly",12,500,Per Month,Contracted
+29291,Gypsy,0,"Coach Rate, Daily",243,725,Per Day,Contracted
+29291,Gypsy,0,"Driver Rate, Daily",243,400,Per Day,Contracted
+29291,Gypsy,0,"Internet Service, Daily",243,75,Per Day,Contracted
+29291,Gypsy,0,"IFTA/DOT Fee, Daily",243,50,Per Day,Contracted
+29291,Gypsy,0,Fuel Estimate,29980,1.25,Per Mile,Contracted
+29291,Gypsy,0,Engine Services,29980,0.5,Per Mile,Contracted
+29291,Gypsy,0,Interior Cleanings,34,95,Per Week,Contracted
+29291,Gypsy,0,Bus Washes,34,100,Per Week,Contracted
+29291,Gypsy,0,Linen Cleanings,34,75,Per Week,Contracted
+29291,Gypsy,0,Generator Services,34,195,Per Week,Contracted
+29291,Gypsy,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29291,Gypsy,0,Tolls,1,2435,Flat Rate,Contracted
+29291,Hickory,1,"Coach Rate, Daily",243,800,Per Day,Contracted
+29291,Hickory,1,"Driver Rate, Daily",243,400,Per Day,Contracted
+29291,Hickory,1,"Internet Service, Daily",243,75,Per Day,Contracted
+29291,Hickory,1,"IFTA/DOT Fee, Daily",243,50,Per Day,Contracted
+29291,Hickory,1,Fuel Estimate,29980,1.25,Per Mile,Contracted
+29291,Hickory,1,Engine Services,29980,0.5,Per Mile,Contracted
+29291,Hickory,1,Interior Cleanings,34,95,Per Week,Contracted
+29291,Hickory,1,Bus Washes,34,100,Per Week,Contracted
+29291,Hickory,1,Linen Cleanings,34,75,Per Week,Contracted
+29291,Hickory,1,Generator Services,34,195,Per Week,Contracted
+29291,Hickory,1,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29291,Hickory,1,Tolls,1,2435,Flat Rate,Contracted
+29315,Full House,0,"Coach Rate, Monthly",12,22000,Per Month,Contracted
+29315,Full House,0,"Internet Service, Monthly",12,850,Per Month,Contracted
+29315,Full House,0,"Insurance, Monthly",12,850,Per Month,Contracted
+29315,Full House,0,"IFTA/DOT Fee, Monthly",12,500,Per Month,Contracted
+29319,Encore,0,"Coach Rate, Monthly",12,20000,Per Month,Contracted
+29319,Encore,0,"Satellite Service, Monthly",12,500,Per Month,Contracted
+29319,Encore,0,"Internet Service, Monthly",12,1000,Per Month,Contracted
+29319,Encore,0,"Insurance, Monthly",12,850,Per Month,Contracted
+29319,Encore,0,"IFTA/DOT Fee, Monthly",12,500,Per Month,Contracted
+29319,Presley,1,"Coach Rate, Monthly",12,22000,Per Month,Contracted
+29319,Presley,1,"Satellite Service, Monthly",12,500,Per Month,Contracted
+29319,Presley,1,"Internet Service, Monthly",12,1000,Per Month,Contracted
+29319,Presley,1,"Insurance, Monthly",12,850,Per Month,Contracted
+29319,Presley,1,"IFTA/DOT Fee, Monthly",12,500,Per Month,Contracted
+29330,Cobra,0,"Coach Rate, Monthly",12,26000,Per Month,Contracted
+29330,Cobra,0,"Satellite Service, Monthly",12,350,Per Month,Contracted
+29330,Cobra,0,"Internet Service, Monthly",12,500,Per Month,Contracted
+29330,Cobra,0,"Insurance, Monthly",12,850,Per Month,Contracted
+29330,Cobra,0,"IFTA/DOT Fee, Monthly",12,500,Per Month,Contracted
+29330,Cobra,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29344,Anonymous,0,"Coach Rate, Daily",61,525,Per Day,Contracted
+29344,Anonymous,0,"Driver Rate, Daily",61,450,Per Day,Contracted
+29344,Anonymous,0,"Satellite Service, Daily",61,35,Per Day,Contracted
+29344,Anonymous,0,"Internet Service, Daily",61,50,Per Day,Contracted
+29344,Anonymous,0,"Insurance, Daily",61,50,Per Day,Contracted
+29344,Anonymous,0,"IFTA/DOT Fee, Daily",61,50,Per Day,Contracted
+29344,Anonymous,0,Fuel Estimate,13250,1.3,Per Mile,Contracted
+29344,Anonymous,0,Engine Services,13250,0.4,Per Mile,Contracted
+29344,Anonymous,0,Interior Cleanings,7,95,Per Week,Contracted
+29344,Anonymous,0,Bus Washes,7,140,Per Week,Contracted
+29344,Anonymous,0,Linen Cleanings,7,75,Per Week,Contracted
+29344,Anonymous,0,Generator Services,7,195,Per Week,Contracted
+29344,Anonymous,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29344,CC9004,1,"Trailer Rate, Daily",61,90,Per Day,Contracted
+29345,Attitude,0,"Coach Rate, Daily",30,550,Per Day,Contracted
+29345,Attitude,0,"Driver Rate, Daily",30,450,Per Day,Contracted
+29345,Attitude,0,"Satellite Service, Daily",30,35,Per Day,Contracted
+29345,Attitude,0,"Internet Service, Daily",30,50,Per Day,Contracted
+29345,Attitude,0,"Insurance, Daily",30,50,Per Day,Contracted
+29345,Attitude,0,"IFTA/DOT Fee, Daily",30,50,Per Day,Contracted
+29345,Attitude,0,Fuel Estimate,8250,1.3,Per Mile,Contracted
+29345,Attitude,0,Engine Services,8250,0.5,Per Mile,Contracted
+29345,Attitude,0,Interior Cleanings,3,95,Per Week,Contracted
+29345,Attitude,0,Bus Washes,3,140,Per Week,Contracted
+29345,Attitude,0,Linen Cleanings,3,75,Per Week,Contracted
+29345,Attitude,0,Generator Services,3,195,Per Week,Contracted
+29345,Attitude,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29345,Attitude,0,Tolls,1,75,Flat Rate,Contracted
+29345,CC9017,1,"Trailer Rate, Daily",30,90,Per Day,Contracted
+29346,Attitude,0,"Coach Rate, Daily",26,550,Per Day,Contracted
+29346,Attitude,0,"Driver Rate, Daily",26,450,Per Day,Contracted
+29346,Attitude,0,"Satellite Service, Daily",26,35,Per Day,Contracted
+29346,Attitude,0,"Internet Service, Daily",26,50,Per Day,Contracted
+29346,Attitude,0,"Insurance, Daily",26,50,Per Day,Contracted
+29346,Attitude,0,"IFTA/DOT Fee, Daily",26,50,Per Day,Contracted
+29346,Attitude,0,Fuel Estimate,7280,1.3,Per Mile,Contracted
+29346,Attitude,0,Engine Services,7280,0.5,Per Mile,Contracted
+29346,Attitude,0,Interior Cleanings,3,95,Per Week,Contracted
+29346,Attitude,0,Bus Washes,3,140,Per Week,Contracted
+29346,Attitude,0,Linen Cleanings,3,75,Per Week,Contracted
+29346,Attitude,0,Generator Services,3,195,Per Week,Contracted
+29346,Attitude,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29346,Attitude,0,Tolls,1,75,Flat Rate,Contracted
+29346,CC9012,1,"Trailer Rate, Daily",26,90,Per Day,Contracted
+29354,Highways,0,"Coach Rate, Daily",2,500,Per Day,Contracted
+29354,Highways,0,"Driver Rate, Daily",3,425,Per Day,Contracted
+29354,Highways,0,"Satellite Service, Daily",2,35,Per Day,Contracted
+29354,Highways,0,"Internet Service, Daily",2,50,Per Day,Contracted
+29354,Highways,0,"Insurance, Daily",2,50,Per Day,Contracted
+29354,Highways,0,"IFTA/DOT Fee, Daily",2,50,Per Day,Contracted
+29354,Highways,0,Fuel Estimate,485,1.3,Per Mile,Contracted
+29354,Highways,0,Engine Services,485,0.5,Per Mile,Contracted
+29354,Highways,0,Generator Services,1,195,Per Week,Contracted
+29354,Highways,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29362,CC9033,0,"Trailer Rate, Daily",47,90,Per Day,Contracted
+29362,Conspiracy,1,"Coach Rate, Daily",35,625,Per Day,Contracted
+29362,Conspiracy,1,"Driver Rate, Daily",35,450,Per Day,Contracted
+29362,Conspiracy,1,"Satellite Service, Daily",35,35,Per Day,Contracted
+29362,Conspiracy,1,"Internet Service, Daily",35,50,Per Day,Contracted
+29362,Conspiracy,1,"Insurance, Daily",35,50,Per Day,Contracted
+29362,Conspiracy,1,"IFTA/DOT Fee, Daily",35,50,Per Day,Contracted
+29362,Conspiracy,1,Fuel Estimate,12330,1.3,Per Mile,Contracted
+29362,Conspiracy,1,Engine Services,12330,0.5,Per Mile,Contracted
+29362,Conspiracy,1,Interior Cleanings,6,95,Per Week,Contracted
+29362,Conspiracy,1,Bus Washes,6,140,Per Week,Contracted
+29362,Conspiracy,1,Linen Cleanings,6,75,Per Week,Contracted
+29362,Conspiracy,1,Generator Services,6,195,Per Week,Contracted
+29362,Conspiracy,1,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29362,Conspiracy,1,Tolls,1,695,Flat Rate,Contracted
+29363,Victory,0,"Coach Rate, Daily",35,875,Per Day,Contracted
+29363,Victory,0,"Driver Rate, Daily",35,425,Per Day,Contracted
+29363,Victory,0,"Satellite Service, Daily",35,35,Per Day,Contracted
+29363,Victory,0,"Internet Service, Daily",35,50,Per Day,Contracted
+29363,Victory,0,"Insurance, Daily",35,50,Per Day,Contracted
+29363,Victory,0,"IFTA/DOT Fee, Daily",35,50,Per Day,Contracted
+29363,Victory,0,Fuel Estimate,12330,1.3,Per Mile,Contracted
+29363,Victory,0,Engine Services,12330,0.5,Per Mile,Contracted
+29363,Victory,0,Interior Cleanings,6,95,Per Week,Contracted
+29363,Victory,0,Bus Washes,6,100,Per Week,Contracted
+29363,Victory,0,Linen Cleanings,6,75,Per Week,Contracted
+29363,Victory,0,Generator Services,6,195,Per Week,Contracted
+29363,Victory,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29363,Victory,0,Tolls,1,695,Flat Rate,Contracted
+29368,Bandit,0,"Coach Rate, Daily",4,500,Per Day,Contracted
+29368,Bandit,0,"Driver Rate, Daily",4,425,Per Day,Contracted
+29368,Bandit,0,"Satellite Service, Daily",4,35,Per Day,Contracted
+29368,Bandit,0,"Internet Service, Daily",4,50,Per Day,Contracted
+29368,Bandit,0,"Insurance, Daily",4,50,Per Day,Contracted
+29368,Bandit,0,"IFTA/DOT Fee, Daily",4,50,Per Day,Contracted
+29368,Bandit,0,Fuel Estimate,1165,1.3,Per Mile,Contracted
+29368,Bandit,0,Engine Services,1165,0.75,Per Mile,Contracted
+29368,Bandit,0,Generator Services,1,195,Per Week,Contracted
+29369,Bandit,0,"Coach Rate, Daily",5,500,Per Day,Contracted
+29369,Bandit,0,"Driver Rate, Daily",5,425,Per Day,Contracted
+29369,Bandit,0,"Satellite Service, Daily",5,35,Per Day,Contracted
+29369,Bandit,0,"Internet Service, Daily",5,50,Per Day,Contracted
+29369,Bandit,0,"Insurance, Daily",5,50,Per Day,Contracted
+29369,Bandit,0,"IFTA/DOT Fee, Daily",5,50,Per Day,Contracted
+29369,Bandit,0,Fuel Estimate,1220,1.3,Per Mile,Contracted
+29369,Bandit,0,Engine Services,1220,0.75,Per Mile,Contracted
+29369,Bandit,0,Generator Services,1,195,Per Week,Contracted
+29369,Bandit,0,Tolls,1,18,Flat Rate,Contracted
+29375,Legacy,0,"Coach Rate, Daily",3,850,Per Day,Contracted
+29375,Legacy,0,"Driver Rate, Daily",4,425,Per Day,Contracted
+29375,Legacy,0,"Satellite Service, Daily",3,35,Per Day,Contracted
+29375,Legacy,0,"Internet Service, Daily",3,50,Per Day,Contracted
+29375,Legacy,0,"Insurance, Daily",3,50,Per Day,Contracted
+29375,Legacy,0,"IFTA/DOT Fee, Daily",3,50,Per Day,Contracted
+29375,Legacy,0,Fuel Estimate,995,1.35,Per Mile,Contracted
+29375,Legacy,0,Engine Services,995,0.5,Per Mile,Contracted
+29375,Legacy,0,Generator Services,1,195,Per Week,Contracted
+29375,Legacy,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29375,Legacy,0,Tolls,1,20,Flat Rate,Contracted
+30371,Gypsy,0,"Coach Rate, Monthly",12,24000,Per Month,Contracted
+30371,Gypsy,0,"Satellite Service, Monthly",12,350,Per Month,Contracted
+30371,Gypsy,0,"Internet Service, Monthly",12,500,Per Month,Contracted
+30371,Gypsy,0,"Insurance, Monthly",12,850,Per Month,Contracted
+30371,Gypsy,0,"IFTA/DOT Fee, Monthly",12,500,Per Month,Contracted
+30406,Summit,0,"Coach Rate, Daily",60,700,Per Day,Contracted
+30406,Summit,0,"Driver Rate, Daily",60,400,Per Day,Contracted
+30406,Summit,0,"Satellite Service, Daily",60,35,Per Day,Contracted
+30406,Summit,0,"Internet Service, Daily",60,50,Per Day,Contracted
+30406,Summit,0,"Insurance, Daily",60,50,Per Day,Contracted
+30406,Summit,0,"IFTA/DOT Fee, Daily",60,50,Per Day,Contracted
+30406,Summit,0,Interior Cleanings,8,95,Per Week,Contracted
+30406,Summit,0,Bus Washes,8,100,Per Week,Contracted
+30406,Summit,0,Linen Cleanings,8,75,Per Week,Contracted
+30406,Summit,0,Generator Services,8,195,Per Week,Contracted
+30406,Summit,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30410,Cayman,0,"Coach Rate, Daily",5,500,Per Day,Contracted
+30410,Cayman,0,"Driver Rate, Daily",5,400,Per Day,Contracted
+30410,Cayman,0,"Satellite Service, Daily",5,35,Per Day,Contracted
+30410,Cayman,0,"Internet Service, Daily",5,50,Per Day,Contracted
+30410,Cayman,0,"IFTA/DOT Fee, Daily",5,50,Per Day,Contracted
+30410,Cayman,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30417,Snowman,0,"Driver Rate, Daily",34,450,Per Day,Contracted
+30417,Snowman,0,Engine Services,8890,0.5,Per Mile,Contracted
+30417,Snowman,0,Interior Cleanings,4,95,Per Week,Contracted
+30417,Snowman,0,Bus Washes,4,140,Per Week,Contracted
+30417,Snowman,0,Linen Cleanings,4,75,Per Week,Contracted
+30417,Snowman,0,Generator Services,4,195,Per Week,Contracted
+30418,Imposter,0,"Coach Rate, Daily",14,800,Per Day,Contracted
+30418,Imposter,0,"Driver Rate, Daily",4,400,Per Day,Contracted
+30418,Imposter,0,"Satellite Service, Daily",14,35,Per Day,Contracted
+30418,Imposter,0,"Internet Service, Daily",14,50,Per Day,Contracted
+30418,Imposter,0,"Insurance, Daily",14,50,Per Day,Contracted
+30418,Imposter,0,"IFTA/DOT Fee, Daily",14,50,Per Day,Contracted
+30418,Imposter,0,Fuel Estimate,1510,1.55,Per Mile,Contracted
+30418,Imposter,0,Engine Services,1510,0.5,Per Mile,Contracted
+30418,Imposter,0,Generator Services,1,195,Per Week,Contracted
+30418,Imposter,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30418,Marshall,1,"Coach Rate, Daily",14,800,Per Day,Contracted
+30418,Marshall,1,"Driver Rate, Daily",4,400,Per Day,Contracted
+30418,Marshall,1,"Satellite Service, Daily",14,35,Per Day,Contracted
+30418,Marshall,1,"Internet Service, Daily",14,50,Per Day,Contracted
+30418,Marshall,1,"Insurance, Daily",14,50,Per Day,Contracted
+30418,Marshall,1,"IFTA/DOT Fee, Daily",14,50,Per Day,Contracted
+30418,Marshall,1,Fuel Estimate,1510,1.55,Per Mile,Contracted
+30418,Marshall,1,Engine Services,1510,0.5,Per Mile,Contracted
+30418,Marshall,1,Generator Services,1,195,Per Week,Contracted
+30418,Marshall,1,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30426,Snowman,0,"Driver Rate, Daily",34,450,Per Day,Contracted
+30426,Snowman,0,Interior Cleanings,4,95,Per Week,Contracted
+30426,Snowman,0,Bus Washes,4,100,Per Week,Contracted
+30426,Snowman,0,Linen Cleanings,4,75,Per Week,Contracted
+30426,Snowman,0,Generator Services,4,195,Per Week,Contracted
+30426,Snowman,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30428,Telluride,0,"Coach Rate, Daily",7,700,Per Day,Contracted
+30428,Telluride,0,"Driver Rate, Daily",9,425,Per Day,Contracted
+30428,Telluride,0,"Satellite Service, Daily",7,35,Per Day,Contracted
+30428,Telluride,0,"Internet Service, Daily",7,50,Per Day,Contracted
+30428,Telluride,0,"IFTA/DOT Fee, Daily",7,50,Per Day,Contracted
+30428,Telluride,0,Fuel Estimate,1615,1,Per Mile,Contracted
+30428,Telluride,0,Engine Services,1615,0.5,Per Mile,Contracted
+30428,Telluride,0,Interior Cleanings,1,95,Per Week,Contracted
+30428,Telluride,0,Bus Washes,1,100,Per Week,Contracted
+30428,Telluride,0,Linen Cleanings,1,75,Per Week,Contracted
+30428,Telluride,0,Generator Services,1,195,Per Week,Contracted
+30428,Telluride,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30431,Conspiracy,0,"Coach Rate, Daily",2,700,Per Day,Contracted
+30431,Conspiracy,0,"Driver Rate, Daily",2,450,Per Day,Contracted
+30431,Conspiracy,0,"Satellite Service, Daily",2,35,Per Day,Contracted
+30431,Conspiracy,0,"Internet Service, Daily",2,50,Per Day,Contracted
+30431,Conspiracy,0,"Insurance, Daily",2,50,Per Day,Contracted
+30431,Conspiracy,0,"IFTA/DOT Fee, Daily",2,50,Per Day,Contracted
+30431,Conspiracy,0,Fuel Estimate,785,1.5,Per Mile,Contracted
+30431,Conspiracy,0,Engine Services,785,0.5,Per Mile,Contracted
+30431,Conspiracy,0,Generator Services,1,195,Per Week,Contracted
+30431,Conspiracy,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30441,CC9046,0,"Trailer Rate, Monthly",10.77,2700,Per Month,Contracted
+30441,Snowman,1,"Coach Rate, Monthly",10.77,15000,Per Month,Contracted
