@@ -360,6 +360,7 @@ async function importQuotes(supabase, quotes, artistDataMap = {}) {
     artistIdMap[quote.artist_name] = artistId;
 
     // Prepare quote record
+    // Note: quoted_lease_days is a generated column (computed from dates), so we don't include it
     const quoteRecord = {
       external_id: quote.external_id,
       seq_number: quote.seq_number,
@@ -372,7 +373,6 @@ async function importQuotes(supabase, quotes, artistDataMap = {}) {
       quoted_lease_end_date: quote.quoted_lease_end_date,
       tour_start_date: quote.tour_start_date,
       tour_end_date: quote.tour_end_date,
-      quoted_lease_days: quote.quoted_lease_days,
       tour_days: quote.tour_days,
       billed_bus_days: quote.billed_bus_days,
       main_driver_days: quote.main_driver_days,
@@ -529,15 +529,47 @@ async function importQuoteTrailers(supabase, trailers, quoteIdMap) {
 }
 
 /**
+ * Delete existing line items for quotes we're about to import
+ *
+ * When quotes are created in Bravo, auto-generated line items are added.
+ * These would conflict with our imported line items due to unique constraints
+ * (quote_line_items_coach_item_type_unique, quote_line_items_trailer_item_type_unique).
+ * We delete them first to avoid conflicts.
+ */
+async function deleteExistingLineItems(supabase, quoteIdMap) {
+  log('blue', '\nDeleting existing line items for imported quotes...');
+
+  let deletedCount = 0;
+
+  for (const [externalId, quoteId] of Object.entries(quoteIdMap)) {
+    if (DRY_RUN) {
+      log('cyan', `  [DRY RUN] Would delete existing line items for quote ${externalId}`);
+      continue;
+    }
+
+    const { data, error } = await supabase
+      .from('quote_line_items')
+      .delete()
+      .eq('quote_id', quoteId)
+      .select('id');
+
+    if (error) {
+      log('yellow', `  Error deleting line items for quote ${externalId}:`, error.message);
+    } else if (data && data.length > 0) {
+      deletedCount += data.length;
+    }
+  }
+
+  log('green', `  Deleted ${deletedCount} existing line items`);
+}
+
+/**
  * Import line items
- * Returns importedItemTypesByQuote to track which item types were imported per quote
  */
 async function importLineItems(supabase, lineItems, quoteIdMap, coachIdMap, trailerIdMap) {
   log('blue', `\nImporting ${lineItems.length} line items...`);
   const results = { success: 0, failed: 0 };
   const itemTypeCache = {};
-  // Track which item types we imported for each quote (by external_id)
-  const importedItemTypesByQuote = {};
 
   for (const item of lineItems) {
     const quoteId = quoteIdMap[item.external_id];
@@ -552,14 +584,6 @@ async function importLineItems(supabase, lineItems, quoteIdMap, coachIdMap, trai
       log('yellow', `  Skipping line item - type not found: ${item.item_type}`);
       results.failed++;
       continue;
-    }
-
-    // Track this item type as imported for this quote
-    if (!importedItemTypesByQuote[item.external_id]) {
-      importedItemTypesByQuote[item.external_id] = new Set();
-    }
-    if (itemTypeId) {
-      importedItemTypesByQuote[item.external_id].add(itemTypeId);
     }
 
     // Determine vehicle link
@@ -602,73 +626,7 @@ async function importLineItems(supabase, lineItems, quoteIdMap, coachIdMap, trai
     }
   }
 
-  return { results, importedItemTypesByQuote };
-}
-
-/**
- * Cleanup automatic line items that weren't in our import
- *
- * When Bravo creates a quote, it auto-generates certain line items
- * (e.g., Monthly Parking and Shore Power, Weekly Generator Services).
- * These items have is_automatic=true. If we didn't import an equivalent
- * item from StarTracker, we should mark these as user_deleted=true
- * so they don't appear on the imported quote.
- */
-async function cleanupAutomaticLineItems(supabase, quoteIdMap, importedItemTypesByQuote) {
-  log('blue', '\nCleaning up automatic line items...');
-
-  let cleanedCount = 0;
-  let skippedCount = 0;
-
-  for (const [externalId, quoteId] of Object.entries(quoteIdMap)) {
-    // Get all automatic line items for this quote
-    const { data: autoItems, error } = await supabase
-      .from('quote_line_items')
-      .select('id, quote_item_type_id')
-      .eq('quote_id', quoteId)
-      .eq('is_automatic', true)
-      .eq('user_deleted', false);
-
-    if (error) {
-      log('yellow', `  Error fetching automatic items for quote ${externalId}:`, error.message);
-      continue;
-    }
-
-    if (!autoItems || autoItems.length === 0) {
-      continue;
-    }
-
-    // Get the set of item types we imported for this quote
-    const importedTypes = importedItemTypesByQuote[externalId] || new Set();
-
-    for (const item of autoItems) {
-      // If we imported an item of this type, keep the automatic one
-      // (our imported item should have overridden it)
-      if (importedTypes.has(item.quote_item_type_id)) {
-        skippedCount++;
-        continue;
-      }
-
-      // Mark this automatic item as deleted since it wasn't in StarTracker
-      if (!DRY_RUN) {
-        const { error: updateError } = await supabase
-          .from('quote_line_items')
-          .update({ user_deleted: true })
-          .eq('id', item.id);
-
-        if (updateError) {
-          log('yellow', `  Error marking item as deleted:`, updateError.message);
-        } else {
-          cleanedCount++;
-        }
-      } else {
-        log('cyan', `  [DRY RUN] Would mark automatic item as deleted: ${item.id}`);
-        cleanedCount++;
-      }
-    }
-  }
-
-  log('green', `  Cleaned up ${cleanedCount} automatic items (kept ${skippedCount} that match imports)`);
+  return { results };
 }
 
 /**
@@ -774,10 +732,10 @@ async function main() {
   const { quoteIdMap, artistIdMap } = await importQuotes(supabase, quotesData, artistDataMap);
   const { coachIdMap } = await importQuoteCoaches(supabase, coachesData, quoteIdMap);
   const { trailerIdMap } = await importQuoteTrailers(supabase, trailersData, quoteIdMap);
-  const { importedItemTypesByQuote } = await importLineItems(supabase, lineItemsData, quoteIdMap, coachIdMap, trailerIdMap);
 
-  // Clean up automatic line items that weren't in StarTracker
-  await cleanupAutomaticLineItems(supabase, quoteIdMap, importedItemTypesByQuote);
+  // Delete existing line items before importing (avoids unique constraint conflicts)
+  await deleteExistingLineItems(supabase, quoteIdMap);
+  await importLineItems(supabase, lineItemsData, quoteIdMap, coachIdMap, trailerIdMap);
 
   // Import contacts if available
   if (contactsData.length > 0) {

@@ -30,6 +30,7 @@ const QUOTE_ITEM_TYPES = {
   BUS_WASHES: 'Bus Washes',
   LINEN_CLEANINGS: 'Linen Cleanings',
   GENERATOR_SERVICES: 'Generator Services',
+  WEEKLY_GENERATOR_SERVICES: 'Weekly Generator Services',
   DRIVER_PER_DIEM: 'Driver Per Diem',
   CO_DRIVER_PER_DIEMS: 'Co-Driver Per Diems',
   DRIVER_OVERDRIVES: 'Driver Overdrives',
@@ -157,12 +158,12 @@ const RATE_FIELD_MAPPING = {
     quantitySource: { shortTerm: 'weeks', longTerm: null },
   },
   GeneratorRate: {
-    // ST: "Weekly Generator Services" (per week)
+    // ST: "Weekly Generator Services" (per week, minimum_quantity=1 in Bravo)
     // LT: "Generator Services" only if rate > 0 (shows as variable expense)
-    shortTerm: QUOTE_ITEM_TYPES.GENERATOR_SERVICES,
+    shortTerm: QUOTE_ITEM_TYPES.WEEKLY_GENERATOR_SERVICES,
     longTerm: QUOTE_ITEM_TYPES.GENERATOR_SERVICES,
     unitType: { shortTerm: 'Per Week', longTerm: 'Per Week' },
-    quantitySource: { shortTerm: 'weeks', longTerm: 'zero' },
+    quantitySource: { shortTerm: 'weeksMinOne', longTerm: 'zero' }, // ST uses min(weeks, 1) to match Bravo's minimum_quantity
     longTermRequiresPositiveRate: true, // Special: only create LT item if rate > 0
   },
 
@@ -192,20 +193,19 @@ const RATE_FIELD_MAPPING = {
     quantitySource: { shortTerm: 'flat', longTerm: null },
   },
 
-  // --- Quote-Level Items (both ST and LT, flat rate) ---
+  // --- Flat Rate Items (both ST and LT) ---
+  // Note: In StarTracker, AdminTotal and MiscTotal are per-row (per-vehicle), not quote-level
   MiscTotal: {
     shortTerm: QUOTE_ITEM_TYPES.MISCELLANEOUS,
     longTerm: QUOTE_ITEM_TYPES.MISCELLANEOUS,
     unitType: { shortTerm: 'Flat Rate', longTerm: 'Flat Rate' },
     quantitySource: { shortTerm: 'flat', longTerm: 'flat' },
-    isQuoteLevel: true, // Not vehicle-specific
   },
   AdminTotal: {
     shortTerm: QUOTE_ITEM_TYPES.ADMIN_FEE,
     longTerm: QUOTE_ITEM_TYPES.ADMIN_FEE,
     unitType: { shortTerm: 'Flat Rate', longTerm: 'Flat Rate' },
     quantitySource: { shortTerm: 'flat', longTerm: 'flat' },
-    isQuoteLevel: true, // Not vehicle-specific
   },
 };
 
@@ -275,6 +275,7 @@ export const calculateQuantity = (quantitySource, context) => {
     case 'billedMonths': return billedMonths;
     case 'driverDays': return driverDays;
     case 'weeks': return tourWeeks;
+    case 'weeksMinOne': return Math.max(tourWeeks, 1); // For items with minimum_quantity=1 in Bravo
     case 'mileage': return mileage;
     case 'flat': return 1;
     case 'zero': return 0;
@@ -650,7 +651,7 @@ export const transformTour = (classifiedTour) => {
     const busDays = getNumField(row, 'BusDays', 'BilledDays');
     const rowBilledMonths = getNumField(row, 'BilledMonths', 'BusMonths');
     const tourDays = cleanNum(row.TourDays);
-    const tourWeeks = Math.max(Math.floor(tourDays / 7), 1); // At least 1 week for weekly services
+    const tourWeeks = Math.floor(tourDays / 7); // Match Bravo: FLOOR(days / 7), 0 for tours < 7 days
     const totalMileage = cleanNum(row.TotalMileage);
     const driverDays = cleanNum(row.DriverDays);
 
@@ -830,6 +831,37 @@ export const transformTour = (classifiedTour) => {
         });
       }
 
+      // --- Driver Per Diem (ST only) ---
+      // StarTracker stores PerDeimTotal as a flat amount (agent manually calculates days × $50)
+      // Bravo uses qty=DriverDays × rate=$50 per day
+      // Only create when DriverDays > 0 (driver services are included)
+      if (driverDays > 0 && !longTerm) {
+        lineItems.push({
+          external_id: String(tourId),
+          vehicle_name: vehicleName,
+          vehicle_index: vehicleIdx,
+          item_type: QUOTE_ITEM_TYPES.DRIVER_PER_DIEM,
+          quantity: driverDays,
+          rate: 50, // Standard per diem rate
+          unit_type: 'Per Day',
+          billing_category: 'Contracted',
+        });
+      }
+
+      // --- Admin Fee (per vehicle row) ---
+      if (hasRateField(row, 'AdminTotal')) {
+        const adminTotal = cleanNum(row.AdminTotal);
+        const lineItem = createMappedLineItem('AdminTotal', adminTotal, longTerm, context);
+        if (lineItem) lineItems.push(lineItem);
+      }
+
+      // --- Miscellaneous (per vehicle row) ---
+      if (hasRateField(row, 'MiscTotal')) {
+        const miscTotal = cleanNum(row.MiscTotal);
+        const lineItem = createMappedLineItem('MiscTotal', miscTotal, longTerm, context);
+        if (lineItem) lineItems.push(lineItem);
+      }
+
       // --- Co-Driver Per Diems (ST only, when co_driver_days > 0) ---
       // Created when AddDriverDays > 0 to show per diem for co-driver
       const coDriverDays = cleanNum(row.AddDriverDays);
@@ -849,35 +881,6 @@ export const transformTour = (classifiedTour) => {
       }
     }
   });
-
-  // --- Quote-level items (not vehicle-specific) ---
-  // Context for quote-level items
-  const quoteLevelContext = {
-    tourId,
-    vehicleName: null,
-    vehicleIdx: null,
-    busDays: 0,
-    billedMonths: 0,
-    driverDays: 0,
-    tourWeeks: 0,
-    mileage: 0,
-  };
-
-  // Admin Fee - sum across all rows, check if any row has the field
-  const hasAdminField = rows.some(r => hasRateField(r, 'AdminTotal'));
-  if (hasAdminField) {
-    const adminTotal = rows.reduce((sum, r) => sum + cleanNum(r.AdminTotal), 0);
-    const lineItem = createMappedLineItem('AdminTotal', adminTotal, longTerm, quoteLevelContext);
-    if (lineItem) lineItems.push(lineItem);
-  }
-
-  // Miscellaneous - sum across all rows, check if any row has the field
-  const hasMiscField = rows.some(r => hasRateField(r, 'MiscTotal'));
-  if (hasMiscField) {
-    const miscTotal = rows.reduce((sum, r) => sum + cleanNum(r.MiscTotal), 0);
-    const lineItem = createMappedLineItem('MiscTotal', miscTotal, longTerm, quoteLevelContext);
-    if (lineItem) lineItems.push(lineItem);
-  }
 
   // --- Extract Artist data (from first row) ---
   const artist = extractArtistData(firstRow);
@@ -1046,7 +1049,7 @@ export const generateCSVs = (transformedData) => {
     'total_estimated_miles', 'driver_deadhead_front_days', 'driver_deadhead_rear_days',
     'bus_deadhead_front_days', 'bus_deadhead_rear_days', 'co_driver_days',
     'main_driver_overdrives', 'quoted_lease_months', 'tour_months', 'notes',
-    '_startracker_status', '_is_contract'
+    '_startracker_status', '_is_contract', '_startracker_total'
   ];
 
   const coachColumns = [

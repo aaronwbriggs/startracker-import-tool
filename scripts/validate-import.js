@@ -6,10 +6,14 @@
  * Does NOT modify any data - read-only validation.
  *
  * Usage:
- *   node scripts/validate-import.js --source=path/to/source.csv --env=dev
+ *   node scripts/validate-import.js --dir=./bravo-import/<batch-name> --env=dev
+ *   node scripts/validate-import.js --source=path/to/original-startracker.csv --env=dev
  *
- * The source CSV should be the original StarTracker export that was transformed
- * and imported. It must contain TourID and TourBudget columns.
+ * Preferred: Use --dir to point to the transformed output folder containing quotes.csv
+ * (which includes _startracker_total). This avoids needing the original export.
+ *
+ * Alternative: Use --source to point to the original StarTracker export
+ * (must contain TourID and TourBudget columns).
  */
 
 import fs from 'fs';
@@ -24,11 +28,14 @@ const args = process.argv.slice(2).reduce((acc, arg) => {
 }, {});
 
 const SOURCE_FILE = args.source;
+const INPUT_DIR = args.dir;
 const ENV = args.env || 'dev';
 
-if (!SOURCE_FILE) {
-  console.error('Error: --source=path/to/source.csv is required');
-  console.error('Usage: node scripts/validate-import.js --source=path/to/source.csv --env=dev');
+if (!SOURCE_FILE && !INPUT_DIR) {
+  console.error('Error: Either --dir or --source is required');
+  console.error('Usage:');
+  console.error('  node scripts/validate-import.js --dir=./bravo-import/<batch-name> --env=dev');
+  console.error('  node scripts/validate-import.js --source=path/to/original-startracker.csv --env=dev');
   process.exit(1);
 }
 
@@ -60,6 +67,8 @@ function log(color, ...args) {
 
 /**
  * Read and parse source CSV, extracting TourID -> TourBudget mapping
+ * Supports both original StarTracker export (TourID, TourBudget) and
+ * transformed quotes.csv (external_id, _startracker_total)
  */
 function readSourceTotals(filepath) {
   if (!fs.existsSync(filepath)) {
@@ -72,18 +81,42 @@ function readSourceTotals(filepath) {
     skip_empty_lines: true,
   });
 
-  // Group by TourID and get the TourBudget (should be same for all rows of a tour)
   const totals = {};
-  for (const row of records) {
-    const tourId = row.TourID;
-    const tourBudget = parseFloat(row.TourBudget) || 0;
 
-    if (tourId && !totals[tourId]) {
-      totals[tourId] = tourBudget;
+  // Detect format: transformed quotes.csv has external_id and _startracker_total
+  const firstRow = records[0] || {};
+  const isTransformedFormat = 'external_id' in firstRow && '_startracker_total' in firstRow;
+
+  for (const row of records) {
+    if (isTransformedFormat) {
+      // Transformed quotes.csv format
+      const externalId = row.external_id;
+      const total = parseFloat(row._startracker_total) || 0;
+      if (externalId) {
+        totals[externalId] = total;
+      }
+    } else {
+      // Original StarTracker export format
+      const tourId = row.TourID;
+      const tourBudget = parseFloat(row.TourBudget) || 0;
+      if (tourId && !totals[tourId]) {
+        totals[tourId] = tourBudget;
+      }
     }
   }
 
   return totals;
+}
+
+/**
+ * Find the quotes.csv file in a directory
+ */
+function findQuotesFile(dir) {
+  const quotesPath = `${dir}/quotes.csv`;
+  if (fs.existsSync(quotesPath)) {
+    return quotesPath;
+  }
+  throw new Error(`quotes.csv not found in ${dir}`);
 }
 
 /**
@@ -266,15 +299,18 @@ function printReport(results) {
  * Main validation function
  */
 async function main() {
+  // Determine source file
+  const sourceFile = SOURCE_FILE || findQuotesFile(INPUT_DIR);
+
   log('blue', '='.repeat(60));
   log('blue', 'StarTracker Import Validation');
   log('blue', `Environment: ${ENV.toUpperCase()}`);
-  log('blue', `Source file: ${SOURCE_FILE}`);
+  log('blue', `Source file: ${sourceFile}`);
   log('blue', '='.repeat(60));
 
   // Read source totals
   log('blue', '\nReading source CSV...');
-  const sourceTotals = readSourceTotals(SOURCE_FILE);
+  const sourceTotals = readSourceTotals(sourceFile);
   log('green', `  Found ${Object.keys(sourceTotals).length} tours in source`);
 
   // Connect to Supabase

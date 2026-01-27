@@ -493,6 +493,9 @@ export default function StarTrackerImportDashboard() {
       coaches: { data: csvs.quoteCoaches, name: `quote_coaches.csv` },
       trailers: { data: csvs.quoteTrailers, name: `quote_trailers.csv` },
       lineItems: { data: csvs.lineItems, name: `line_items.csv` },
+      artists: { data: csvs.artists, name: `artists.csv` },
+      contacts: { data: csvs.contacts, name: `contacts.csv` },
+      artistContacts: { data: csvs.artistContacts, name: `artist_contacts.csv` },
     };
 
     if (type === 'all') {

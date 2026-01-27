@@ -104,6 +104,12 @@ Output files:
 
 ### Step 2: Import to Supabase (as Draft)
 
+**Primary method: Use Supabase MCP tools** (via Cursor/Claude Code)
+
+The MCP tools (`execute_sql`, `apply_migration`) are always available and don't require environment variable setup. Ask the assistant to import the CSVs using direct SQL via the appropriate MCP server (`supabase-dev` or `supabase-prod`).
+
+**Alternative: Node.js script** (requires env vars)
+
 ```bash
 # ALWAYS dry-run first
 node scripts/import-to-supabase.js --env=dev --dir=./bravo-import/<batch-name> --skip-status --dry-run
@@ -114,6 +120,8 @@ node scripts/import-to-supabase.js --env=dev --dir=./bravo-import/<batch-name> -
 
 **Required env vars:** `SUPABASE_DEV_URL`, `SUPABASE_DEV_SERVICE_KEY` (or PROD equivalents)
 
+**Known constraint:** Each artist can only have one quote with the same name. If you see `unique constraint quotes_name_artist_unique` errors, manually rename one of the duplicate quotes in the source CSV before re-transforming (e.g., append "(Option 2)" or "(Driver Only)" to distinguish them).
+
 **Flags:**
 - `--skip-status` — Import all quotes as Draft (recommended for review workflow)
 - `--dry-run` — Show what would happen without making changes
@@ -121,13 +129,18 @@ node scripts/import-to-supabase.js --env=dev --dir=./bravo-import/<batch-name> -
 ### Step 3: Validate Import Results
 
 ```bash
+node scripts/validate-import.js --dir=./bravo-import/<batch-name> --env=dev
+```
+
+The script reads `_startracker_total` from `quotes.csv` in the batch folder and compares against Bravo's calculated totals.
+
+**Alternative:** If you have the original StarTracker export:
+```bash
 node scripts/validate-import.js --source=<ORIGINAL-STARTRACKER-CSV> --env=dev
 ```
 
-**CRITICAL:** The `--source` must be the ORIGINAL StarTracker export (with `TourBudget` column), NOT the transformed output CSVs.
-
 The script compares:
-- StarTracker `TourBudget` (from source CSV, keyed by `TourID`)
+- StarTracker total (from `_startracker_total` in quotes.csv, or `TourBudget` in original export)
 - Bravo calculated total (SUM of qty × rate for non-deleted line items)
 
 Output categories:
