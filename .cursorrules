@@ -104,11 +104,15 @@ Output files:
 
 ### Step 2: Import to Supabase (as Draft)
 
-**Primary method: Use Supabase MCP tools** (via Cursor/Claude Code)
+**⚠️ ALWAYS use the import script — NEVER write manual SQL INSERTs**
 
-The MCP tools (`execute_sql`, `apply_migration`) are always available and don't require environment variable setup. Ask the assistant to import the CSVs using direct SQL via the appropriate MCP server (`supabase-dev` or `supabase-prod`).
+The import script handles critical steps that manual SQL will miss:
+- Deletes auto-generated line items before inserting StarTracker data
+- Resolves foreign keys (artist names → IDs, coach names → IDs)
+- Uses correct item type names from the transformer output
+- Maintains referential integrity across tables
 
-**Alternative: Node.js script** (requires env vars)
+**DO NOT** use Supabase MCP `execute_sql` to write INSERT/UPDATE statements for imports. The MCP tools are for **queries and investigation only** during imports.
 
 ```bash
 # ALWAYS dry-run first
@@ -125,6 +129,8 @@ node scripts/import-to-supabase.js --env=dev --dir=./bravo-import/<batch-name> -
 **Flags:**
 - `--skip-status` — Import all quotes as Draft (recommended for review workflow)
 - `--dry-run` — Show what would happen without making changes
+
+**Why not manual SQL?** The import script includes `deleteExistingLineItems()` which removes Bravo's auto-generated line items (Monthly Parking, Weekly Trailer Wash, etc.) before inserting the StarTracker data. Without this step, validation totals will be wrong because Bravo auto-adds items that weren't in StarTracker.
 
 ### Step 3: Validate Import Results
 
@@ -273,6 +279,7 @@ FieldName: {
 - Don't skip the dry-run step before actual imports
 - Don't import to prod without testing in dev first
 - Don't use transformed CSVs for validation (use original StarTracker export)
+- **Don't write manual SQL INSERTs for imports** — always use `scripts/import-to-supabase.js` which handles auto-generated line item cleanup and foreign key resolution
 
 ## Supabase Access
 

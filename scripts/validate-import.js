@@ -8,12 +8,20 @@
  * Usage:
  *   node scripts/validate-import.js --dir=./bravo-import/<batch-name> --env=dev
  *   node scripts/validate-import.js --source=path/to/original-startracker.csv --env=dev
+ *   node scripts/validate-import.js --dir=./bravo-import/<batch-name> --env=dev --output=./report.md
+ *
+ * Flags:
+ *   --dir      Path to transformed output folder (reads quotes.csv with _startracker_total)
+ *   --source   Path to original StarTracker export (reads TourID/TourBudget columns)
+ *   --env      Environment: dev (default) or prod
+ *   --output   Path for Markdown report (default: <dir>/validation-report.md when using --dir)
  *
  * Preferred: Use --dir to point to the transformed output folder containing quotes.csv
  * (which includes _startracker_total). This avoids needing the original export.
  *
  * Alternative: Use --source to point to the original StarTracker export
- * (must contain TourID and TourBudget columns).
+ * (must contain TourID and TourBudget columns). For multi-vehicle quotes,
+ * TourBudget values are summed across all rows with the same TourID.
  */
 
 import fs from 'fs';
@@ -30,6 +38,7 @@ const args = process.argv.slice(2).reduce((acc, arg) => {
 const SOURCE_FILE = args.source;
 const INPUT_DIR = args.dir;
 const ENV = args.env || 'dev';
+const OUTPUT_FILE = args.output; // Optional: write Markdown report to file
 
 if (!SOURCE_FILE && !INPUT_DIR) {
   console.error('Error: Either --dir or --source is required');
@@ -97,10 +106,11 @@ function readSourceTotals(filepath) {
       }
     } else {
       // Original StarTracker export format
+      // Sum TourBudget for all rows with same TourID (multi-vehicle quotes)
       const tourId = row.TourID;
       const tourBudget = parseFloat(row.TourBudget) || 0;
-      if (tourId && !totals[tourId]) {
-        totals[tourId] = tourBudget;
+      if (tourId) {
+        totals[tourId] = (totals[tourId] || 0) + tourBudget;
       }
     }
   }
@@ -296,6 +306,83 @@ function printReport(results) {
 }
 
 /**
+ * Write Markdown report to file
+ */
+function writeMarkdownReport(results, outputPath, sourceFile, env) {
+  const total = results.match.length + results.close.length + results.mismatch.length;
+  const matchRate = total > 0 ? ((results.match.length / total) * 100).toFixed(1) : 0;
+
+  const lines = [];
+  lines.push('# Import Validation Report\n');
+  lines.push(`**Generated:** ${new Date().toISOString()}`);
+  lines.push(`**Environment:** ${env.toUpperCase()}`);
+  lines.push(`**Source:** ${sourceFile}`);
+  lines.push(`**Match Rate:** ${matchRate}% (${results.match.length}/${total})\n`);
+
+  lines.push('## Summary\n');
+  lines.push('| Status | Count |');
+  lines.push('|--------|-------|');
+  lines.push(`| ✓ Match (< $0.01) | ${results.match.length} |`);
+  lines.push(`| ~ Close (< $100) | ${results.close.length} |`);
+  lines.push(`| ✗ Mismatch (>= $100) | ${results.mismatch.length} |`);
+  if (results.notInSource.length > 0) {
+    lines.push(`| ? Not in source | ${results.notInSource.length} |`);
+  }
+  if (results.notInBravo.length > 0) {
+    lines.push(`| ? Not in Bravo | ${results.notInBravo.length} |`);
+  }
+  lines.push('');
+
+  // Matches
+  if (results.match.length > 0) {
+    lines.push('## Matches\n');
+    lines.push('| Tour ID | Artist | Quote Name | Total |');
+    lines.push('|---------|--------|------------|-------|');
+    for (const q of results.match) {
+      lines.push(`| ${q.external_id} | ${q.artist_name} | ${q.quote_name} | $${q.bravo_total.toLocaleString()} |`);
+    }
+    lines.push('');
+  }
+
+  // Mismatches
+  if (results.mismatch.length > 0) {
+    lines.push('## Mismatches (Need Attention)\n');
+    results.mismatch.sort((a, b) => Math.abs(b.difference) - Math.abs(a.difference));
+    lines.push('| Tour ID | Artist | Quote Name | Source | Bravo | Diff | % |');
+    lines.push('|---------|--------|------------|--------|-------|------|---|');
+    for (const q of results.mismatch) {
+      lines.push(`| ${q.external_id} | ${q.artist_name} | ${q.quote_name} | $${q.source_total.toLocaleString()} | $${q.bravo_total.toLocaleString()} | $${q.difference.toLocaleString()} | ${q.pct_diff.toFixed(1)}% |`);
+    }
+    lines.push('');
+  }
+
+  // Close matches
+  if (results.close.length > 0) {
+    lines.push('## Close Matches (Minor Differences)\n');
+    lines.push('| Tour ID | Artist | Quote Name | Diff |');
+    lines.push('|---------|--------|------------|------|');
+    for (const q of results.close) {
+      lines.push(`| ${q.external_id} | ${q.artist_name} | ${q.quote_name} | $${q.difference.toFixed(2)} |`);
+    }
+    lines.push('');
+  }
+
+  // Not in Bravo
+  if (results.notInBravo.length > 0) {
+    lines.push('## Not Found in Bravo\n');
+    lines.push('| Tour ID | Source Total |');
+    lines.push('|---------|--------------|');
+    for (const q of results.notInBravo) {
+      lines.push(`| ${q.external_id} | $${q.source_total.toLocaleString()} |`);
+    }
+    lines.push('');
+  }
+
+  fs.writeFileSync(outputPath, lines.join('\n'));
+  log('green', `\nMarkdown report written to: ${outputPath}`);
+}
+
+/**
  * Main validation function
  */
 async function main() {
@@ -336,6 +423,15 @@ async function main() {
   // Compare and report
   const results = compareAndReport(sourceTotals, bravoData);
   printReport(results);
+
+  // Write Markdown report if --output specified
+  if (OUTPUT_FILE) {
+    writeMarkdownReport(results, OUTPUT_FILE, sourceFile, ENV);
+  } else if (INPUT_DIR) {
+    // Default: write to batch directory
+    const defaultOutput = `${INPUT_DIR}/validation-report.md`;
+    writeMarkdownReport(results, defaultOutput, sourceFile, ENV);
+  }
 
   // Exit with error code if there are mismatches
   if (results.mismatch.length > 0) {

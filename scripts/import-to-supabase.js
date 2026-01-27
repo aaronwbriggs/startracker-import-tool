@@ -383,6 +383,7 @@ async function importQuotes(supabase, quotes, artistDataMap = {}) {
       bus_deadhead_front_days: quote.bus_deadhead_front_days || 0,
       bus_deadhead_rear_days: quote.bus_deadhead_rear_days || 0,
       co_driver_days: quote.co_driver_days || 0,
+      discount_days: quote.discount_days || 0,
       main_driver_overdrives: quote.main_driver_overdrives || 0,
       quoted_lease_months: quote.quoted_lease_months,
       tour_months: quote.tour_months,
@@ -564,6 +565,74 @@ async function deleteExistingLineItems(supabase, quoteIdMap) {
 }
 
 /**
+ * Import entity notes for quotes that have notes
+ */
+async function importEntityNotes(supabase, quotes, quoteIdMap) {
+  // Filter quotes that have notes
+  const quotesWithNotes = quotes.filter(q => q.notes && q.notes.trim());
+
+  if (quotesWithNotes.length === 0) {
+    log('blue', '\nNo notes to import.');
+    return { results: { success: 0, failed: 0, skipped: 0 } };
+  }
+
+  log('blue', `\nImporting ${quotesWithNotes.length} entity notes...`);
+  const results = { success: 0, failed: 0, skipped: 0 };
+
+  for (const quote of quotesWithNotes) {
+    const quoteId = quoteIdMap[quote.external_id];
+    if (!quoteId) {
+      log('yellow', `  Skipping note - quote not found: ${quote.external_id}`);
+      results.failed++;
+      continue;
+    }
+
+    // Check if note already exists for this quote
+    if (!DRY_RUN) {
+      const { data: existing } = await supabase
+        .from('entity_notes')
+        .select('id')
+        .eq('entity_type', 'quote')
+        .eq('entity_id', quoteId)
+        .limit(1)
+        .single();
+
+      if (existing) {
+        log('yellow', `  Skipping note for ${quote.external_id} (already exists)`);
+        results.skipped++;
+        continue;
+      }
+    }
+
+    const noteRecord = {
+      entity_type: 'quote',
+      entity_id: quoteId,
+      note_text: quote.notes.trim(),
+    };
+
+    if (DRY_RUN) {
+      log('cyan', `  [DRY RUN] Would create note for quote ${quote.external_id}: "${quote.notes.substring(0, 50)}${quote.notes.length > 50 ? '...' : ''}"`);
+      results.success++;
+      continue;
+    }
+
+    const { error } = await supabase
+      .from('entity_notes')
+      .insert(noteRecord);
+
+    if (error) {
+      log('red', `  Error creating note for ${quote.external_id}:`, error.message);
+      results.failed++;
+    } else {
+      log('green', `  Created note for quote ${quote.external_id}`);
+      results.success++;
+    }
+  }
+
+  return { results };
+}
+
+/**
  * Import line items
  */
 async function importLineItems(supabase, lineItems, quoteIdMap, coachIdMap, trailerIdMap) {
@@ -736,6 +805,9 @@ async function main() {
   // Delete existing line items before importing (avoids unique constraint conflicts)
   await deleteExistingLineItems(supabase, quoteIdMap);
   await importLineItems(supabase, lineItemsData, quoteIdMap, coachIdMap, trailerIdMap);
+
+  // Import entity notes for quotes with notes
+  await importEntityNotes(supabase, quotesData, quoteIdMap);
 
   // Import contacts if available
   if (contactsData.length > 0) {

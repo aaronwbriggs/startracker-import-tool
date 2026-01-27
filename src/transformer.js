@@ -33,6 +33,7 @@ const QUOTE_ITEM_TYPES = {
   WEEKLY_GENERATOR_SERVICES: 'Weekly Generator Services',
   DRIVER_PER_DIEM: 'Driver Per Diem',
   CO_DRIVER_PER_DIEMS: 'Co-Driver Per Diems',
+  CO_DRIVER_RATE_DAILY: 'Co-Driver Rate, Daily',
   DRIVER_OVERDRIVES: 'Driver Overdrives',
   DRIVER_HOTEL_BUY_OUTS: 'Driver Hotel Buy Outs',
   TOLLS: 'Tolls',
@@ -560,6 +561,14 @@ export const transformTour = (classifiedTour) => {
   const firstRow = rows[0];
   const longTerm = leaseType === 'LONG_TERM';
 
+  // Calculate values from ALL rows (for multi-vehicle quotes)
+  // co_driver_days: max AddDriverDays across all rows (may only be set on one vehicle)
+  const maxCoDriverDays = Math.max(...rows.map(r => cleanNum(r.AddDriverDays) || 0));
+  // discount_days: max DiscountedDays across all rows
+  const maxDiscountDays = Math.max(...rows.map(r => cleanNum(r.DiscountedDays) || 0));
+  // _startracker_total: sum TourBudget across all rows (each row has per-vehicle total)
+  const totalStarTrackerBudget = rows.reduce((sum, r) => sum + (getNumField(r, 'TourBudget') || 0), 0);
+
   // Build quote record - using getField/getNumField for aliased columns
   const billedMonths = getNumField(firstRow, 'BilledMonths', 'BusMonths');
   const quote = {
@@ -584,14 +593,15 @@ export const transformTour = (classifiedTour) => {
     driver_deadhead_rear_days: cleanNum(firstRow.DriverDHR),
     bus_deadhead_front_days: getNumField(firstRow, 'TravelDaysIn', 'BusDHF'),
     bus_deadhead_rear_days: getNumField(firstRow, 'TravelDaysOut', 'BusDHR'),
-    co_driver_days: cleanNum(firstRow.AddDriverDays) || 0,
+    co_driver_days: maxCoDriverDays,
+    discount_days: maxDiscountDays,
     main_driver_overdrives: getNumField(firstRow, 'DriverODQty') || 0,
     quoted_lease_months: longTerm ? billedMonths : null,
     tour_months: longTerm ? billedMonths : null,
     notes: getField(firstRow, 'Notes', 'TourNotes') || null,
     _startracker_status: status, // Preserve original for reference
     _is_contract: isContract(status),
-    _startracker_total: getNumField(firstRow, 'TourBudget') || 0, // For import validation
+    _startracker_total: totalStarTrackerBudget, // Sum of TourBudget across all vehicles
   };
 
   // Build vehicle assignments
@@ -862,19 +872,33 @@ export const transformTour = (classifiedTour) => {
         if (lineItem) lineItems.push(lineItem);
       }
 
+      // --- Co-Driver Rate, Daily (ST only, when AddDriverDays > 0 and CoDriverRate > 0) ---
+      // This represents the daily rate charged for the co-driver
+      const coDriverDays = cleanNum(row.AddDriverDays);
+      const coDriverRate = cleanNum(row.CoDriverRate);
+      if (coDriverDays > 0 && coDriverRate > 0 && !longTerm) {
+        lineItems.push({
+          external_id: String(tourId),
+          vehicle_name: vehicleName,
+          vehicle_index: vehicleIdx,
+          item_type: QUOTE_ITEM_TYPES.CO_DRIVER_RATE_DAILY,
+          quantity: coDriverDays,
+          rate: coDriverRate,
+          unit_type: 'Per Day',
+          billing_category: 'Contracted',
+        });
+      }
+
       // --- Co-Driver Per Diems (ST only, when co_driver_days > 0) ---
       // Created when AddDriverDays > 0 to show per diem for co-driver
-      const coDriverDays = cleanNum(row.AddDriverDays);
       if (coDriverDays > 0 && !longTerm) {
-        // Use the same per diem rate as main driver, or default to $50/day
-        const coDriverPerDiemRate = driverRate > 0 ? 50 : 50; // Standard per diem rate
         lineItems.push({
           external_id: String(tourId),
           vehicle_name: vehicleName,
           vehicle_index: vehicleIdx,
           item_type: QUOTE_ITEM_TYPES.CO_DRIVER_PER_DIEMS,
           quantity: coDriverDays,
-          rate: coDriverPerDiemRate,
+          rate: 50, // Standard per diem rate
           unit_type: 'Per Day',
           billing_category: 'Contracted',
         });
@@ -1047,7 +1071,7 @@ export const generateCSVs = (transformedData) => {
     'tour_start_date', 'tour_end_date', 'quoted_lease_days', 'tour_days',
     'billed_bus_days', 'main_driver_days', 'billed_driver_days',
     'total_estimated_miles', 'driver_deadhead_front_days', 'driver_deadhead_rear_days',
-    'bus_deadhead_front_days', 'bus_deadhead_rear_days', 'co_driver_days',
+    'bus_deadhead_front_days', 'bus_deadhead_rear_days', 'co_driver_days', 'discount_days',
     'main_driver_overdrives', 'quoted_lease_months', 'tour_months', 'notes',
     '_startracker_status', '_is_contract', '_startracker_total'
   ];
