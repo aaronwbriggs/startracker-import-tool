@@ -27,7 +27,7 @@ const QUOTE_ITEM_TYPES = {
   FUEL_ESTIMATE: 'Fuel Estimate',
   ENGINE_SERVICES: 'Engine Services',
   INTERIOR_CLEANINGS: 'Interior Cleanings',
-  BUS_WASHES: 'Bus Washes',
+  BUS_WASHES: 'Weekly Coach Wash',
   LINEN_CLEANINGS: 'Linen Cleanings',
   GENERATOR_SERVICES: 'Generator Services',
   WEEKLY_GENERATOR_SERVICES: 'Weekly Generator Services',
