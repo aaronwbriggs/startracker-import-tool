@@ -1,0 +1,20 @@
+external_id,vehicle_name,vehicle_index,item_type,quantity,rate,unit_type,billing_category
+30426,Snowman,0,"Coach Rate, Daily",0,0,Per Day,Contracted
+30426,Snowman,0,"Driver Rate, Daily",34,450,Per Day,Contracted
+30426,Snowman,0,"Satellite Service, Daily",0,0,Per Day,Contracted
+30426,Snowman,0,"Internet Service, Daily",0,0,Per Day,Contracted
+30426,Snowman,0,"Insurance, Daily",0,0,Per Day,Contracted
+30426,Snowman,0,"IFTA/DOT Fee, Daily",0,0,Per Day,Contracted
+30426,Snowman,0,Fuel Estimate,0,1.55,Per Mile,Contracted
+30426,Snowman,0,Engine Services,0,0.75,Per Mile,Contracted
+30426,Snowman,0,Weekly Generator Services,4,195,Per Week,Contracted
+30426,Snowman,0,Interior Cleanings,4,95,Per Week,Contracted
+30426,Snowman,0,Weekly Coach Wash,4,100,Per Week,Contracted
+30426,Snowman,0,Linen Cleanings,4,75,Per Week,Contracted
+30426,Snowman,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30426,Snowman,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30426,Snowman,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30426,Snowman,0,Tolls,1,0,Flat Rate,Contracted
+30426,Snowman,0,Driver Per Diem,34,50,Per Day,Contracted
+30426,Snowman,0,Admin Fee,1,0,Flat Rate,Contracted
+30426,Snowman,0,Miscellaneous,1,0,Flat Rate,Contracted

@@ -167,49 +167,56 @@ async function getBravoTotals(supabase) {
 }
 
 /**
- * Direct query for Bravo totals (fallback if RPC doesn't exist)
+ * Direct query for Bravo totals using the quote_summary view
+ * This view includes payroll fees in the grand_total calculation
  */
 async function getBravoTotalsDirect(supabase) {
-  const { data: quotes, error } = await supabase
-    .from('quotes')
+  // Use quote_summary view which includes payroll fee in grand_total
+  const { data: summaries, error } = await supabase
+    .from('quote_summary')
     .select(`
-      id,
-      external_id,
+      quote_id,
       quote_name,
-      type,
-      status,
-      artist:artists(name)
+      quote_type,
+      quote_status,
+      artist_name,
+      grand_total
     `)
-    .not('external_id', 'is', null);
+    .not('quote_id', 'is', null);
 
   if (error) {
-    throw new Error(`Failed to fetch quotes: ${error.message}`);
+    throw new Error(`Failed to fetch quote summaries: ${error.message}`);
   }
 
-  // Get line items for each quote
+  // Now get external_ids from quotes table
+  const { data: quotes, error: quotesError } = await supabase
+    .from('quotes')
+    .select('id, external_id')
+    .not('external_id', 'is', null);
+
+  if (quotesError) {
+    throw new Error(`Failed to fetch quotes: ${quotesError.message}`);
+  }
+
+  // Build a map of quote_id -> external_id
+  const externalIdMap = {};
+  for (const q of quotes) {
+    externalIdMap[q.id] = q.external_id;
+  }
+
+  // Filter summaries to only those with external_ids and map to result format
   const results = [];
-  for (const quote of quotes) {
-    const { data: lineItems, error: liError } = await supabase
-      .from('quote_line_items')
-      .select('quantity, rate, user_deleted')
-      .eq('quote_id', quote.id);
-
-    if (liError) {
-      log('yellow', `  Error fetching line items for ${quote.external_id}: ${liError.message}`);
-      continue;
-    }
-
-    const bravoTotal = lineItems
-      .filter(li => !li.user_deleted)
-      .reduce((sum, li) => sum + ((li.quantity || 0) * (li.rate || 0)), 0);
+  for (const summary of summaries) {
+    const externalId = externalIdMap[summary.quote_id];
+    if (!externalId) continue; // Skip quotes without external_id
 
     results.push({
-      external_id: quote.external_id,
-      quote_name: quote.quote_name,
-      artist_name: quote.artist?.name || 'Unknown',
-      type: quote.type,
-      status: quote.status,
-      bravo_total: bravoTotal,
+      external_id: externalId,
+      quote_name: summary.quote_name,
+      artist_name: summary.artist_name || 'Unknown',
+      type: summary.quote_type,
+      status: summary.quote_status,
+      bravo_total: parseFloat(summary.grand_total) || 0,
     });
   }
 
