@@ -23,8 +23,13 @@
 
 import fs from 'fs';
 import path from 'path';
+import readline from 'readline';
 import { parse } from 'csv-parse/sync';
 import { createClient } from '@supabase/supabase-js';
+
+// Load .env file
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig();
 
 // Parse command line arguments
 const args = process.argv.slice(2).reduce((acc, arg) => {
@@ -34,8 +39,43 @@ const args = process.argv.slice(2).reduce((acc, arg) => {
 }, {});
 
 const DRY_RUN = args['dry-run'] || args.dryRun || false;
-const ENV = args.env || 'dev';
+const ENV = args.env; // No default - must be explicit
 const INPUT_DIR = args.dir || './bravo-import';
+
+// Validate environment is explicitly specified
+if (!ENV) {
+  console.error('\x1b[31m');
+  console.error('ERROR: You must specify --env=dev or --env=prod');
+  console.error('\x1b[0m');
+  console.error('Usage:');
+  console.error('  node scripts/apply-status.js --env=dev --dir=./bravo-import/<batch>');
+  console.error('  node scripts/apply-status.js --env=prod --dir=./bravo-import/<batch>');
+  process.exit(1);
+}
+
+if (ENV !== 'dev' && ENV !== 'prod') {
+  console.error('\x1b[31m');
+  console.error(`ERROR: Invalid environment "${ENV}". Must be "dev" or "prod".`);
+  console.error('\x1b[0m');
+  process.exit(1);
+}
+
+/**
+ * Prompt user for confirmation
+ */
+function askConfirmation(question) {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(answer.toLowerCase().trim());
+    });
+  });
+}
 
 // Environment-specific Supabase config
 const SUPABASE_CONFIG = {
@@ -127,10 +167,33 @@ async function getDefaultLostReason(supabase) {
 async function main() {
   log('blue', '='.repeat(60));
   log('blue', 'Apply Status Script');
-  log('blue', `Environment: ${ENV.toUpperCase()}`);
+
+  // Big visual warning for production
+  if (ENV === 'prod') {
+    console.log('');
+    console.log('\x1b[41m\x1b[37m' + ' '.repeat(60) + '\x1b[0m');
+    console.log('\x1b[41m\x1b[37m' + '    ⚠️  PRODUCTION DATABASE ⚠️                              ' + '\x1b[0m');
+    console.log('\x1b[41m\x1b[37m' + '    You are about to update statuses in BRAVO-PROD         ' + '\x1b[0m');
+    console.log('\x1b[41m\x1b[37m' + ' '.repeat(60) + '\x1b[0m');
+    console.log('');
+  } else {
+    log('green', `Environment: ${ENV.toUpperCase()} (development)`);
+  }
+
   log('blue', `Mode: ${DRY_RUN ? 'DRY RUN (no changes will be made)' : 'LIVE'}`);
   log('blue', `Input directory: ${INPUT_DIR}`);
   log('blue', '='.repeat(60));
+
+  // Production confirmation prompt (skip for dry runs)
+  if (ENV === 'prod' && !DRY_RUN) {
+    console.log('');
+    const answer = await askConfirmation('\x1b[33mType "yes" to confirm production status update: \x1b[0m');
+    if (answer !== 'yes') {
+      log('yellow', '\nStatus update cancelled.');
+      process.exit(0);
+    }
+    console.log('');
+  }
 
   // Read quotes CSV
   log('blue', '\nReading quotes.csv...');

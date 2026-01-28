@@ -1,106 +1,111 @@
 ---
 name: import
 description: Import StarTracker data to Bravo. Use when user has uploaded files to bravo-import/ and wants to import them.
-argument-hint: [folder-path] [environment]
-disable-model-invocation: true
+argument-hint: [folder-name] [environment]
 ---
 
 # Bravo Import Skill
 
-Import StarTracker-transformed CSV files into Bravo database.
+Import StarTracker-transformed CSV files into Bravo database using the Node.js import scripts.
 
-## Gather Parameters
+## Step 1: Gather Parameters
 
-If arguments not provided, ask:
-1. **Folder path**: Which subfolder of `bravo-import/` contains the export? (e.g., `bravo-import/january_tour_test_upload_bravo_V5`)
-2. **Environment**: `dev` or `prod`?
+If not provided, ask:
+1. **Folder name**: Which subfolder of `bravo-import/` contains the export? (list available folders)
+2. **Environment**: `dev` or `prod`? (default: dev)
 
-## Pre-flight Checks
+## Step 2: Pre-flight Checks
 
-Before importing, verify:
+Verify the folder contains required files:
+- `quotes.csv` (required)
+- `quote_coaches.csv`
+- `quote_trailers.csv`
+- `line_items.csv`
+- Optional: `artists.csv`, `contacts.csv`, `artist_contacts.csv`
 
-1. **Required files exist** in the folder:
-   - `quotes.csv`
-   - `quote_coaches.csv`
-   - `quote_trailers.csv`
-   - `line_items.csv`
-   - Optional: `artists.csv`, `contacts.csv`, `artist_contacts.csv`
+Report what was found and the record counts.
 
-2. **Line item types are valid** - check that all `item_type` values in `line_items.csv` exist in `quote_item_types`:
-   ```sql
-   SELECT DISTINCT item_name FROM quote_item_types ORDER BY item_name;
-   ```
-   If any CSV item_type doesn't match, STOP and report the mismatch. Do NOT create new item types - this is a transformer bug.
+## Step 3: Dry Run
 
-3. **Vehicles exist** - verify all coach and trailer names exist in the database
+Run the import script in dry-run mode to verify everything looks correct:
 
-4. **No duplicate external_ids** - check quotes don't already exist:
-   ```sql
-   SELECT external_id FROM quotes WHERE external_id IN (...);
-   ```
-
-## Import Order
-
-Use `mcp__supabase-dev__execute_sql` (or `mcp__supabase-prod__execute_sql` for prod).
-
-Import in this order:
-1. **Artists** - get or create, build artist_id map
-2. **Quotes** - insert with proper enum casts (`::quote_status_enum`, `::quote_type_enum`)
-3. **Quote Coaches** - link quotes to coaches
-4. **Quote Trailers** - link quotes to trailers
-5. **Delete auto-generated line items** - Bravo auto-creates line items on quote creation; delete them first
-6. **Line Items** - insert with quote_coach_id/quote_trailer_id links
-7. **Entity Notes** - for quotes with notes
-8. **Contacts & Artist Contacts** - if contact files exist
-
-## SQL Patterns
-
-### Insert quotes with enum casts:
-```sql
-INSERT INTO quotes (external_id, status, type, ...)
-SELECT v.external_id, v.status::quote_status_enum, v.type::quote_type_enum, ...
-FROM (VALUES (...)) AS v(...)
+```bash
+node scripts/import-to-supabase.js --env=<env> --dir=./bravo-import/<folder> --skip-status --dry-run
 ```
 
-### Look up vehicle IDs:
-```sql
-SELECT id, name FROM coaches WHERE name IN (...);
-SELECT id, name FROM trailers WHERE name IN (...);
+Review the output for:
+- Missing coaches/trailers (need to be created in Bravo first)
+- Missing quote item types (transformer bug - do NOT create them)
+- Any other errors
+
+If there are blocking issues, STOP and report them.
+
+## Step 4: Live Import
+
+Run the actual import (all quotes imported as Draft):
+
+```bash
+node scripts/import-to-supabase.js --env=<env> --dir=./bravo-import/<folder> --skip-status
 ```
 
-### Look up item type IDs:
-```sql
-SELECT id, item_name FROM quote_item_types WHERE item_name IN (...);
+Report the results:
+- Quotes imported
+- Coaches linked
+- Trailers linked
+- Line items created
+- Contacts/artist_contacts created
+- Any skipped records (already existed)
+
+## Step 5: Validate
+
+Run the validation script to compare Bravo totals against StarTracker totals:
+
+```bash
+node scripts/validate-import.js --env=<env> --dir=./bravo-import/<folder>
 ```
 
-## Post-Import Validation
+This generates `validation-report.md` in the batch folder.
 
-After import completes, run validation:
+**Present the validation results to the user:**
+- How many quotes match exactly
+- How many have minor differences (< $100)
+- How many have significant mismatches (need attention)
 
-1. **Count verification**:
-   ```sql
-   SELECT COUNT(*) FROM quotes WHERE external_id IN (...);
-   SELECT COUNT(*) FROM quote_coaches WHERE quote_id IN (SELECT id FROM quotes WHERE external_id IN (...));
-   SELECT COUNT(*) FROM quote_line_items WHERE quote_id IN (SELECT id FROM quotes WHERE external_id IN (...));
-   ```
+If there are mismatches, list them with the difference amounts.
 
-2. **Compare to CSV counts** - report any discrepancies
+## Step 6: STOP and Wait
 
-3. **Run validation queries** from `scripts/validation-queries.sql`
+After validation, **STOP and wait for user instructions**.
 
-## Report Results
+Tell the user:
+- All quotes are currently in Draft status
+- They should review the quotes in Bravo and the validation report
+- When ready, they can ask to apply final statuses
 
-Provide a summary:
-- Quotes imported: X
-- Coaches linked: X
-- Trailers linked: X
-- Line items created: X
-- Contacts created: X
-- Any errors or warnings
+## Step 7: Apply Statuses (On User Request Only)
+
+Only when the user explicitly asks to apply statuses:
+
+```bash
+node scripts/apply-status.js --env=<env> --dir=./bravo-import/<folder>
+```
+
+This updates quotes from Draft to their intended status (Approved, Declined, etc.) based on the CSV.
 
 ## Critical Rules
 
-- **NEVER create quote_item_types** - if item type missing, it's a transformer bug
-- **NEVER fall back to Node.js scripts** - use MCP tools only
-- **Fix SQL issues** (like enum casting) - don't abandon MCP
-- **Batch large inserts** - split into groups of 10-20 records if needed
+1. **Use Node.js scripts** - NOT manual SQL via MCP (prevents context loss issues)
+2. **Never create quote_item_types** - if item type is missing, it's a transformer bug
+3. **Always use --skip-status** on import - quotes start as Draft for review
+4. **Always validate** - run validation script after every import
+5. **Wait for user approval** before applying final statuses
+6. **Production requires confirmation** - script will prompt to type "yes"
+
+## MCP Tools
+
+Use MCP tools (`mcp__supabase-dev__execute_sql`) only for:
+- Quick lookups during troubleshooting
+- Investigating mismatches
+- Ad-hoc queries
+
+Do NOT use MCP for batch imports.

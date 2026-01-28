@@ -1,25 +1,60 @@
 # Claude Code Rules for StarTracker Import Tool
 
-## Database Operations
+## Import Process
 
-### Use MCP Tools for Supabase
-- **Always use `mcp__supabase-dev__execute_sql`** for bravo-dev database operations
-- **Always use `mcp__supabase-prod__execute_sql`** for bravo-prod database operations
-- **Never fall back to running Node.js import scripts** when MCP tools are available
-- If you hit an obstacle with MCP (like enum casting), fix the SQL - don't abandon MCP
+### Use the Node.js Import Script (Recommended)
+
+**Always use the Node.js import scripts** for batch imports instead of manual SQL:
+
+```bash
+# Dry run first (no changes made)
+node scripts/import-to-supabase.js --env=dev --dir=./bravo-import/<batch-name> --skip-status --dry-run
+
+# Live import (all quotes imported as Draft)
+node scripts/import-to-supabase.js --env=dev --dir=./bravo-import/<batch-name> --skip-status
+
+# Validate after import
+node scripts/validate-import.js --env=dev --dir=./bravo-import/<batch-name>
+
+# Apply final statuses after review
+node scripts/apply-status.js --env=dev --dir=./bravo-import/<batch-name>
+```
+
+**Why scripts over manual SQL:**
+- Scripts are deterministic and won't lose context mid-import
+- Automatic foreign key lookups (artists, coaches, trailers, item types)
+- Auto-deletes Bravo's auto-generated line items before inserting
+- Handles contacts and artist_contacts linking
+- Creates entity_notes from quote notes
+- Supports dry-run mode for testing
+- `--skip-status` imports all quotes as Draft for review
+
+### Environment Variables Required
+
+Set these for the import scripts:
+```bash
+export SUPABASE_DEV_URL="https://xxx.supabase.co"
+export SUPABASE_DEV_SERVICE_KEY="eyJ..."
+export SUPABASE_PROD_URL="https://yyy.supabase.co"
+export SUPABASE_PROD_SERVICE_KEY="eyJ..."
+```
+
+### MCP Tools for Ad-Hoc Queries
+
+Use MCP tools (`mcp__supabase-dev__execute_sql`, `mcp__supabase-prod__execute_sql`) for:
+- Validation queries
+- Quick lookups
+- Status updates on individual quotes
+- Debugging issues
+
+**Do not use MCP for batch imports** - the conversation context may compact mid-import, causing data integrity issues.
 
 ### No Creating Quote Item Types
+
 - **Never create new `quote_item_types` records** during import
 - All item types must already exist in Bravo
 - If a line item type doesn't exist, that's a bug in the transformer mapping - fix the transformer
 - The transformer (`src/transformer.js`) must output exact Bravo `quote_item_types.item_name` values
-
-### Import Process
-1. Read the CSV files from the export directory
-2. Look up existing records (artists, coaches, trailers, quote_item_types) by name
-3. Insert quotes, quote_coaches, quote_trailers, quote_line_items
-4. Use proper enum casts: `value::quote_status_enum`, `value::quote_type_enum`
-5. Run validation script after import
 
 ## Transformer Maintenance
 
@@ -38,4 +73,4 @@ After every import, run validation:
 node scripts/validate-import.js --env=dev --dir=<export-directory>
 ```
 
-Or use `mcp__supabase-dev__execute_sql` to run validation queries from `scripts/validation-queries.sql`.
+This compares Bravo calculated totals against `_startracker_total` from the CSV and generates a markdown report.

@@ -13,7 +13,7 @@
  * Flags:
  *   --dir      Path to transformed output folder (reads quotes.csv with _startracker_total)
  *   --source   Path to original StarTracker export (reads TourID/TourBudget columns)
- *   --env      Environment: dev (default) or prod
+ *   --env      Environment: dev or prod (required)
  *   --output   Path for Markdown report (default: <dir>/validation-report.md when using --dir)
  *
  * Preferred: Use --dir to point to the transformed output folder containing quotes.csv
@@ -28,6 +28,10 @@ import fs from 'fs';
 import { parse } from 'csv-parse/sync';
 import { createClient } from '@supabase/supabase-js';
 
+// Load .env file
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig();
+
 // Parse command line arguments
 const args = process.argv.slice(2).reduce((acc, arg) => {
   const [key, value] = arg.replace(/^--/, '').split('=');
@@ -37,8 +41,26 @@ const args = process.argv.slice(2).reduce((acc, arg) => {
 
 const SOURCE_FILE = args.source;
 const INPUT_DIR = args.dir;
-const ENV = args.env || 'dev';
+const ENV = args.env; // No default - must be explicit
 const OUTPUT_FILE = args.output; // Optional: write Markdown report to file
+
+// Validate environment is explicitly specified
+if (!ENV) {
+  console.error('\x1b[31m');
+  console.error('ERROR: You must specify --env=dev or --env=prod');
+  console.error('\x1b[0m');
+  console.error('Usage:');
+  console.error('  node scripts/validate-import.js --env=dev --dir=./bravo-import/<batch>');
+  console.error('  node scripts/validate-import.js --env=prod --dir=./bravo-import/<batch>');
+  process.exit(1);
+}
+
+if (ENV !== 'dev' && ENV !== 'prod') {
+  console.error('\x1b[31m');
+  console.error(`ERROR: Invalid environment "${ENV}". Must be "dev" or "prod".`);
+  console.error('\x1b[0m');
+  process.exit(1);
+}
 
 if (!SOURCE_FILE && !INPUT_DIR) {
   console.error('Error: Either --dir or --source is required');
@@ -390,8 +412,15 @@ async function main() {
   const sourceFile = SOURCE_FILE || findQuotesFile(INPUT_DIR);
 
   log('blue', '='.repeat(60));
-  log('blue', 'StarTracker Import Validation');
-  log('blue', `Environment: ${ENV.toUpperCase()}`);
+  log('blue', 'StarTracker Import Validation (Read-Only)');
+
+  // Visual indicator for production
+  if (ENV === 'prod') {
+    console.log('\x1b[43m\x1b[30m' + '  PRODUCTION  ' + '\x1b[0m' + ' Validating against bravo-prod');
+  } else {
+    log('green', `Environment: ${ENV.toUpperCase()} (development)`);
+  }
+
   log('blue', `Source file: ${sourceFile}`);
   log('blue', '='.repeat(60));
 
