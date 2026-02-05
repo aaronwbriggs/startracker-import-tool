@@ -371,6 +371,7 @@ async function getQuoteItemType(supabase, itemTypeName, cache = {}) {
 async function importQuotes(supabase, quotes, artistDataMap = {}) {
   log('blue', `\nImporting ${quotes.length} quotes...`);
   const results = { success: 0, failed: 0, skipped: 0 };
+  const skippedQuotes = []; // Track skipped duplicates for reporting
   const quoteIdMap = {}; // external_id -> bravo_quote_id
   const artistIdMap = {}; // artist_name -> bravo_artist_id
 
@@ -384,7 +385,8 @@ async function importQuotes(supabase, quotes, artistDataMap = {}) {
       .single();
 
     if (existing) {
-      log('yellow', `  Skipping quote ${quote.external_id} (already exists)`);
+      log('yellow', `  Skipping quote ${quote.external_id} - ${quote.artist_name} - ${quote.quote_name} (already exists)`);
+      skippedQuotes.push({ external_id: quote.external_id, artist: quote.artist_name, name: quote.quote_name });
       quoteIdMap[quote.external_id] = existing.id;
       results.skipped++;
       continue;
@@ -453,7 +455,15 @@ async function importQuotes(supabase, quotes, artistDataMap = {}) {
     }
   }
 
-  return { results, quoteIdMap, artistIdMap };
+  // Report skipped duplicates
+  if (skippedQuotes.length > 0) {
+    log('yellow', `\nSkipped ${skippedQuotes.length} duplicate quotes (already in Bravo):`);
+    for (const q of skippedQuotes) {
+      log('yellow', `  - ${q.external_id} | ${q.artist} | ${q.name}`);
+    }
+  }
+
+  return { results, quoteIdMap, artistIdMap, skippedQuotes };
 }
 
 /**
@@ -810,6 +820,21 @@ async function main() {
   const artistsData = artistsFile ? readCSV(artistsFile) : [];
   const contactsData = contactsFile ? readCSV(contactsFile) : [];
   const artistContactsData = artistContactsFile ? readCSV(artistContactsFile) : [];
+
+  // Normalize external_ids: strip thousand-separator commas (e.g. "30,418" -> "30418")
+  const normalizeExternalId = (id) => id ? id.replace(/,/g, '') : id;
+  for (const row of quotesData) {
+    if (row.external_id) row.external_id = normalizeExternalId(row.external_id);
+  }
+  for (const row of coachesData) {
+    if (row.external_id) row.external_id = normalizeExternalId(row.external_id);
+  }
+  for (const row of trailersData) {
+    if (row.external_id) row.external_id = normalizeExternalId(row.external_id);
+  }
+  for (const row of lineItemsData) {
+    if (row.external_id) row.external_id = normalizeExternalId(row.external_id);
+  }
 
   // Build artist data map for enhanced artist creation (name -> full artist data)
   const artistDataMap = {};

@@ -198,6 +198,10 @@ async function main() {
   // Read quotes CSV
   log('blue', '\nReading quotes.csv...');
   const quotes = readCSV('quotes.csv');
+  // Normalize external_ids: strip thousand-separator commas (e.g. "30,418" -> "30418")
+  for (const q of quotes) {
+    if (q.external_id) q.external_id = q.external_id.replace(/,/g, '');
+  }
   log('green', `  Found ${quotes.length} quotes`);
 
   // Connect to Supabase

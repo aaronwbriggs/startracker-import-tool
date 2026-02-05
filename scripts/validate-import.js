@@ -121,7 +121,7 @@ function readSourceTotals(filepath) {
   for (const row of records) {
     if (isTransformedFormat) {
       // Transformed quotes.csv format
-      const externalId = row.external_id;
+      const externalId = row.external_id ? row.external_id.replace(/,/g, '') : row.external_id;
       const total = parseFloat(row._startracker_total) || 0;
       if (externalId) {
         totals[externalId] = total;
