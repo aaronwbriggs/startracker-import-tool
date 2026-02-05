@@ -74,3 +74,30 @@ node scripts/validate-import.js --env=dev --dir=<export-directory>
 ```
 
 This compares Bravo calculated totals against `_startracker_total` from the CSV and generates a markdown report.
+
+## Import Tracking
+
+**All import activity must be logged in `bravo-import/IMPORT_TRACKER.md`.**
+
+This is a mandatory part of the import workflow. After any of the following actions, update the tracker:
+
+1. **Importing a batch** - Record the date, environment, and quote count
+2. **Running validation** - Record matched/mismatched counts and list mismatched quotes
+3. **Applying statuses** - Record the date statuses were applied
+4. **Investigating mismatches** - Fill in root cause as it's discovered
+5. **Applying manual fixes** - Document what was changed, how, and in which environment
+
+### Tracker Update Rules
+
+- When creating a new batch directory under `bravo-import/`, add a new section to the tracker using the template at the bottom of the file
+- When Aaron dictates fix details verbally, capture them in the tracker immediately
+- Never remove or overwrite existing tracker entries — append or update in place
+- The tracker is the source of truth for "what has been imported where"
+
+### Dev vs Prod Strategy
+
+- **Dev** is a workbench for testing transformer/script changes, not a data staging environment
+- **Prod** is where real imports land (as Draft via `--skip-status`)
+- Draft quotes are invisible to the leasing team's workflow
+- Duplicate detection via `external_id` prevents overwriting manually-created quotes
+- It is not required to keep dev and prod data in sync
