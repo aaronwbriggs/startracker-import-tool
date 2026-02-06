@@ -145,13 +145,29 @@ async function getOrCreateArtist(supabase, artistName, artistDataMap = {}) {
   // Get artist data from map (if artists.csv was loaded)
   const artistData = artistDataMap[artistName] || {};
 
+  // Lookup state_province_id from abbreviation (e.g. "TN" -> "TN " in states_provinces)
+  let stateProvinceId = null;
+  if (artistData.state) {
+    const { data: stateMatch } = await supabase
+      .from('states_provinces')
+      .select('subdivision_code')
+      .ilike('subdivision_code', artistData.state.trim())
+      .limit(1)
+      .single();
+    if (stateMatch) {
+      stateProvinceId = stateMatch.subdivision_code;
+    } else {
+      log('yellow', `  Warning: State "${artistData.state}" not found in states_provinces for ${artistName}`);
+    }
+  }
+
   // Create new artist with address data
   const artistRecord = {
     name: artistName,
     legal_name: artistData.legal_name || null,
     address: artistData.address || null,
     city: artistData.city || null,
-    state_province_id: artistData.state || null, // state maps to state_province_id
+    state_province_id: stateProvinceId,
     zip: artistData.zip || null,
   };
 
@@ -216,9 +232,13 @@ async function importContacts(supabase, contacts, artistContacts, artistIdMap) {
       continue;
     }
 
-    // Create contact
+    // Create contact - split full_name into first/last (full_name is a generated column)
+    const nameParts = (contact.full_name || '').trim().split(/\s+/);
+    const firstName = nameParts[0] || null;
+    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : null;
     const contactRecord = {
-      full_name: contact.full_name,
+      first_name: firstName,
+      last_name: lastName,
       email: contact.email,
       phone: contact.phone || null,
     };
@@ -285,7 +305,6 @@ async function importContacts(supabase, contacts, artistContacts, artistIdMap) {
         artist_id: artistId,
         contact_id: contactId,
         role: link.role,
-        is_primary: link.is_primary === true || link.is_primary === 'true',
       });
 
     if (error) {
@@ -375,6 +394,60 @@ async function importQuotes(supabase, quotes, artistDataMap = {}) {
   const quoteIdMap = {}; // external_id -> bravo_quote_id
   const artistIdMap = {}; // artist_name -> bravo_artist_id
 
+  // Auto-disambiguate quotes that share the same artist + name.
+  // Build a map of "artist_name|quote_name" -> [external_ids] to find collisions
+  // within the batch, then also check against existing Bravo quotes.
+  const nameKeyMap = {}; // "artist|name" -> [external_id, ...]
+  for (const quote of quotes) {
+    const key = `${quote.artist_name}|${quote.quote_name}`;
+    if (!nameKeyMap[key]) nameKeyMap[key] = [];
+    nameKeyMap[key].push(quote.external_id);
+  }
+
+  // For any group with >1 quote, append (ST-XXXXX) to all of them
+  const needsSuffix = new Set();
+  for (const [, ids] of Object.entries(nameKeyMap)) {
+    if (ids.length > 1) {
+      ids.forEach(id => needsSuffix.add(id));
+    }
+  }
+
+  // Also check for collisions with existing Bravo quotes (different external_id, same artist+name)
+  for (const quote of quotes) {
+    if (needsSuffix.has(quote.external_id)) continue; // already flagged
+
+    const { data: existing } = await supabase
+      .from('quotes')
+      .select('id, external_id')
+      .eq('quote_name', quote.quote_name)
+      .neq('external_id', quote.external_id)
+      .limit(1);
+
+    if (existing && existing.length > 0) {
+      // There's a quote in Bravo with the same name — check if it's the same artist
+      const { data: bravoQuote } = await supabase
+        .from('quotes')
+        .select('artist_id, artists!inner(name)')
+        .eq('id', existing[0].id)
+        .single();
+
+      if (bravoQuote && bravoQuote.artists?.name === quote.artist_name) {
+        needsSuffix.add(quote.external_id);
+      }
+    }
+  }
+
+  // Apply the suffix
+  if (needsSuffix.size > 0) {
+    for (const quote of quotes) {
+      if (needsSuffix.has(quote.external_id)) {
+        const original = quote.quote_name;
+        quote.quote_name = `${quote.quote_name} (ST-${quote.external_id})`;
+        log('yellow', `  Auto-renamed: "${original}" → "${quote.quote_name}" (name collision)`);
+      }
+    }
+  }
+
   for (const quote of quotes) {
     // Check if already exists
     const { data: existing } = await supabase
@@ -388,6 +461,11 @@ async function importQuotes(supabase, quotes, artistDataMap = {}) {
       log('yellow', `  Skipping quote ${quote.external_id} - ${quote.artist_name} - ${quote.quote_name} (already exists)`);
       skippedQuotes.push({ external_id: quote.external_id, artist: quote.artist_name, name: quote.quote_name });
       quoteIdMap[quote.external_id] = existing.id;
+      // Still populate artistIdMap for skipped quotes so artist_contacts linking works
+      if (!artistIdMap[quote.artist_name]) {
+        const artistId = await getOrCreateArtist(supabase, quote.artist_name, artistDataMap);
+        if (artistId) artistIdMap[quote.artist_name] = artistId;
+      }
       results.skipped++;
       continue;
     }
@@ -401,14 +479,27 @@ async function importQuotes(supabase, quotes, artistDataMap = {}) {
     }
     artistIdMap[quote.artist_name] = artistId;
 
+    // Generate seq_number and quote_number from Bravo's global sequence
+    let seqNumber, quoteNumber;
+    if (!DRY_RUN) {
+      const { data: seqData, error: seqError } = await supabase.rpc('generate_quote_number');
+      if (seqError) {
+        log('red', `  Error generating quote number for ${quote.external_id}:`, seqError.message);
+        results.failed++;
+        continue;
+      }
+      seqNumber = seqData.seq_number;
+      quoteNumber = seqData.quote_number;
+    }
+
     // Prepare quote record
     // Note: quoted_lease_days is a generated column (computed from dates), so we don't include it
     const quoteRecord = {
       external_id: quote.external_id,
-      seq_number: quote.seq_number,
+      seq_number: seqNumber,
       artist_id: artistId,
       quote_name: quote.quote_name,
-      quote_number: quote.quote_number,
+      quote_number: quoteNumber,
       status: SKIP_STATUS ? 'Draft' : (quote.status || 'Draft'),
       type: quote.type,
       quoted_lease_start_date: quote.quoted_lease_start_date,
@@ -469,12 +560,18 @@ async function importQuotes(supabase, quotes, artistDataMap = {}) {
 /**
  * Import quote coaches
  */
-async function importQuoteCoaches(supabase, coaches, quoteIdMap) {
+async function importQuoteCoaches(supabase, coaches, quoteIdMap, skippedExternalIds = new Set()) {
   log('blue', `\nImporting ${coaches.length} quote coaches...`);
-  const results = { success: 0, failed: 0 };
+  const results = { success: 0, failed: 0, skipped: 0 };
   const coachIdMap = {}; // "external_id:vehicle_index" -> quote_coach_id
 
   for (const coach of coaches) {
+    // Skip coaches for quotes that were already in Bravo (duplicate quotes)
+    if (skippedExternalIds.has(coach.external_id)) {
+      results.skipped++;
+      continue;
+    }
+
     const quoteId = quoteIdMap[coach.external_id];
     if (!quoteId) {
       log('yellow', `  Skipping coach - quote not found: ${coach.external_id}`);
@@ -529,12 +626,18 @@ async function importQuoteCoaches(supabase, coaches, quoteIdMap) {
 /**
  * Import quote trailers
  */
-async function importQuoteTrailers(supabase, trailers, quoteIdMap) {
+async function importQuoteTrailers(supabase, trailers, quoteIdMap, skippedExternalIds = new Set()) {
   log('blue', `\nImporting ${trailers.length} quote trailers...`);
-  const results = { success: 0, failed: 0 };
+  const results = { success: 0, failed: 0, skipped: 0 };
   const trailerIdMap = {}; // "external_id:vehicle_index" -> quote_trailer_id
 
   for (const trailer of trailers) {
+    // Skip trailers for quotes that were already in Bravo (duplicate quotes)
+    if (skippedExternalIds.has(trailer.external_id)) {
+      results.skipped++;
+      continue;
+    }
+
     const quoteId = quoteIdMap[trailer.external_id];
     if (!quoteId) {
       log('yellow', `  Skipping trailer - quote not found: ${trailer.external_id}`);
@@ -587,12 +690,13 @@ async function importQuoteTrailers(supabase, trailers, quoteIdMap) {
  * (quote_line_items_coach_item_type_unique, quote_line_items_trailer_item_type_unique).
  * We delete them first to avoid conflicts.
  */
-async function deleteExistingLineItems(supabase, quoteIdMap) {
+async function deleteExistingLineItems(supabase, quoteIdMap, skippedExternalIds = new Set()) {
   log('blue', '\nDeleting existing line items for imported quotes...');
 
   let deletedCount = 0;
 
   for (const [externalId, quoteId] of Object.entries(quoteIdMap)) {
+    if (skippedExternalIds.has(externalId)) continue;
     if (DRY_RUN) {
       log('cyan', `  [DRY RUN] Would delete existing line items for quote ${externalId}`);
       continue;
@@ -685,12 +789,18 @@ async function importEntityNotes(supabase, quotes, quoteIdMap) {
 /**
  * Import line items
  */
-async function importLineItems(supabase, lineItems, quoteIdMap, coachIdMap, trailerIdMap) {
+async function importLineItems(supabase, lineItems, quoteIdMap, coachIdMap, trailerIdMap, skippedExternalIds = new Set()) {
   log('blue', `\nImporting ${lineItems.length} line items...`);
-  const results = { success: 0, failed: 0 };
+  const results = { success: 0, failed: 0, skipped: 0 };
   const itemTypeCache = {};
 
   for (const item of lineItems) {
+    // Skip line items for quotes that were already in Bravo (duplicate quotes)
+    if (skippedExternalIds.has(item.external_id)) {
+      results.skipped++;
+      continue;
+    }
+
     const quoteId = quoteIdMap[item.external_id];
     if (!quoteId) {
       log('yellow', `  Skipping line item - quote not found: ${item.external_id}`);
@@ -836,6 +946,27 @@ async function main() {
     if (row.external_id) row.external_id = normalizeExternalId(row.external_id);
   }
 
+  // Normalize dates: fix StarTracker format "YYYY  12:00:00 AM-MM-DD" -> "YYYY-MM-DD"
+  const normalizeDate = (val) => {
+    if (!val || typeof val !== 'string') return val;
+    const match = val.match(/^(\d{4})\s+12:00:00\s+AM-(\d{2})-(\d{2})$/);
+    if (match) return `${match[1]}-${match[2]}-${match[3]}`;
+    return val;
+  };
+  const dateColumns = [
+    'quoted_lease_start_date', 'quoted_lease_end_date',
+    'tour_start_date', 'tour_end_date',
+    'start_date', 'end_date',
+    'custom_tour_start_date', 'custom_tour_end_date',
+  ];
+  for (const dataset of [quotesData, coachesData, trailersData]) {
+    for (const row of dataset) {
+      for (const col of dateColumns) {
+        if (row[col]) row[col] = normalizeDate(row[col]);
+      }
+    }
+  }
+
   // Build artist data map for enhanced artist creation (name -> full artist data)
   const artistDataMap = {};
   for (const artist of artistsData) {
@@ -887,13 +1018,14 @@ async function main() {
   log('green', 'Connected to Supabase successfully.\n');
 
   // Run imports in order
-  const { quoteIdMap, artistIdMap } = await importQuotes(supabase, quotesData, artistDataMap);
-  const { coachIdMap } = await importQuoteCoaches(supabase, coachesData, quoteIdMap);
-  const { trailerIdMap } = await importQuoteTrailers(supabase, trailersData, quoteIdMap);
+  const { quoteIdMap, artistIdMap, skippedQuotes } = await importQuotes(supabase, quotesData, artistDataMap);
+  const skippedExternalIds = new Set(skippedQuotes.map(q => q.external_id));
+  const { coachIdMap } = await importQuoteCoaches(supabase, coachesData, quoteIdMap, skippedExternalIds);
+  const { trailerIdMap } = await importQuoteTrailers(supabase, trailersData, quoteIdMap, skippedExternalIds);
 
   // Delete existing line items before importing (avoids unique constraint conflicts)
-  await deleteExistingLineItems(supabase, quoteIdMap);
-  await importLineItems(supabase, lineItemsData, quoteIdMap, coachIdMap, trailerIdMap);
+  await deleteExistingLineItems(supabase, quoteIdMap, skippedExternalIds);
+  await importLineItems(supabase, lineItemsData, quoteIdMap, coachIdMap, trailerIdMap, skippedExternalIds);
 
   // Import entity notes for quotes with notes
   await importEntityNotes(supabase, quotesData, quoteIdMap);
