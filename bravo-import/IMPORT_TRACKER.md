@@ -115,8 +115,8 @@ This document tracks all import batches, their status, validation results, and m
 
 | Environment | Imported | Status Applied | Notes |
 |-------------|----------|----------------|-------|
-| dev         | 2026-02-05 | Pending | All 59 quotes inserted. Artist-contact links all created. |
-| prod        | Not yet  | —              | — |
+| dev         | 2026-02-05 | 2026-02-06 | All 59 quotes inserted. Artist-contact links all created. Statuses applied (54 updated, 5 skipped). |
+| prod        | 2026-02-06 | 2026-02-06 | All 59 quotes inserted. 11 artist-contact links, 10 new contacts created. Manual fixes applied. Statuses applied (54 updated, 5 skipped). |
 
 ### Import Results (dev)
 
@@ -138,26 +138,21 @@ This document tracks all import batches, their status, validation results, and m
 ### Validation Summary (dev)
 
 - **Exact match:** 49 of 57 (86%) — 30412 and 30425 not yet validated
-- **Close match (< $100):** 2
-- **Mismatch (>= $100):** 6
+- **Close match (< $100):** 0
+- **Mismatch (>= $100):** 7
 
 ### Mismatched Quotes
 
 | Quote | ST Tour ID | StarTracker Total | Bravo Total | Difference | Root Cause | Resolution |
 |-------|-----------|-------------------|-------------|------------|------------|------------|
-| Daniel Donato - Jan 28 - March 2, 2026 | 30417 | $25,715.00 | $31,194.60 | +$5,479.60 | Known: Celebrity waived Payroll Fee in ST | Pending |
-| Snow Strippers - January 6 - March 1, 2026 | 29344 | $127,209.80 | $124,159.80 | -$3,050.00 | Known: $3,050 Per Diem on Trailer record in ST | Pending |
-| Carrie Underwood - Jan 1 - Dec 31, 2026 | 29330 | $339,000.00 | $338,400.00 | -$600.00 | Known: End of Tour Cleaning line item discrepancy | Pending |
-| 21 Savage - Test | 30491 | $3,954.60 | $3,804.60 | -$150.00 | TBD | Pending |
-| Tyler Farr - Jan 9-11, 2026 | 29230 | $9,113.97 | $9,219.60 | +$105.63 | Known: Non-standard Payroll Fee rate in ST | Pending |
-| Daniel Donato - Jan 28 - Dec 20, 2026 | 30441 | $190,729.00 | $190,629.00 | -$100.00 | TBD | Pending |
-
-### Close Matches
-
-| Quote | ST Tour ID | Difference |
-|-------|-----------|------------|
-| Nate Bargatze | 29291 | -$0.02 |
-| Lo Cash | 30487 | +$54.60 |
+| Tucker Wetmore - Jan 1 - Dec 31, 2026 | 29319 | $803,200.00 | $572,400.00 | -$230,800.00 | ST quote has a third coach (Bills RV) with partial duration, not currently supported in Bravo. Per-vehicle totals for Presley and Encore match. | Pending |
+| Daniel Donato - Jan 28 - March 2, 2026 | 30417 | $25,715.00 | $31,194.60 | +$5,479.60 | Known: Celebrity waived Payroll Fee in ST | Unresolved: need Discount line item capability |
+| Snow Strippers - January 6 - March 1, 2026 | 29344 | $127,209.80 | $124,159.80 | -$3,050.00 | Known: $3,050 Per Diem on Trailer record in ST | Fixed. Adding “Miscelleneous” line item to Trailer  discrepancy in Bravo quote for $3050 to make financial data match.  |
+| Carrie Underwood - Jan 1 - Dec 31, 2026 | 29330 | $339,000.00 | $338,400.00 | -$600.00 | Known: End of Tour Cleaning line item discrepancy | Fixed: Set “End of Tour Cleaning” to required_for = both so that can be added to either kind of quote. Will need to be manually removed, going forward, from LT Quotes OR create a separate item type (one for Short Term, one for Long Term). Quote fixed to match ST data.  |
+| 21 Savage - Test | 30491 | $3,954.60 | $3,804.60 | -$150.00 | ST has DriverDays=0 but ST total includes 3 days × $50 per diem ($150). Transformer skips Driver Per Diem when DriverDays=0. ST data inconsistency. | Fixed via Bravo UI. |
+| Tyler Farr - Jan 9-11, 2026 | 29230 | $9,113.97 | $9,219.60 | +$105.63 | Known: Non-standard Payroll Fee rate in ST | Fixed manually; to make financial data match, took a Flat Rate item (End of Tour Cleaning) and discounted by the difference of ~$109 so the totals would match. |
+| Daniel Donato - Jan 28 - Dec 20, 2026 | 30441 | $190,729.00 | $190,629.00 | -$100.00 | ST has $100 Per Diem on "The Rig" (swap vehicle added for Snowman breakdown per quote notes). All other line items on The Rig are $0 — the Per Diem is likely a missed zero-out during swap setup. Dirty data artifact. | Fixed. Added $100 Miscellaneous line item. |
+| Lo Cash | 30487 | $6829.20 | $6774.60 | -$54.60 | Payroll Fee set to 0% in ST (non-standard). Bravo doesn't allow waiving Payroll Fee. Needs Discount line item capability (not yet implemented). |
 
 ### Script Fixes Applied
 

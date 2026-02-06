@@ -1,0 +1,940 @@
+external_id,vehicle_name,vehicle_index,item_type,quantity,rate,unit_type,billing_category
+29200,First Order,0,"Coach Rate, Daily",42,1000,Per Day,Contracted
+29200,First Order,0,"Driver Rate, Daily",42,425,Per Day,Contracted
+29200,First Order,0,"Satellite Service, Daily",42,35,Per Day,Contracted
+29200,First Order,0,"Internet Service, Daily",42,50,Per Day,Contracted
+29200,First Order,0,"Insurance, Daily",42,50,Per Day,Contracted
+29200,First Order,0,"IFTA/DOT Fee, Daily",42,50,Per Day,Contracted
+29200,First Order,0,Fuel Estimate,12000,1.55,Per Mile,Contracted
+29200,First Order,0,Engine Services,12000,0.6,Per Mile,Contracted
+29200,First Order,0,Weekly Generator Services,5,195,Per Week,Contracted
+29200,First Order,0,Interior Cleanings,5,95,Per Week,Contracted
+29200,First Order,0,Weekly Coach Wash,5,100,Per Week,Contracted
+29200,First Order,0,Linen Cleanings,5,75,Per Week,Contracted
+29200,First Order,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29200,First Order,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+29200,First Order,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+29200,First Order,0,Tolls,1,845,Flat Rate,Contracted
+29200,First Order,0,Driver Overdrives,6,425,Per Quantity,Contracted
+29200,First Order,0,Driver Hotel Buy Outs,5,150,Per Quantity,Contracted
+29200,First Order,0,Driver Per Diem,42,50,Per Day,Contracted
+29200,First Order,0,Admin Fee,1,0,Flat Rate,Contracted
+29200,First Order,0,Miscellaneous,1,0,Flat Rate,Contracted
+29200,Havana,1,"Coach Rate, Daily",42,850,Per Day,Contracted
+29200,Havana,1,"Driver Rate, Daily",42,400,Per Day,Contracted
+29200,Havana,1,"Satellite Service, Daily",42,35,Per Day,Contracted
+29200,Havana,1,"Internet Service, Daily",42,50,Per Day,Contracted
+29200,Havana,1,"Insurance, Daily",42,50,Per Day,Contracted
+29200,Havana,1,"IFTA/DOT Fee, Daily",42,50,Per Day,Contracted
+29200,Havana,1,Fuel Estimate,12000,1.55,Per Mile,Contracted
+29200,Havana,1,Engine Services,12000,0.6,Per Mile,Contracted
+29200,Havana,1,Weekly Generator Services,5,195,Per Week,Contracted
+29200,Havana,1,Interior Cleanings,5,95,Per Week,Contracted
+29200,Havana,1,Weekly Coach Wash,5,100,Per Week,Contracted
+29200,Havana,1,Linen Cleanings,5,75,Per Week,Contracted
+29200,Havana,1,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29200,Havana,1,Upholstery Cleaning,1,0,Flat Rate,Contracted
+29200,Havana,1,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+29200,Havana,1,Tolls,1,845,Flat Rate,Contracted
+29200,Havana,1,Driver Overdrives,6,400,Per Quantity,Contracted
+29200,Havana,1,Driver Hotel Buy Outs,5,150,Per Quantity,Contracted
+29200,Havana,1,Driver Per Diem,42,50,Per Day,Contracted
+29200,Havana,1,Admin Fee,1,0,Flat Rate,Contracted
+29200,Havana,1,Miscellaneous,1,0,Flat Rate,Contracted
+29200,Hickory,2,"Coach Rate, Daily",42,850,Per Day,Contracted
+29200,Hickory,2,"Driver Rate, Daily",42,400,Per Day,Contracted
+29200,Hickory,2,"Satellite Service, Daily",42,35,Per Day,Contracted
+29200,Hickory,2,"Internet Service, Daily",42,50,Per Day,Contracted
+29200,Hickory,2,"Insurance, Daily",42,50,Per Day,Contracted
+29200,Hickory,2,"IFTA/DOT Fee, Daily",42,50,Per Day,Contracted
+29200,Hickory,2,Fuel Estimate,12000,1.55,Per Mile,Contracted
+29200,Hickory,2,Engine Services,12000,0.6,Per Mile,Contracted
+29200,Hickory,2,Weekly Generator Services,5,195,Per Week,Contracted
+29200,Hickory,2,Interior Cleanings,5,95,Per Week,Contracted
+29200,Hickory,2,Weekly Coach Wash,5,100,Per Week,Contracted
+29200,Hickory,2,Linen Cleanings,5,75,Per Week,Contracted
+29200,Hickory,2,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29200,Hickory,2,Upholstery Cleaning,1,0,Flat Rate,Contracted
+29200,Hickory,2,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+29200,Hickory,2,Tolls,1,845,Flat Rate,Contracted
+29200,Hickory,2,Driver Overdrives,6,400,Per Quantity,Contracted
+29200,Hickory,2,Driver Hotel Buy Outs,5,150,Per Quantity,Contracted
+29200,Hickory,2,Driver Per Diem,42,50,Per Day,Contracted
+29200,Hickory,2,Admin Fee,1,0,Flat Rate,Contracted
+29200,Hickory,2,Miscellaneous,1,0,Flat Rate,Contracted
+29200,Matador,3,"Coach Rate, Daily",42,850,Per Day,Contracted
+29200,Matador,3,"Driver Rate, Daily",42,400,Per Day,Contracted
+29200,Matador,3,"Satellite Service, Daily",42,35,Per Day,Contracted
+29200,Matador,3,"Internet Service, Daily",42,50,Per Day,Contracted
+29200,Matador,3,"Insurance, Daily",42,50,Per Day,Contracted
+29200,Matador,3,"IFTA/DOT Fee, Daily",42,50,Per Day,Contracted
+29200,Matador,3,Fuel Estimate,12000,1.55,Per Mile,Contracted
+29200,Matador,3,Engine Services,12000,0.6,Per Mile,Contracted
+29200,Matador,3,Weekly Generator Services,5,195,Per Week,Contracted
+29200,Matador,3,Interior Cleanings,5,95,Per Week,Contracted
+29200,Matador,3,Weekly Coach Wash,5,100,Per Week,Contracted
+29200,Matador,3,Linen Cleanings,5,75,Per Week,Contracted
+29200,Matador,3,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29200,Matador,3,Upholstery Cleaning,1,0,Flat Rate,Contracted
+29200,Matador,3,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+29200,Matador,3,Tolls,1,845,Flat Rate,Contracted
+29200,Matador,3,Driver Overdrives,6,400,Per Quantity,Contracted
+29200,Matador,3,Driver Hotel Buy Outs,5,150,Per Quantity,Contracted
+29200,Matador,3,Driver Per Diem,42,50,Per Day,Contracted
+29200,Matador,3,Admin Fee,1,0,Flat Rate,Contracted
+29200,Matador,3,Miscellaneous,1,0,Flat Rate,Contracted
+29326,Attitude,0,"Coach Rate, Daily",55,750,Per Day,Contracted
+29326,Attitude,0,"Driver Rate, Daily",55,450,Per Day,Contracted
+29326,Attitude,0,"Satellite Service, Daily",55,35,Per Day,Contracted
+29326,Attitude,0,"Internet Service, Daily",55,50,Per Day,Contracted
+29326,Attitude,0,"Insurance, Daily",55,50,Per Day,Contracted
+29326,Attitude,0,"IFTA/DOT Fee, Daily",55,50,Per Day,Contracted
+29326,Attitude,0,Fuel Estimate,18550,1.55,Per Mile,Contracted
+29326,Attitude,0,Engine Services,18550,0.5,Per Mile,Contracted
+29326,Attitude,0,Weekly Generator Services,7,195,Per Week,Contracted
+29326,Attitude,0,Interior Cleanings,7,95,Per Week,Contracted
+29326,Attitude,0,Weekly Coach Wash,7,100,Per Week,Contracted
+29326,Attitude,0,Linen Cleanings,7,75,Per Week,Contracted
+29326,Attitude,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29326,Attitude,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+29326,Attitude,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+29326,Attitude,0,Tolls,1,495,Flat Rate,Contracted
+29326,Attitude,0,Driver Overdrives,13,450,Per Quantity,Contracted
+29326,Attitude,0,Driver Per Diem,55,50,Per Day,Contracted
+29326,Attitude,0,Admin Fee,1,0,Flat Rate,Contracted
+29326,Attitude,0,Miscellaneous,1,0,Flat Rate,Contracted
+29326,Attitude,0,"Co-Driver Rate, Daily",14,450,Per Day,Contracted
+29326,Attitude,0,Co-Driver Per Diems,14,50,Per Day,Contracted
+29326,Highways,1,"Coach Rate, Daily",55,850,Per Day,Contracted
+29326,Highways,1,"Driver Rate, Daily",55,425,Per Day,Contracted
+29326,Highways,1,"Satellite Service, Daily",55,35,Per Day,Contracted
+29326,Highways,1,"Internet Service, Daily",55,50,Per Day,Contracted
+29326,Highways,1,"Insurance, Daily",55,50,Per Day,Contracted
+29326,Highways,1,"IFTA/DOT Fee, Daily",55,50,Per Day,Contracted
+29326,Highways,1,Fuel Estimate,18550,1.55,Per Mile,Contracted
+29326,Highways,1,Engine Services,18550,0.5,Per Mile,Contracted
+29326,Highways,1,Weekly Generator Services,7,195,Per Week,Contracted
+29326,Highways,1,Interior Cleanings,7,95,Per Week,Contracted
+29326,Highways,1,Weekly Coach Wash,7,100,Per Week,Contracted
+29326,Highways,1,Linen Cleanings,7,75,Per Week,Contracted
+29326,Highways,1,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29326,Highways,1,Upholstery Cleaning,1,0,Flat Rate,Contracted
+29326,Highways,1,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+29326,Highways,1,Tolls,1,495,Flat Rate,Contracted
+29326,Highways,1,Driver Overdrives,13,425,Per Quantity,Contracted
+29326,Highways,1,Driver Per Diem,55,50,Per Day,Contracted
+29326,Highways,1,Admin Fee,1,0,Flat Rate,Contracted
+29326,Highways,1,Miscellaneous,1,0,Flat Rate,Contracted
+29326,Highways,1,"Co-Driver Rate, Daily",14,425,Per Day,Contracted
+29326,Highways,1,Co-Driver Per Diems,14,50,Per Day,Contracted
+29337,Jester,0,"Coach Rate, Daily",4,800,Per Day,Contracted
+29337,Jester,0,"Driver Rate, Daily",0,0,Per Day,Contracted
+29337,Jester,0,"Satellite Service, Daily",4,35,Per Day,Contracted
+29337,Jester,0,"Internet Service, Daily",4,50,Per Day,Contracted
+29337,Jester,0,"Insurance, Daily",4,50,Per Day,Contracted
+29337,Jester,0,"IFTA/DOT Fee, Daily",4,50,Per Day,Contracted
+29337,Jester,0,Fuel Estimate,0,1.55,Per Mile,Contracted
+29337,Jester,0,Engine Services,0,0.75,Per Mile,Contracted
+29337,Jester,0,Weekly Generator Services,1,195,Per Week,Contracted
+29337,Jester,0,Interior Cleanings,0,95,Per Week,Contracted
+29337,Jester,0,Weekly Coach Wash,0,100,Per Week,Contracted
+29337,Jester,0,Linen Cleanings,0,75,Per Week,Contracted
+29337,Jester,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29337,Jester,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+29337,Jester,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+29337,Jester,0,Tolls,1,0,Flat Rate,Contracted
+29337,Jester,0,Admin Fee,1,0,Flat Rate,Contracted
+29337,Jester,0,Miscellaneous,1,0,Flat Rate,Contracted
+29338,Jester,0,"Coach Rate, Daily",4,800,Per Day,Contracted
+29338,Jester,0,"Driver Rate, Daily",0,0,Per Day,Contracted
+29338,Jester,0,"Satellite Service, Daily",4,35,Per Day,Contracted
+29338,Jester,0,"Internet Service, Daily",4,50,Per Day,Contracted
+29338,Jester,0,"Insurance, Daily",4,50,Per Day,Contracted
+29338,Jester,0,"IFTA/DOT Fee, Daily",4,50,Per Day,Contracted
+29338,Jester,0,Fuel Estimate,0,1.55,Per Mile,Contracted
+29338,Jester,0,Engine Services,0,0.75,Per Mile,Contracted
+29338,Jester,0,Weekly Generator Services,1,195,Per Week,Contracted
+29338,Jester,0,Interior Cleanings,0,95,Per Week,Contracted
+29338,Jester,0,Weekly Coach Wash,0,100,Per Week,Contracted
+29338,Jester,0,Linen Cleanings,0,75,Per Week,Contracted
+29338,Jester,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29338,Jester,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+29338,Jester,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+29338,Jester,0,Tolls,1,0,Flat Rate,Contracted
+29338,Jester,0,Admin Fee,1,0,Flat Rate,Contracted
+29338,Jester,0,Miscellaneous,1,0,Flat Rate,Contracted
+29352,Been There,0,"Coach Rate, Daily",23,650,Per Day,Contracted
+29352,Been There,0,"Driver Rate, Daily",23,450,Per Day,Contracted
+29352,Been There,0,"Satellite Service, Daily",23,35,Per Day,Contracted
+29352,Been There,0,"Internet Service, Daily",23,50,Per Day,Contracted
+29352,Been There,0,"Insurance, Daily",23,50,Per Day,Contracted
+29352,Been There,0,"IFTA/DOT Fee, Daily",23,50,Per Day,Contracted
+29352,Been There,0,Fuel Estimate,6375,1.3,Per Mile,Contracted
+29352,Been There,0,Engine Services,6375,0.5,Per Mile,Contracted
+29352,Been There,0,Weekly Generator Services,2,195,Per Week,Contracted
+29352,Been There,0,Interior Cleanings,2,95,Per Week,Contracted
+29352,Been There,0,Weekly Coach Wash,2,140,Per Week,Contracted
+29352,Been There,0,Linen Cleanings,2,75,Per Week,Contracted
+29352,Been There,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29352,Been There,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+29352,Been There,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+29352,Been There,0,Tolls,1,285,Flat Rate,Contracted
+29352,Been There,0,Driver Overdrives,2,450,Per Quantity,Contracted
+29352,Been There,0,Driver Hotel Buy Outs,2,150,Per Quantity,Contracted
+29352,Been There,0,Driver Per Diem,23,50,Per Day,Contracted
+29352,Been There,0,Admin Fee,1,0,Flat Rate,Contracted
+29352,Been There,0,Miscellaneous,1,0,Flat Rate,Contracted
+29352,Been There,0,"Co-Driver Rate, Daily",8,450,Per Day,Contracted
+29352,Been There,0,Co-Driver Per Diems,8,50,Per Day,Contracted
+29352,CC9033,1,"Trailer Rate, Daily",23,100,Per Day,Contracted
+29356,Carolina,0,"Coach Rate, Daily",11,800,Per Day,Contracted
+29356,Carolina,0,"Driver Rate, Daily",11,425,Per Day,Contracted
+29356,Carolina,0,"Satellite Service, Daily",11,35,Per Day,Contracted
+29356,Carolina,0,"Internet Service, Daily",11,0,Per Day,Contracted
+29356,Carolina,0,"Insurance, Daily",11,50,Per Day,Contracted
+29356,Carolina,0,"IFTA/DOT Fee, Daily",11,50,Per Day,Contracted
+29356,Carolina,0,Fuel Estimate,2960,0,Per Mile,Contracted
+29356,Carolina,0,Engine Services,2960,0.5,Per Mile,Contracted
+29356,Carolina,0,Weekly Generator Services,1,195,Per Week,Contracted
+29356,Carolina,0,Interior Cleanings,1,95,Per Week,Contracted
+29356,Carolina,0,Weekly Coach Wash,1,100,Per Week,Contracted
+29356,Carolina,0,Linen Cleanings,1,75,Per Week,Contracted
+29356,Carolina,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29356,Carolina,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+29356,Carolina,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+29356,Carolina,0,Tolls,1,615,Flat Rate,Contracted
+29356,Carolina,0,Driver Per Diem,11,50,Per Day,Contracted
+29356,Carolina,0,Admin Fee,1,0,Flat Rate,Contracted
+29356,Carolina,0,Miscellaneous,1,0,Flat Rate,Contracted
+29356,Carolina,0,"Co-Driver Rate, Daily",4,425,Per Day,Contracted
+29356,Carolina,0,Co-Driver Per Diems,4,50,Per Day,Contracted
+29356,Gypsy,1,"Coach Rate, Daily",11,750,Per Day,Contracted
+29356,Gypsy,1,"Driver Rate, Daily",11,400,Per Day,Contracted
+29356,Gypsy,1,"Satellite Service, Daily",11,35,Per Day,Contracted
+29356,Gypsy,1,"Internet Service, Daily",11,0,Per Day,Contracted
+29356,Gypsy,1,"Insurance, Daily",11,50,Per Day,Contracted
+29356,Gypsy,1,"IFTA/DOT Fee, Daily",11,50,Per Day,Contracted
+29356,Gypsy,1,Fuel Estimate,2960,0,Per Mile,Contracted
+29356,Gypsy,1,Engine Services,2960,0.5,Per Mile,Contracted
+29356,Gypsy,1,Weekly Generator Services,1,195,Per Week,Contracted
+29356,Gypsy,1,Interior Cleanings,1,95,Per Week,Contracted
+29356,Gypsy,1,Weekly Coach Wash,1,100,Per Week,Contracted
+29356,Gypsy,1,Linen Cleanings,1,75,Per Week,Contracted
+29356,Gypsy,1,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29356,Gypsy,1,Upholstery Cleaning,1,0,Flat Rate,Contracted
+29356,Gypsy,1,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+29356,Gypsy,1,Tolls,1,615,Flat Rate,Contracted
+29356,Gypsy,1,Driver Per Diem,11,50,Per Day,Contracted
+29356,Gypsy,1,Admin Fee,1,0,Flat Rate,Contracted
+29356,Gypsy,1,Miscellaneous,1,0,Flat Rate,Contracted
+29356,Gypsy,1,"Co-Driver Rate, Daily",4,400,Per Day,Contracted
+29356,Gypsy,1,Co-Driver Per Diems,4,50,Per Day,Contracted
+29367,Confession,0,"Coach Rate, Monthly",6,20000,Per Month,Contracted
+29367,Confession,0,"Driver Rate, Daily",0,0,Per Day,Contracted
+29367,Confession,0,"Satellite Service, Monthly",6,350,Per Month,Contracted
+29367,Confession,0,"Internet Service, Monthly",6,500,Per Month,Contracted
+29367,Confession,0,"Insurance, Monthly",6,850,Per Month,Contracted
+29367,Confession,0,"IFTA/DOT Fee, Monthly",6,500,Per Month,Contracted
+29367,Confession,0,Fuel Estimate,0,0,Per Mile,Contracted
+29367,Confession,0,Engine Services,0,0.5,Per Mile,Contracted
+29367,Confession,0,Admin Fee,1,0,Flat Rate,Contracted
+29367,Confession,0,Miscellaneous,1,0,Flat Rate,Contracted
+29378,Telluride,0,"Coach Rate, Daily",5,900,Per Day,Contracted
+29378,Telluride,0,"Driver Rate, Daily",6,425,Per Day,Contracted
+29378,Telluride,0,"Satellite Service, Daily",5,35,Per Day,Contracted
+29378,Telluride,0,"Internet Service, Daily",5,50,Per Day,Contracted
+29378,Telluride,0,"Insurance, Daily",5,50,Per Day,Contracted
+29378,Telluride,0,"IFTA/DOT Fee, Daily",5,50,Per Day,Contracted
+29378,Telluride,0,Fuel Estimate,1975,1.35,Per Mile,Contracted
+29378,Telluride,0,Engine Services,1975,0.5,Per Mile,Contracted
+29378,Telluride,0,Weekly Generator Services,1,195,Per Week,Contracted
+29378,Telluride,0,Interior Cleanings,0,95,Per Week,Contracted
+29378,Telluride,0,Weekly Coach Wash,0,100,Per Week,Contracted
+29378,Telluride,0,Linen Cleanings,0,75,Per Week,Contracted
+29378,Telluride,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29378,Telluride,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+29378,Telluride,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+29378,Telluride,0,Tolls,1,165,Flat Rate,Contracted
+29378,Telluride,0,Driver Overdrives,2,425,Per Quantity,Contracted
+29378,Telluride,0,Driver Per Diem,6,50,Per Day,Contracted
+29378,Telluride,0,Admin Fee,1,0,Flat Rate,Contracted
+29378,Telluride,0,Miscellaneous,1,0,Flat Rate,Contracted
+29378,Telluride,0,"Co-Driver Rate, Daily",2,425,Per Day,Contracted
+29378,Telluride,0,Co-Driver Per Diems,2,50,Per Day,Contracted
+29379,Telluride,0,"Coach Rate, Daily",4,900,Per Day,Contracted
+29379,Telluride,0,"Driver Rate, Daily",5,425,Per Day,Contracted
+29379,Telluride,0,"Satellite Service, Daily",4,35,Per Day,Contracted
+29379,Telluride,0,"Internet Service, Daily",4,50,Per Day,Contracted
+29379,Telluride,0,"Insurance, Daily",4,50,Per Day,Contracted
+29379,Telluride,0,"IFTA/DOT Fee, Daily",4,50,Per Day,Contracted
+29379,Telluride,0,Fuel Estimate,1335,1.35,Per Mile,Contracted
+29379,Telluride,0,Engine Services,1335,0.5,Per Mile,Contracted
+29379,Telluride,0,Weekly Generator Services,1,195,Per Week,Contracted
+29379,Telluride,0,Interior Cleanings,0,95,Per Week,Contracted
+29379,Telluride,0,Weekly Coach Wash,0,100,Per Week,Contracted
+29379,Telluride,0,Linen Cleanings,0,75,Per Week,Contracted
+29379,Telluride,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+29379,Telluride,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+29379,Telluride,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+29379,Telluride,0,Tolls,1,0,Flat Rate,Contracted
+29379,Telluride,0,Driver Overdrives,1,425,Per Quantity,Contracted
+29379,Telluride,0,Driver Per Diem,5,50,Per Day,Contracted
+29379,Telluride,0,Admin Fee,1,0,Flat Rate,Contracted
+29379,Telluride,0,Miscellaneous,1,0,Flat Rate,Contracted
+30368,Freedom,0,"Coach Rate, Daily",13,900,Per Day,Contracted
+30368,Freedom,0,"Driver Rate, Daily",13,425,Per Day,Contracted
+30368,Freedom,0,"Satellite Service, Daily",13,35,Per Day,Contracted
+30368,Freedom,0,"Internet Service, Daily",13,50,Per Day,Contracted
+30368,Freedom,0,"Insurance, Daily",13,50,Per Day,Contracted
+30368,Freedom,0,"IFTA/DOT Fee, Daily",13,50,Per Day,Contracted
+30368,Freedom,0,Fuel Estimate,3525,1.35,Per Mile,Contracted
+30368,Freedom,0,Engine Services,3525,0.5,Per Mile,Contracted
+30368,Freedom,0,Weekly Generator Services,1,195,Per Week,Contracted
+30368,Freedom,0,Interior Cleanings,0,95,Per Week,Contracted
+30368,Freedom,0,Weekly Coach Wash,0,100,Per Week,Contracted
+30368,Freedom,0,Linen Cleanings,0,75,Per Week,Contracted
+30368,Freedom,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30368,Freedom,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30368,Freedom,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30368,Freedom,0,Tolls,1,0,Flat Rate,Contracted
+30368,Freedom,0,Driver Hotel Buy Outs,6,150,Per Quantity,Contracted
+30368,Freedom,0,Driver Per Diem,13,50,Per Day,Contracted
+30368,Freedom,0,Admin Fee,1,0,Flat Rate,Contracted
+30368,Freedom,0,Miscellaneous,1,0,Flat Rate,Contracted
+30368,Gypsy,1,"Coach Rate, Daily",13,750,Per Day,Contracted
+30368,Gypsy,1,"Driver Rate, Daily",13,400,Per Day,Contracted
+30368,Gypsy,1,"Satellite Service, Daily",13,35,Per Day,Contracted
+30368,Gypsy,1,"Internet Service, Daily",13,50,Per Day,Contracted
+30368,Gypsy,1,"Insurance, Daily",13,50,Per Day,Contracted
+30368,Gypsy,1,"IFTA/DOT Fee, Daily",13,50,Per Day,Contracted
+30368,Gypsy,1,Fuel Estimate,3525,1.35,Per Mile,Contracted
+30368,Gypsy,1,Engine Services,3525,0.5,Per Mile,Contracted
+30368,Gypsy,1,Weekly Generator Services,1,195,Per Week,Contracted
+30368,Gypsy,1,Interior Cleanings,0,95,Per Week,Contracted
+30368,Gypsy,1,Weekly Coach Wash,0,100,Per Week,Contracted
+30368,Gypsy,1,Linen Cleanings,0,75,Per Week,Contracted
+30368,Gypsy,1,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30368,Gypsy,1,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30368,Gypsy,1,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30368,Gypsy,1,Tolls,1,0,Flat Rate,Contracted
+30368,Gypsy,1,Driver Hotel Buy Outs,6,150,Per Quantity,Contracted
+30368,Gypsy,1,Driver Per Diem,13,50,Per Day,Contracted
+30368,Gypsy,1,Admin Fee,1,0,Flat Rate,Contracted
+30368,Gypsy,1,Miscellaneous,1,0,Flat Rate,Contracted
+30368,Headliner,2,"Coach Rate, Daily",13,900,Per Day,Contracted
+30368,Headliner,2,"Driver Rate, Daily",13,425,Per Day,Contracted
+30368,Headliner,2,"Satellite Service, Daily",13,35,Per Day,Contracted
+30368,Headliner,2,"Internet Service, Daily",13,50,Per Day,Contracted
+30368,Headliner,2,"Insurance, Daily",13,50,Per Day,Contracted
+30368,Headliner,2,"IFTA/DOT Fee, Daily",13,50,Per Day,Contracted
+30368,Headliner,2,Fuel Estimate,3525,1.35,Per Mile,Contracted
+30368,Headliner,2,Engine Services,3525,0.5,Per Mile,Contracted
+30368,Headliner,2,Weekly Generator Services,1,195,Per Week,Contracted
+30368,Headliner,2,Interior Cleanings,0,95,Per Week,Contracted
+30368,Headliner,2,Weekly Coach Wash,0,100,Per Week,Contracted
+30368,Headliner,2,Linen Cleanings,0,75,Per Week,Contracted
+30368,Headliner,2,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30368,Headliner,2,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30368,Headliner,2,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30368,Headliner,2,Tolls,1,0,Flat Rate,Contracted
+30368,Headliner,2,Driver Hotel Buy Outs,6,150,Per Quantity,Contracted
+30368,Headliner,2,Driver Per Diem,13,50,Per Day,Contracted
+30368,Headliner,2,Admin Fee,1,0,Flat Rate,Contracted
+30368,Headliner,2,Miscellaneous,1,0,Flat Rate,Contracted
+30368,High Roller,3,"Coach Rate, Daily",13,900,Per Day,Contracted
+30368,High Roller,3,"Driver Rate, Daily",13,425,Per Day,Contracted
+30368,High Roller,3,"Satellite Service, Daily",13,35,Per Day,Contracted
+30368,High Roller,3,"Internet Service, Daily",13,50,Per Day,Contracted
+30368,High Roller,3,"Insurance, Daily",13,50,Per Day,Contracted
+30368,High Roller,3,"IFTA/DOT Fee, Daily",13,50,Per Day,Contracted
+30368,High Roller,3,Fuel Estimate,3525,1.35,Per Mile,Contracted
+30368,High Roller,3,Engine Services,3525,0.5,Per Mile,Contracted
+30368,High Roller,3,Weekly Generator Services,1,195,Per Week,Contracted
+30368,High Roller,3,Interior Cleanings,0,95,Per Week,Contracted
+30368,High Roller,3,Weekly Coach Wash,0,100,Per Week,Contracted
+30368,High Roller,3,Linen Cleanings,0,75,Per Week,Contracted
+30368,High Roller,3,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30368,High Roller,3,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30368,High Roller,3,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30368,High Roller,3,Tolls,1,0,Flat Rate,Contracted
+30368,High Roller,3,Driver Hotel Buy Outs,6,150,Per Quantity,Contracted
+30368,High Roller,3,Driver Per Diem,13,50,Per Day,Contracted
+30368,High Roller,3,Admin Fee,1,0,Flat Rate,Contracted
+30368,High Roller,3,Miscellaneous,1,0,Flat Rate,Contracted
+30373,CC9040,0,"Trailer Rate, Daily",32,95,Per Day,Contracted
+30373,CC9043,1,"Trailer Rate, Daily",32,95,Per Day,Contracted
+30373,Drifter,2,"Coach Rate, Daily",32,550,Per Day,Contracted
+30373,Drifter,2,"Driver Rate, Daily",32,450,Per Day,Contracted
+30373,Drifter,2,"Satellite Service, Daily",32,35,Per Day,Contracted
+30373,Drifter,2,"Internet Service, Daily",32,50,Per Day,Contracted
+30373,Drifter,2,"Insurance, Daily",32,50,Per Day,Contracted
+30373,Drifter,2,"IFTA/DOT Fee, Daily",32,50,Per Day,Contracted
+30373,Drifter,2,Fuel Estimate,11175,0,Per Mile,Contracted
+30373,Drifter,2,Engine Services,11175,0.6,Per Mile,Contracted
+30373,Drifter,2,Weekly Generator Services,4,195,Per Week,Contracted
+30373,Drifter,2,Interior Cleanings,4,95,Per Week,Contracted
+30373,Drifter,2,Weekly Coach Wash,4,140,Per Week,Contracted
+30373,Drifter,2,Linen Cleanings,4,75,Per Week,Contracted
+30373,Drifter,2,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30373,Drifter,2,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30373,Drifter,2,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30373,Drifter,2,Tolls,1,675,Flat Rate,Contracted
+30373,Drifter,2,Driver Overdrives,5,450,Per Quantity,Contracted
+30373,Drifter,2,Driver Hotel Buy Outs,1,150,Per Quantity,Contracted
+30373,Drifter,2,Driver Per Diem,32,50,Per Day,Contracted
+30373,Drifter,2,Admin Fee,1,0,Flat Rate,Contracted
+30373,Drifter,2,Miscellaneous,1,0,Flat Rate,Contracted
+30373,Tupelo Honey,3,"Coach Rate, Daily",32,550,Per Day,Contracted
+30373,Tupelo Honey,3,"Driver Rate, Daily",32,450,Per Day,Contracted
+30373,Tupelo Honey,3,"Satellite Service, Daily",32,35,Per Day,Contracted
+30373,Tupelo Honey,3,"Internet Service, Daily",32,50,Per Day,Contracted
+30373,Tupelo Honey,3,"Insurance, Daily",32,50,Per Day,Contracted
+30373,Tupelo Honey,3,"IFTA/DOT Fee, Daily",32,50,Per Day,Contracted
+30373,Tupelo Honey,3,Fuel Estimate,11175,0,Per Mile,Contracted
+30373,Tupelo Honey,3,Engine Services,11175,0.6,Per Mile,Contracted
+30373,Tupelo Honey,3,Weekly Generator Services,4,195,Per Week,Contracted
+30373,Tupelo Honey,3,Interior Cleanings,4,95,Per Week,Contracted
+30373,Tupelo Honey,3,Weekly Coach Wash,4,140,Per Week,Contracted
+30373,Tupelo Honey,3,Linen Cleanings,4,75,Per Week,Contracted
+30373,Tupelo Honey,3,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30373,Tupelo Honey,3,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30373,Tupelo Honey,3,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30373,Tupelo Honey,3,Tolls,1,675,Flat Rate,Contracted
+30373,Tupelo Honey,3,Driver Overdrives,5,450,Per Quantity,Contracted
+30373,Tupelo Honey,3,Driver Hotel Buy Outs,1,150,Per Quantity,Contracted
+30373,Tupelo Honey,3,Driver Per Diem,32,50,Per Day,Contracted
+30373,Tupelo Honey,3,Admin Fee,1,0,Flat Rate,Contracted
+30373,Tupelo Honey,3,Miscellaneous,1,0,Flat Rate,Contracted
+30374,Cayman,0,"Coach Rate, Daily",9,750,Per Day,Contracted
+30374,Cayman,0,"Driver Rate, Daily",9,400,Per Day,Contracted
+30374,Cayman,0,"Satellite Service, Daily",9,35,Per Day,Contracted
+30374,Cayman,0,"Internet Service, Daily",9,50,Per Day,Contracted
+30374,Cayman,0,"Insurance, Daily",9,50,Per Day,Contracted
+30374,Cayman,0,"IFTA/DOT Fee, Daily",9,50,Per Day,Contracted
+30374,Cayman,0,Fuel Estimate,2450,1.55,Per Mile,Contracted
+30374,Cayman,0,Engine Services,2450,0.5,Per Mile,Contracted
+30374,Cayman,0,Weekly Generator Services,1,195,Per Week,Contracted
+30374,Cayman,0,Interior Cleanings,1,95,Per Week,Contracted
+30374,Cayman,0,Weekly Coach Wash,1,100,Per Week,Contracted
+30374,Cayman,0,Linen Cleanings,1,75,Per Week,Contracted
+30374,Cayman,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30374,Cayman,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30374,Cayman,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30374,Cayman,0,Tolls,1,275,Flat Rate,Contracted
+30374,Cayman,0,Driver Overdrives,1,400,Per Quantity,Contracted
+30374,Cayman,0,Driver Hotel Buy Outs,1,150,Per Quantity,Contracted
+30374,Cayman,0,Driver Per Diem,9,50,Per Day,Contracted
+30374,Cayman,0,Admin Fee,1,0,Flat Rate,Contracted
+30374,Cayman,0,Miscellaneous,1,0,Flat Rate,Contracted
+30376,Snowman,0,"Coach Rate, Daily",48,550,Per Day,Contracted
+30376,Snowman,0,"Driver Rate, Daily",48,400,Per Day,Contracted
+30376,Snowman,0,"Satellite Service, Daily",48,35,Per Day,Contracted
+30376,Snowman,0,"Internet Service, Daily",48,50,Per Day,Contracted
+30376,Snowman,0,"Insurance, Daily",48,50,Per Day,Contracted
+30376,Snowman,0,"IFTA/DOT Fee, Daily",48,50,Per Day,Contracted
+30376,Snowman,0,Fuel Estimate,12350,1.3,Per Mile,Contracted
+30376,Snowman,0,Engine Services,12350,0.5,Per Mile,Contracted
+30376,Snowman,0,Weekly Generator Services,6,195,Per Week,Contracted
+30376,Snowman,0,Interior Cleanings,6,95,Per Week,Contracted
+30376,Snowman,0,Weekly Coach Wash,6,100,Per Week,Contracted
+30376,Snowman,0,Linen Cleanings,6,75,Per Week,Contracted
+30376,Snowman,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30376,Snowman,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30376,Snowman,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30376,Snowman,0,Tolls,1,905,Flat Rate,Contracted
+30376,Snowman,0,Driver Overdrives,9,400,Per Quantity,Contracted
+30376,Snowman,0,Driver Per Diem,48,50,Per Day,Contracted
+30376,Snowman,0,Admin Fee,1,0,Flat Rate,Contracted
+30376,Snowman,0,Miscellaneous,1,0,Flat Rate,Contracted
+30376,Snowman,0,"Co-Driver Rate, Daily",5,400,Per Day,Contracted
+30376,Snowman,0,Co-Driver Per Diems,5,50,Per Day,Contracted
+30379,Havana,0,"Coach Rate, Daily",4,750,Per Day,Contracted
+30379,Havana,0,"Driver Rate, Daily",4,400,Per Day,Contracted
+30379,Havana,0,"Satellite Service, Daily",4,35,Per Day,Contracted
+30379,Havana,0,"Internet Service, Daily",4,50,Per Day,Contracted
+30379,Havana,0,"Insurance, Daily",4,50,Per Day,Contracted
+30379,Havana,0,"IFTA/DOT Fee, Daily",4,50,Per Day,Contracted
+30379,Havana,0,Fuel Estimate,1650,1.5,Per Mile,Contracted
+30379,Havana,0,Engine Services,1650,0.6,Per Mile,Contracted
+30379,Havana,0,Weekly Generator Services,1,195,Per Week,Contracted
+30379,Havana,0,Interior Cleanings,0,95,Per Week,Contracted
+30379,Havana,0,Weekly Coach Wash,0,100,Per Week,Contracted
+30379,Havana,0,Linen Cleanings,0,75,Per Week,Contracted
+30379,Havana,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30379,Havana,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30379,Havana,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30379,Havana,0,Tolls,1,0,Flat Rate,Contracted
+30379,Havana,0,Driver Overdrives,1,400,Per Quantity,Contracted
+30379,Havana,0,Driver Per Diem,4,50,Per Day,Contracted
+30379,Havana,0,Admin Fee,1,0,Flat Rate,Contracted
+30379,Havana,0,Miscellaneous,1,0,Flat Rate,Contracted
+30379,Havana,0,"Co-Driver Rate, Daily",2,400,Per Day,Contracted
+30379,Havana,0,Co-Driver Per Diems,2,50,Per Day,Contracted
+30381,Summit,0,"Coach Rate, Daily",73,825,Per Day,Contracted
+30381,Summit,0,"Driver Rate, Daily",73,425,Per Day,Contracted
+30381,Summit,0,"Satellite Service, Daily",73,35,Per Day,Contracted
+30381,Summit,0,"Internet Service, Daily",73,50,Per Day,Contracted
+30381,Summit,0,"Insurance, Daily",73,50,Per Day,Contracted
+30381,Summit,0,"IFTA/DOT Fee, Daily",73,50,Per Day,Contracted
+30381,Summit,0,Fuel Estimate,18760,1.35,Per Mile,Contracted
+30381,Summit,0,Engine Services,18760,0.6,Per Mile,Contracted
+30381,Summit,0,Weekly Generator Services,9,195,Per Week,Contracted
+30381,Summit,0,Interior Cleanings,9,95,Per Week,Contracted
+30381,Summit,0,Weekly Coach Wash,9,100,Per Week,Contracted
+30381,Summit,0,Linen Cleanings,9,75,Per Week,Contracted
+30381,Summit,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30381,Summit,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30381,Summit,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30381,Summit,0,Tolls,1,465,Flat Rate,Contracted
+30381,Summit,0,Driver Overdrives,1,425,Per Quantity,Contracted
+30381,Summit,0,Driver Hotel Buy Outs,3,150,Per Quantity,Contracted
+30381,Summit,0,Driver Per Diem,73,50,Per Day,Contracted
+30381,Summit,0,Admin Fee,1,0,Flat Rate,Contracted
+30381,Summit,0,Miscellaneous,1,0,Flat Rate,Contracted
+30381,Summit,0,"Co-Driver Rate, Daily",21,425,Per Day,Contracted
+30381,Summit,0,Co-Driver Per Diems,21,50,Per Day,Contracted
+30385,All In,0,"Coach Rate, Daily",14,575,Per Day,Contracted
+30385,All In,0,"Driver Rate, Daily",14,450,Per Day,Contracted
+30385,All In,0,"Satellite Service, Daily",14,35,Per Day,Contracted
+30385,All In,0,"Internet Service, Daily",14,50,Per Day,Contracted
+30385,All In,0,"Insurance, Daily",14,50,Per Day,Contracted
+30385,All In,0,"IFTA/DOT Fee, Daily",14,50,Per Day,Contracted
+30385,All In,0,Fuel Estimate,7050,1.3,Per Mile,Contracted
+30385,All In,0,Engine Services,7050,0.5,Per Mile,Contracted
+30385,All In,0,Weekly Generator Services,2,195,Per Week,Contracted
+30385,All In,0,Interior Cleanings,2,95,Per Week,Contracted
+30385,All In,0,Weekly Coach Wash,2,140,Per Week,Contracted
+30385,All In,0,Linen Cleanings,2,75,Per Week,Contracted
+30385,All In,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30385,All In,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30385,All In,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30385,All In,0,Tolls,1,15,Flat Rate,Contracted
+30385,All In,0,Driver Overdrives,7,450,Per Quantity,Contracted
+30385,All In,0,Driver Per Diem,14,50,Per Day,Contracted
+30385,All In,0,Admin Fee,1,0,Flat Rate,Contracted
+30385,All In,0,Miscellaneous,1,0,Flat Rate,Contracted
+30385,All In,0,"Co-Driver Rate, Daily",4,450,Per Day,Contracted
+30385,All In,0,Co-Driver Per Diems,4,50,Per Day,Contracted
+30385,CC9038,1,"Trailer Rate, Daily",14,90,Per Day,Contracted
+30394,Adrenaline,0,"Coach Rate, Daily",18,500,Per Day,Contracted
+30394,Adrenaline,0,"Driver Rate, Daily",18,450,Per Day,Contracted
+30394,Adrenaline,0,"Satellite Service, Daily",18,35,Per Day,Contracted
+30394,Adrenaline,0,"Internet Service, Daily",18,35,Per Day,Contracted
+30394,Adrenaline,0,"Insurance, Daily",18,0,Per Day,Contracted
+30394,Adrenaline,0,"IFTA/DOT Fee, Daily",18,35,Per Day,Contracted
+30394,Adrenaline,0,Fuel Estimate,4740,1,Per Mile,Contracted
+30394,Adrenaline,0,Engine Services,4740,0.3,Per Mile,Contracted
+30394,Adrenaline,0,Weekly Generator Services,2,195,Per Week,Contracted
+30394,Adrenaline,0,Interior Cleanings,2,95,Per Week,Contracted
+30394,Adrenaline,0,Weekly Coach Wash,2,140,Per Week,Contracted
+30394,Adrenaline,0,Linen Cleanings,2,75,Per Week,Contracted
+30394,Adrenaline,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30394,Adrenaline,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30394,Adrenaline,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30394,Adrenaline,0,Tolls,1,35,Flat Rate,Contracted
+30394,Adrenaline,0,Driver Overdrives,3,450,Per Quantity,Contracted
+30394,Adrenaline,0,Driver Per Diem,18,50,Per Day,Contracted
+30394,Adrenaline,0,Admin Fee,1,0,Flat Rate,Contracted
+30394,Adrenaline,0,Miscellaneous,1,0,Flat Rate,Contracted
+30394,CC9017,1,"Trailer Rate, Daily",18,75,Per Day,Contracted
+30394,CC9033,2,"Trailer Rate, Daily",18,80,Per Day,Contracted
+30394,Conspiracy,3,"Coach Rate, Daily",18,500,Per Day,Contracted
+30394,Conspiracy,3,"Driver Rate, Daily",18,450,Per Day,Contracted
+30394,Conspiracy,3,"Satellite Service, Daily",18,35,Per Day,Contracted
+30394,Conspiracy,3,"Internet Service, Daily",18,35,Per Day,Contracted
+30394,Conspiracy,3,"Insurance, Daily",18,0,Per Day,Contracted
+30394,Conspiracy,3,"IFTA/DOT Fee, Daily",18,35,Per Day,Contracted
+30394,Conspiracy,3,Fuel Estimate,4740,1,Per Mile,Contracted
+30394,Conspiracy,3,Engine Services,4740,0.3,Per Mile,Contracted
+30394,Conspiracy,3,Weekly Generator Services,2,195,Per Week,Contracted
+30394,Conspiracy,3,Interior Cleanings,2,95,Per Week,Contracted
+30394,Conspiracy,3,Weekly Coach Wash,2,140,Per Week,Contracted
+30394,Conspiracy,3,Linen Cleanings,2,75,Per Week,Contracted
+30394,Conspiracy,3,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30394,Conspiracy,3,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30394,Conspiracy,3,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30394,Conspiracy,3,Tolls,1,35,Flat Rate,Contracted
+30394,Conspiracy,3,Driver Overdrives,3,450,Per Quantity,Contracted
+30394,Conspiracy,3,Driver Per Diem,18,50,Per Day,Contracted
+30394,Conspiracy,3,Admin Fee,1,0,Flat Rate,Contracted
+30394,Conspiracy,3,Miscellaneous,1,0,Flat Rate,Contracted
+30394,Outlaw III,4,"Coach Rate, Daily",18,575,Per Day,Contracted
+30394,Outlaw III,4,"Driver Rate, Daily",18,425,Per Day,Contracted
+30394,Outlaw III,4,"Satellite Service, Daily",18,35,Per Day,Contracted
+30394,Outlaw III,4,"Internet Service, Daily",18,35,Per Day,Contracted
+30394,Outlaw III,4,"Insurance, Daily",18,0,Per Day,Contracted
+30394,Outlaw III,4,"IFTA/DOT Fee, Daily",18,35,Per Day,Contracted
+30394,Outlaw III,4,Fuel Estimate,4740,1,Per Mile,Contracted
+30394,Outlaw III,4,Engine Services,4740,0.3,Per Mile,Contracted
+30394,Outlaw III,4,Weekly Generator Services,2,195,Per Week,Contracted
+30394,Outlaw III,4,Interior Cleanings,2,95,Per Week,Contracted
+30394,Outlaw III,4,Weekly Coach Wash,2,100,Per Week,Contracted
+30394,Outlaw III,4,Linen Cleanings,2,75,Per Week,Contracted
+30394,Outlaw III,4,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30394,Outlaw III,4,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30394,Outlaw III,4,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30394,Outlaw III,4,Tolls,1,35,Flat Rate,Contracted
+30394,Outlaw III,4,Driver Overdrives,3,425,Per Quantity,Contracted
+30394,Outlaw III,4,Driver Per Diem,18,50,Per Day,Contracted
+30394,Outlaw III,4,Admin Fee,1,0,Flat Rate,Contracted
+30394,Outlaw III,4,Miscellaneous,1,0,Flat Rate,Contracted
+30396,Cayman,0,"Coach Rate, Daily",4,700,Per Day,Contracted
+30396,Cayman,0,"Driver Rate, Daily",4,400,Per Day,Contracted
+30396,Cayman,0,"Satellite Service, Daily",4,35,Per Day,Contracted
+30396,Cayman,0,"Internet Service, Daily",4,50,Per Day,Contracted
+30396,Cayman,0,"Insurance, Daily",4,50,Per Day,Contracted
+30396,Cayman,0,"IFTA/DOT Fee, Daily",4,50,Per Day,Contracted
+30396,Cayman,0,Fuel Estimate,1195,1.3,Per Mile,Contracted
+30396,Cayman,0,Engine Services,1195,0.5,Per Mile,Contracted
+30396,Cayman,0,Weekly Generator Services,1,195,Per Week,Contracted
+30396,Cayman,0,Interior Cleanings,0,95,Per Week,Contracted
+30396,Cayman,0,Weekly Coach Wash,0,100,Per Week,Contracted
+30396,Cayman,0,Linen Cleanings,0,75,Per Week,Contracted
+30396,Cayman,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30396,Cayman,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30396,Cayman,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30396,Cayman,0,Tolls,1,0,Flat Rate,Contracted
+30396,Cayman,0,Driver Overdrives,1,400,Per Quantity,Contracted
+30396,Cayman,0,Driver Per Diem,4,50,Per Day,Contracted
+30396,Cayman,0,Admin Fee,1,0,Flat Rate,Contracted
+30396,Cayman,0,Miscellaneous,1,0,Flat Rate,Contracted
+30396,Telluride,1,"Coach Rate, Daily",4,850,Per Day,Contracted
+30396,Telluride,1,"Driver Rate, Daily",4,425,Per Day,Contracted
+30396,Telluride,1,"Satellite Service, Daily",4,35,Per Day,Contracted
+30396,Telluride,1,"Internet Service, Daily",4,50,Per Day,Contracted
+30396,Telluride,1,"Insurance, Daily",4,50,Per Day,Contracted
+30396,Telluride,1,"IFTA/DOT Fee, Daily",4,50,Per Day,Contracted
+30396,Telluride,1,Fuel Estimate,1195,1.3,Per Mile,Contracted
+30396,Telluride,1,Engine Services,1195,0.5,Per Mile,Contracted
+30396,Telluride,1,Weekly Generator Services,1,195,Per Week,Contracted
+30396,Telluride,1,Interior Cleanings,0,95,Per Week,Contracted
+30396,Telluride,1,Weekly Coach Wash,0,100,Per Week,Contracted
+30396,Telluride,1,Linen Cleanings,0,75,Per Week,Contracted
+30396,Telluride,1,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30396,Telluride,1,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30396,Telluride,1,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30396,Telluride,1,Tolls,1,0,Flat Rate,Contracted
+30396,Telluride,1,Driver Overdrives,1,425,Per Quantity,Contracted
+30396,Telluride,1,Driver Per Diem,4,50,Per Day,Contracted
+30396,Telluride,1,Admin Fee,1,0,Flat Rate,Contracted
+30396,Telluride,1,Miscellaneous,1,0,Flat Rate,Contracted
+30404,Imposter,0,"Coach Rate, Daily",38,700,Per Day,Contracted
+30404,Imposter,0,"Driver Rate, Daily",38,400,Per Day,Contracted
+30404,Imposter,0,"Satellite Service, Daily",38,35,Per Day,Contracted
+30404,Imposter,0,"Internet Service, Daily",38,50,Per Day,Contracted
+30404,Imposter,0,"Insurance, Daily",38,50,Per Day,Contracted
+30404,Imposter,0,"IFTA/DOT Fee, Daily",38,50,Per Day,Contracted
+30404,Imposter,0,Fuel Estimate,14250,1.35,Per Mile,Contracted
+30404,Imposter,0,Engine Services,14250,0.5,Per Mile,Contracted
+30404,Imposter,0,Weekly Generator Services,4,195,Per Week,Contracted
+30404,Imposter,0,Interior Cleanings,4,95,Per Week,Contracted
+30404,Imposter,0,Weekly Coach Wash,4,100,Per Week,Contracted
+30404,Imposter,0,Linen Cleanings,4,75,Per Week,Contracted
+30404,Imposter,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30404,Imposter,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30404,Imposter,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30404,Imposter,0,Tolls,1,720,Flat Rate,Contracted
+30404,Imposter,0,Driver Overdrives,8,400,Per Quantity,Contracted
+30404,Imposter,0,Driver Hotel Buy Outs,8,150,Per Quantity,Contracted
+30404,Imposter,0,Driver Per Diem,38,50,Per Day,Contracted
+30404,Imposter,0,Admin Fee,1,0,Flat Rate,Contracted
+30404,Imposter,0,Miscellaneous,1,0,Flat Rate,Contracted
+30408,CC9004,0,"Trailer Rate, Daily",37,85,Per Day,Contracted
+30408,Rhythm,1,"Coach Rate, Daily",37,525,Per Day,Contracted
+30408,Rhythm,1,"Driver Rate, Daily",37,450,Per Day,Contracted
+30408,Rhythm,1,"Satellite Service, Daily",37,35,Per Day,Contracted
+30408,Rhythm,1,"Internet Service, Daily",37,50,Per Day,Contracted
+30408,Rhythm,1,"Insurance, Daily",37,50,Per Day,Contracted
+30408,Rhythm,1,"IFTA/DOT Fee, Daily",37,50,Per Day,Contracted
+30408,Rhythm,1,Fuel Estimate,9910,1.3,Per Mile,Contracted
+30408,Rhythm,1,Engine Services,9910,0.4,Per Mile,Contracted
+30408,Rhythm,1,Weekly Generator Services,4,195,Per Week,Contracted
+30408,Rhythm,1,Interior Cleanings,4,95,Per Week,Contracted
+30408,Rhythm,1,Weekly Coach Wash,4,140,Per Week,Contracted
+30408,Rhythm,1,Linen Cleanings,4,75,Per Week,Contracted
+30408,Rhythm,1,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30408,Rhythm,1,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30408,Rhythm,1,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30408,Rhythm,1,Tolls,1,1450,Flat Rate,Contracted
+30408,Rhythm,1,Driver Overdrives,6,450,Per Quantity,Contracted
+30408,Rhythm,1,Driver Hotel Buy Outs,2,150,Per Quantity,Contracted
+30408,Rhythm,1,Driver Per Diem,37,50,Per Day,Contracted
+30408,Rhythm,1,Admin Fee,1,0,Flat Rate,Contracted
+30408,Rhythm,1,Miscellaneous,1,0,Flat Rate,Contracted
+30420,Marshall,0,"Coach Rate, Daily",51,900,Per Day,Contracted
+30420,Marshall,0,"Driver Rate, Daily",51,400,Per Day,Contracted
+30420,Marshall,0,"Satellite Service, Daily",51,35,Per Day,Contracted
+30420,Marshall,0,"Internet Service, Daily",51,0,Per Day,Contracted
+30420,Marshall,0,"Insurance, Daily",51,50,Per Day,Contracted
+30420,Marshall,0,"IFTA/DOT Fee, Daily",51,50,Per Day,Contracted
+30420,Marshall,0,Fuel Estimate,9095,1.5,Per Mile,Contracted
+30420,Marshall,0,Engine Services,9095,0.5,Per Mile,Contracted
+30420,Marshall,0,Weekly Generator Services,6,195,Per Week,Contracted
+30420,Marshall,0,Interior Cleanings,6,95,Per Week,Contracted
+30420,Marshall,0,Weekly Coach Wash,6,100,Per Week,Contracted
+30420,Marshall,0,Linen Cleanings,6,75,Per Week,Contracted
+30420,Marshall,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30420,Marshall,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30420,Marshall,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30420,Marshall,0,Tolls,1,1120,Flat Rate,Contracted
+30420,Marshall,0,Driver Overdrives,4,400,Per Quantity,Contracted
+30420,Marshall,0,Driver Hotel Buy Outs,2,150,Per Quantity,Contracted
+30420,Marshall,0,Driver Per Diem,51,50,Per Day,Contracted
+30420,Marshall,0,Admin Fee,1,0,Flat Rate,Contracted
+30420,Marshall,0,Miscellaneous,1,0,Flat Rate,Contracted
+30420,Sapphire,1,"Coach Rate, Daily",51,900,Per Day,Contracted
+30420,Sapphire,1,"Driver Rate, Daily",51,400,Per Day,Contracted
+30420,Sapphire,1,"Satellite Service, Daily",51,35,Per Day,Contracted
+30420,Sapphire,1,"Internet Service, Daily",51,0,Per Day,Contracted
+30420,Sapphire,1,"Insurance, Daily",51,50,Per Day,Contracted
+30420,Sapphire,1,"IFTA/DOT Fee, Daily",51,50,Per Day,Contracted
+30420,Sapphire,1,Fuel Estimate,9095,1.5,Per Mile,Contracted
+30420,Sapphire,1,Engine Services,9095,0.5,Per Mile,Contracted
+30420,Sapphire,1,Weekly Generator Services,6,195,Per Week,Contracted
+30420,Sapphire,1,Interior Cleanings,6,95,Per Week,Contracted
+30420,Sapphire,1,Weekly Coach Wash,6,100,Per Week,Contracted
+30420,Sapphire,1,Linen Cleanings,6,75,Per Week,Contracted
+30420,Sapphire,1,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30420,Sapphire,1,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30420,Sapphire,1,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30420,Sapphire,1,Tolls,1,1120,Flat Rate,Contracted
+30420,Sapphire,1,Driver Overdrives,4,400,Per Quantity,Contracted
+30420,Sapphire,1,Driver Hotel Buy Outs,2,150,Per Quantity,Contracted
+30420,Sapphire,1,Driver Per Diem,51,50,Per Day,Contracted
+30420,Sapphire,1,Admin Fee,1,0,Flat Rate,Contracted
+30420,Sapphire,1,Miscellaneous,1,0,Flat Rate,Contracted
+30424,Attitude,0,"Coach Rate, Daily",24,600,Per Day,Contracted
+30424,Attitude,0,"Driver Rate, Daily",24,450,Per Day,Contracted
+30424,Attitude,0,"Satellite Service, Daily",24,35,Per Day,Contracted
+30424,Attitude,0,"Internet Service, Daily",24,50,Per Day,Contracted
+30424,Attitude,0,"Insurance, Daily",24,50,Per Day,Contracted
+30424,Attitude,0,"IFTA/DOT Fee, Daily",24,50,Per Day,Contracted
+30424,Attitude,0,Fuel Estimate,4710,1.3,Per Mile,Contracted
+30424,Attitude,0,Engine Services,4710,0.5,Per Mile,Contracted
+30424,Attitude,0,Weekly Generator Services,2,195,Per Week,Contracted
+30424,Attitude,0,Interior Cleanings,2,95,Per Week,Contracted
+30424,Attitude,0,Weekly Coach Wash,2,140,Per Week,Contracted
+30424,Attitude,0,Linen Cleanings,2,75,Per Week,Contracted
+30424,Attitude,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30424,Attitude,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30424,Attitude,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30424,Attitude,0,Tolls,1,985,Flat Rate,Contracted
+30424,Attitude,0,Driver Overdrives,1,450,Per Quantity,Contracted
+30424,Attitude,0,Driver Hotel Buy Outs,3,150,Per Quantity,Contracted
+30424,Attitude,0,Driver Per Diem,24,50,Per Day,Contracted
+30424,Attitude,0,Admin Fee,1,0,Flat Rate,Contracted
+30424,Attitude,0,Miscellaneous,1,0,Flat Rate,Contracted
+30424,CC9043,1,"Trailer Rate, Daily",24,75,Per Day,Contracted
+30427,CC9040,0,"Trailer Rate, Daily",22,80,Per Day,Contracted
+30427,The Rig,1,"Coach Rate, Daily",22,500,Per Day,Contracted
+30427,The Rig,1,"Driver Rate, Daily",22,450,Per Day,Contracted
+30427,The Rig,1,"Satellite Service, Daily",22,35,Per Day,Contracted
+30427,The Rig,1,"Internet Service, Daily",22,50,Per Day,Contracted
+30427,The Rig,1,"Insurance, Daily",22,50,Per Day,Contracted
+30427,The Rig,1,"IFTA/DOT Fee, Daily",22,50,Per Day,Contracted
+30427,The Rig,1,Fuel Estimate,5275,1.3,Per Mile,Contracted
+30427,The Rig,1,Engine Services,5275,0.5,Per Mile,Contracted
+30427,The Rig,1,Weekly Generator Services,2,195,Per Week,Contracted
+30427,The Rig,1,Interior Cleanings,2,95,Per Week,Contracted
+30427,The Rig,1,Weekly Coach Wash,2,140,Per Week,Contracted
+30427,The Rig,1,Linen Cleanings,2,75,Per Week,Contracted
+30427,The Rig,1,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30427,The Rig,1,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30427,The Rig,1,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30427,The Rig,1,Tolls,1,85,Flat Rate,Contracted
+30427,The Rig,1,Driver Overdrives,1,450,Per Quantity,Contracted
+30427,The Rig,1,Driver Per Diem,22,50,Per Day,Contracted
+30427,The Rig,1,Admin Fee,1,0,Flat Rate,Contracted
+30427,The Rig,1,Miscellaneous,1,0,Flat Rate,Contracted
+30433,Imposter,0,"Coach Rate, Monthly",10,26000,Per Month,Contracted
+30433,Imposter,0,"Driver Rate, Daily",0,0,Per Day,Contracted
+30433,Imposter,0,"Satellite Service, Monthly",10,350,Per Month,Contracted
+30433,Imposter,0,"Internet Service, Monthly",10,500,Per Month,Contracted
+30433,Imposter,0,"Insurance, Monthly",10,500,Per Month,Contracted
+30433,Imposter,0,"IFTA/DOT Fee, Monthly",10,500,Per Month,Contracted
+30433,Imposter,0,Fuel Estimate,0,1.55,Per Mile,Contracted
+30433,Imposter,0,Engine Services,0,0.75,Per Mile,Contracted
+30433,Imposter,0,Admin Fee,1,0,Flat Rate,Contracted
+30433,Imposter,0,Miscellaneous,1,0,Flat Rate,Contracted
+30434,Freedom,0,"Coach Rate, Monthly",6.04,28000,Per Month,Contracted
+30434,Freedom,0,"Driver Rate, Daily",0,0,Per Day,Contracted
+30434,Freedom,0,"Satellite Service, Monthly",6.04,0,Per Month,Contracted
+30434,Freedom,0,"Internet Service, Monthly",6.04,1000,Per Month,Contracted
+30434,Freedom,0,"Insurance, Monthly",6.04,850,Per Month,Contracted
+30434,Freedom,0,"IFTA/DOT Fee, Monthly",6.04,500,Per Month,Contracted
+30434,Freedom,0,Fuel Estimate,0,1.55,Per Mile,Contracted
+30434,Freedom,0,Engine Services,0,0.75,Per Mile,Contracted
+30434,Freedom,0,Admin Fee,1,0,Flat Rate,Contracted
+30434,Freedom,0,Miscellaneous,1,0,Flat Rate,Contracted
+30434,Jester,1,"Coach Rate, Monthly",6.04,20000,Per Month,Contracted
+30434,Jester,1,"Driver Rate, Daily",0,0,Per Day,Contracted
+30434,Jester,1,"Satellite Service, Monthly",6.04,0,Per Month,Contracted
+30434,Jester,1,"Internet Service, Monthly",6.04,500,Per Month,Contracted
+30434,Jester,1,"Insurance, Monthly",6.04,850,Per Month,Contracted
+30434,Jester,1,"IFTA/DOT Fee, Monthly",6.04,500,Per Month,Contracted
+30434,Jester,1,Fuel Estimate,0,1.55,Per Mile,Contracted
+30434,Jester,1,Engine Services,0,0.75,Per Mile,Contracted
+30434,Jester,1,Admin Fee,1,0,Flat Rate,Contracted
+30434,Jester,1,Miscellaneous,1,0,Flat Rate,Contracted
+30434,Rogue,2,"Coach Rate, Monthly",6.04,20000,Per Month,Contracted
+30434,Rogue,2,"Driver Rate, Daily",0,0,Per Day,Contracted
+30434,Rogue,2,"Satellite Service, Monthly",6.04,0,Per Month,Contracted
+30434,Rogue,2,"Internet Service, Monthly",6.04,500,Per Month,Contracted
+30434,Rogue,2,"Insurance, Monthly",6.04,850,Per Month,Contracted
+30434,Rogue,2,"IFTA/DOT Fee, Monthly",6.04,500,Per Month,Contracted
+30434,Rogue,2,Fuel Estimate,0,1.55,Per Mile,Contracted
+30434,Rogue,2,Engine Services,0,0.75,Per Mile,Contracted
+30434,Rogue,2,Admin Fee,1,0,Flat Rate,Contracted
+30434,Rogue,2,Miscellaneous,1,0,Flat Rate,Contracted
+30435,Snowman,0,"Coach Rate, Daily",49,550,Per Day,Contracted
+30435,Snowman,0,"Driver Rate, Daily",49,500,Per Day,Contracted
+30435,Snowman,0,"Satellite Service, Daily",49,35,Per Day,Contracted
+30435,Snowman,0,"Internet Service, Daily",49,50,Per Day,Contracted
+30435,Snowman,0,"Insurance, Daily",49,50,Per Day,Contracted
+30435,Snowman,0,"IFTA/DOT Fee, Daily",49,50,Per Day,Contracted
+30435,Snowman,0,Fuel Estimate,9580,0,Per Mile,Contracted
+30435,Snowman,0,Engine Services,9580,0.5,Per Mile,Contracted
+30435,Snowman,0,Weekly Generator Services,6,195,Per Week,Contracted
+30435,Snowman,0,Interior Cleanings,6,95,Per Week,Contracted
+30435,Snowman,0,Weekly Coach Wash,6,140,Per Week,Contracted
+30435,Snowman,0,Linen Cleanings,6,75,Per Week,Contracted
+30435,Snowman,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30435,Snowman,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30435,Snowman,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30435,Snowman,0,Tolls,1,380,Flat Rate,Contracted
+30435,Snowman,0,Driver Hotel Buy Outs,1,150,Per Quantity,Contracted
+30435,Snowman,0,Driver Per Diem,49,50,Per Day,Contracted
+30435,Snowman,0,Admin Fee,1,0,Flat Rate,Contracted
+30435,Snowman,0,Miscellaneous,1,0,Flat Rate,Contracted
+30454,CC9047,0,"Trailer Rate, Daily",26,100,Per Day,Contracted
+30454,Liberty,1,"Coach Rate, Daily",26,600,Per Day,Contracted
+30454,Liberty,1,"Driver Rate, Daily",26,500,Per Day,Contracted
+30454,Liberty,1,"Satellite Service, Daily",26,35,Per Day,Contracted
+30454,Liberty,1,"Internet Service, Daily",26,50,Per Day,Contracted
+30454,Liberty,1,"Insurance, Daily",26,50,Per Day,Contracted
+30454,Liberty,1,"IFTA/DOT Fee, Daily",26,50,Per Day,Contracted
+30454,Liberty,1,Fuel Estimate,5450,0,Per Mile,Contracted
+30454,Liberty,1,Engine Services,5450,0.6,Per Mile,Contracted
+30454,Liberty,1,Weekly Generator Services,3,195,Per Week,Contracted
+30454,Liberty,1,Interior Cleanings,3,95,Per Week,Contracted
+30454,Liberty,1,Weekly Coach Wash,3,140,Per Week,Contracted
+30454,Liberty,1,Linen Cleanings,3,75,Per Week,Contracted
+30454,Liberty,1,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30454,Liberty,1,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30454,Liberty,1,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30454,Liberty,1,Tolls,1,715,Flat Rate,Contracted
+30454,Liberty,1,Driver Overdrives,4,500,Per Quantity,Contracted
+30454,Liberty,1,Driver Per Diem,26,50,Per Day,Contracted
+30454,Liberty,1,Admin Fee,1,0,Flat Rate,Contracted
+30454,Liberty,1,Miscellaneous,1,0,Flat Rate,Contracted
+30454,Liberty,1,"Co-Driver Rate, Daily",6,500,Per Day,Contracted
+30454,Liberty,1,Co-Driver Per Diems,6,50,Per Day,Contracted
+30460,Phantom,0,"Coach Rate, Daily",0,0,Per Day,Contracted
+30460,Phantom,0,"Driver Rate, Daily",5,500,Per Day,Contracted
+30460,Phantom,0,"Satellite Service, Daily",0,35,Per Day,Contracted
+30460,Phantom,0,"Internet Service, Daily",0,50,Per Day,Contracted
+30460,Phantom,0,"Insurance, Daily",0,50,Per Day,Contracted
+30460,Phantom,0,"IFTA/DOT Fee, Daily",0,50,Per Day,Contracted
+30460,Phantom,0,Fuel Estimate,1385,1.3,Per Mile,Contracted
+30460,Phantom,0,Engine Services,1385,0.5,Per Mile,Contracted
+30460,Phantom,0,Weekly Generator Services,1,195,Per Week,Contracted
+30460,Phantom,0,Interior Cleanings,0,95,Per Week,Contracted
+30460,Phantom,0,Weekly Coach Wash,0,100,Per Week,Contracted
+30460,Phantom,0,Linen Cleanings,0,75,Per Week,Contracted
+30460,Phantom,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30460,Phantom,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30460,Phantom,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30460,Phantom,0,Tolls,1,45,Flat Rate,Contracted
+30460,Phantom,0,Driver Per Diem,5,50,Per Day,Contracted
+30460,Phantom,0,Admin Fee,1,0,Flat Rate,Contracted
+30460,Phantom,0,Miscellaneous,1,0,Flat Rate,Contracted
+30460,Phantom,0,"Co-Driver Rate, Daily",2,500,Per Day,Contracted
+30460,Phantom,0,Co-Driver Per Diems,2,50,Per Day,Contracted
+30476,Attitude,0,"Coach Rate, Monthly",0,600,Per Month,Contracted
+30476,Attitude,0,"Driver Rate, Daily",0,500,Per Day,Contracted
+30476,Attitude,0,"Satellite Service, Monthly",0,35,Per Month,Contracted
+30476,Attitude,0,"Internet Service, Monthly",0,50,Per Month,Contracted
+30476,Attitude,0,"Insurance, Monthly",0,50,Per Month,Contracted
+30476,Attitude,0,"IFTA/DOT Fee, Monthly",0,50,Per Month,Contracted
+30476,Attitude,0,Fuel Estimate,0,1.3,Per Mile,Contracted
+30476,Attitude,0,Engine Services,0,0.5,Per Mile,Contracted
+30476,Attitude,0,Generator Services,0,195,Per Week,Contracted
+30476,Attitude,0,Admin Fee,1,0,Flat Rate,Contracted
+30476,Attitude,0,Miscellaneous,1,0,Flat Rate,Contracted
+30476,CC9043,1,"Trailer Rate, Monthly",0,90,Per Month,Contracted
+30477,CC9049,0,"Trailer Rate, Daily",31,75,Per Day,Contracted
+30477,Liberty,1,"Coach Rate, Daily",31,600,Per Day,Contracted
+30477,Liberty,1,"Driver Rate, Daily",31,500,Per Day,Contracted
+30477,Liberty,1,"Satellite Service, Daily",31,0,Per Day,Contracted
+30477,Liberty,1,"Internet Service, Daily",31,50,Per Day,Contracted
+30477,Liberty,1,"Insurance, Daily",31,50,Per Day,Contracted
+30477,Liberty,1,"IFTA/DOT Fee, Daily",31,50,Per Day,Contracted
+30477,Liberty,1,Fuel Estimate,9250,1.25,Per Mile,Contracted
+30477,Liberty,1,Engine Services,9250,0.3,Per Mile,Contracted
+30477,Liberty,1,Weekly Generator Services,3,195,Per Week,Contracted
+30477,Liberty,1,Interior Cleanings,3,95,Per Week,Contracted
+30477,Liberty,1,Weekly Coach Wash,3,140,Per Week,Contracted
+30477,Liberty,1,Linen Cleanings,3,75,Per Week,Contracted
+30477,Liberty,1,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30477,Liberty,1,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30477,Liberty,1,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30477,Liberty,1,Tolls,1,705,Flat Rate,Contracted
+30477,Liberty,1,Driver Hotel Buy Outs,2,150,Per Quantity,Contracted
+30477,Liberty,1,Driver Per Diem,31,50,Per Day,Contracted
+30477,Liberty,1,Admin Fee,1,0,Flat Rate,Contracted
+30477,Liberty,1,Miscellaneous,1,0,Flat Rate,Contracted
+30478,Matador,0,"Coach Rate, Monthly",10,21000,Per Month,Contracted
+30478,Matador,0,"Driver Rate, Daily",0,0,Per Day,Contracted
+30478,Matador,0,"Satellite Service, Monthly",10,0,Per Month,Contracted
+30478,Matador,0,"Internet Service, Monthly",10,500,Per Month,Contracted
+30478,Matador,0,"Insurance, Monthly",10,800,Per Month,Contracted
+30478,Matador,0,"IFTA/DOT Fee, Monthly",10,500,Per Month,Contracted
+30478,Matador,0,Fuel Estimate,0,1.55,Per Mile,Contracted
+30478,Matador,0,Engine Services,0,0.75,Per Mile,Contracted
+30478,Matador,0,Admin Fee,1,0,Flat Rate,Contracted
+30478,Matador,0,Miscellaneous,1,0,Flat Rate,Contracted
+30481,CC9057,0,"Trailer Rate, Daily",49,75,Per Day,Contracted
+30481,Phantom,1,"Coach Rate, Daily",49,550,Per Day,Contracted
+30481,Phantom,1,"Driver Rate, Daily",49,500,Per Day,Contracted
+30481,Phantom,1,"Satellite Service, Daily",49,0,Per Day,Contracted
+30481,Phantom,1,"Internet Service, Daily",49,50,Per Day,Contracted
+30481,Phantom,1,"Insurance, Daily",49,50,Per Day,Contracted
+30481,Phantom,1,"IFTA/DOT Fee, Daily",49,50,Per Day,Contracted
+30481,Phantom,1,Fuel Estimate,14850,1.3,Per Mile,Contracted
+30481,Phantom,1,Engine Services,14850,0.5,Per Mile,Contracted
+30481,Phantom,1,Weekly Generator Services,5,195,Per Week,Contracted
+30481,Phantom,1,Interior Cleanings,5,95,Per Week,Contracted
+30481,Phantom,1,Weekly Coach Wash,5,140,Per Week,Contracted
+30481,Phantom,1,Linen Cleanings,5,75,Per Week,Contracted
+30481,Phantom,1,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30481,Phantom,1,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30481,Phantom,1,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30481,Phantom,1,Tolls,1,810,Flat Rate,Contracted
+30481,Phantom,1,Driver Overdrives,8,500,Per Quantity,Contracted
+30481,Phantom,1,Driver Hotel Buy Outs,8,150,Per Quantity,Contracted
+30481,Phantom,1,Driver Per Diem,49,50,Per Day,Contracted
+30481,Phantom,1,Admin Fee,1,0,Flat Rate,Contracted
+30481,Phantom,1,Miscellaneous,1,0,Flat Rate,Contracted
+30484,CC9012,0,"Trailer Rate, Daily",20,80,Per Day,Contracted
+30484,The Rig,1,"Coach Rate, Daily",20,600,Per Day,Contracted
+30484,The Rig,1,"Driver Rate, Daily",20,500,Per Day,Contracted
+30484,The Rig,1,"Satellite Service, Daily",20,0,Per Day,Contracted
+30484,The Rig,1,"Internet Service, Daily",20,50,Per Day,Contracted
+30484,The Rig,1,"Insurance, Daily",20,50,Per Day,Contracted
+30484,The Rig,1,"IFTA/DOT Fee, Daily",20,50,Per Day,Contracted
+30484,The Rig,1,Fuel Estimate,6750,1.3,Per Mile,Contracted
+30484,The Rig,1,Engine Services,6750,0.5,Per Mile,Contracted
+30484,The Rig,1,Weekly Generator Services,2,195,Per Week,Contracted
+30484,The Rig,1,Interior Cleanings,2,95,Per Week,Contracted
+30484,The Rig,1,Weekly Coach Wash,2,140,Per Week,Contracted
+30484,The Rig,1,Linen Cleanings,2,75,Per Week,Contracted
+30484,The Rig,1,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30484,The Rig,1,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30484,The Rig,1,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30484,The Rig,1,Tolls,1,365,Flat Rate,Contracted
+30484,The Rig,1,Driver Overdrives,8,500,Per Quantity,Contracted
+30484,The Rig,1,Driver Per Diem,20,50,Per Day,Contracted
+30484,The Rig,1,Admin Fee,1,0,Flat Rate,Contracted
+30484,The Rig,1,Miscellaneous,1,0,Flat Rate,Contracted
+30484,The Rig,1,"Co-Driver Rate, Daily",1,500,Per Day,Contracted
+30484,The Rig,1,Co-Driver Per Diems,1,50,Per Day,Contracted
