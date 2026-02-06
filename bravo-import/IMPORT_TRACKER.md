@@ -166,6 +166,55 @@ _None yet._
 
 ---
 
+## Batch: march 2026 tours_bravo
+
+- **Quotes:** 33
+- **Source:** StarTracker March 2026 tour data
+- **Exported:** 2026-02-06
+
+| Environment | Imported | Status Applied | Notes |
+|-------------|----------|----------------|-------|
+| dev         | 2026-02-06 | — | All 33 quotes inserted as Draft. 12 new artists created, 16 contacts, 17 artist-contact links. |
+| prod        | Not yet  | —              | — |
+
+### Import Results (dev)
+
+- **Quotes inserted:** 33
+- **Coaches linked:** 48
+- **Trailers linked:** 14
+- **Line items created:** 939 (850 auto-generated deleted first)
+- **Entity notes created:** 7
+- **Contacts created:** 16
+- **Artist-contact links:** 17
+
+### Validation Summary (dev)
+
+- **Exact match:** 27 of 33 (81.8%)
+- **Close match (< $100):** 1
+- **Mismatch (>= $100):** 5
+
+### Mismatched Quotes
+
+| Quote | ST Tour ID | StarTracker Total | Bravo Total | Difference | Root Cause | Resolution |
+|-------|-----------|-------------------|-------------|------------|------------|------------|
+| Animals As Leaders - March 29 - June 5, 2026 | 30476 | $157,779.59 | $0.00 | -$157,779.59 | | Pending |
+| Blood Incantation - March 26 - April 10, 2026 | 29352 | $57,249.80 | $56,099.80 | -$1,150.00 | | Pending |
+| Tyler Farr - March 11 - 15, 2026 | 30460 | $9,142.60 | $8,217.60 | -$925.00 | | Pending |
+| Kip Moore - March 5 - 8 | 29337 | $4,989.60 | $4,789.60 | -$200.00 | | Pending |
+| Kip Moore - March 26 - 29, 2026 | 29338 | $4,989.60 | $4,789.60 | -$200.00 | | Pending |
+
+### Close Matches
+
+| Quote | ST Tour ID | Difference | Root Cause | Resolution |
+|-------|-----------|------------|------------|------------|
+| Zach Williams | 29326 | -$0.02 | | Pending |
+
+### Manual Fixes Applied
+
+_None yet._
+
+---
+
 <!-- TEMPLATE: Copy this section for new batches
 
 ## Batch: <batch-name>

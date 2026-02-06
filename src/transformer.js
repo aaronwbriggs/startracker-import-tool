@@ -390,7 +390,10 @@ export const isLongTerm = (rows) => {
     const billedMonths = getNumField(r, 'BilledMonths', 'BusMonths');
     const tourDays = cleanNum(r.TourDays);
     const driverDays = cleanNum(r.DriverDays);
-    return busRate >= 2000 || billedMonths >= 6 || (driverDays === 0 && tourDays > 60);
+    const vehicleName = r.BusTrailer || r.Bus || '';
+    // Exclude trailer rows from driverDays check — trailers naturally have 0 driver days
+    const isTrailerRow = isTrailer(vehicleName);
+    return busRate >= 2000 || billedMonths >= 6 || (!isTrailerRow && driverDays === 0 && tourDays > 60);
   });
 };
 

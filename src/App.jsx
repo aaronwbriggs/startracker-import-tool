@@ -162,12 +162,16 @@ const classifyTour = (rows) => {
   }
 
   // Long-term lease detection
+  const TRAILER_PREFIXES = ['CC', 'ML', 'LK', 'TA'];
   const isLongTerm = rows.some(r => {
     const busRate = cleanNum(r.BusRate);
     const billedMonths = getNumField(r, 'BilledMonths', 'BusMonths');
     const tourDays = cleanNum(r.TourDays);
     const driverDays = cleanNum(r.DriverDays);
-    return busRate >= 2000 || billedMonths >= 6 || (driverDays === 0 && tourDays > 60);
+    // Exclude trailer rows from driverDays check — trailers naturally have 0 driver days
+    const vehicleName = (r.BusTrailer || r.Bus || '').trim().toUpperCase();
+    const isTrailerRow = TRAILER_PREFIXES.some(prefix => vehicleName.startsWith(prefix));
+    return busRate >= 2000 || billedMonths >= 6 || (!isTrailerRow && driverDays === 0 && tourDays > 60);
   });
   
   results.leaseType = isLongTerm ? 'LONG_TERM' : 'SHORT_TERM';
