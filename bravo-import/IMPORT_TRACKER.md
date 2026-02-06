@@ -174,8 +174,8 @@ _None yet._
 
 | Environment | Imported | Status Applied | Notes |
 |-------------|----------|----------------|-------|
-| dev         | 2026-02-06 | — | All 33 quotes inserted as Draft. 12 new artists created, 16 contacts, 17 artist-contact links. |
-| prod        | Not yet  | —              | — |
+| dev         | 2026-02-06 | 2026-02-06 | All 33 quotes inserted as Draft. 12 new artists created, 16 contacts, 17 artist-contact links. Statuses applied (25 updated, 8 skipped). |
+| prod        | 2026-02-06 | 2026-02-06 | All 33 quotes inserted as Draft. Manual fixes applied. Statuses applied (25 updated, 8 skipped). |
 
 ### Import Results (dev)
 
@@ -189,29 +189,32 @@ _None yet._
 
 ### Validation Summary (dev)
 
-- **Exact match:** 27 of 33 (81.8%)
-- **Close match (< $100):** 1
-- **Mismatch (>= $100):** 5
+- **Exact match:** 29 of 33 (87.9%)
+- **Close match (< $100):** 0
+- **Mismatch (>= $100):** 4
 
 ### Mismatched Quotes
 
 | Quote | ST Tour ID | StarTracker Total | Bravo Total | Difference | Root Cause | Resolution |
 |-------|-----------|-------------------|-------------|------------|------------|------------|
-| Animals As Leaders - March 29 - June 5, 2026 | 30476 | $157,779.59 | $0.00 | -$157,779.59 | | Pending |
-| Blood Incantation - March 26 - April 10, 2026 | 29352 | $57,249.80 | $56,099.80 | -$1,150.00 | | Pending |
-| Tyler Farr - March 11 - 15, 2026 | 30460 | $9,142.60 | $8,217.60 | -$925.00 | | Pending |
-| Kip Moore - March 5 - 8 | 29337 | $4,989.60 | $4,789.60 | -$200.00 | | Pending |
-| Kip Moore - March 26 - 29, 2026 | 29338 | $4,989.60 | $4,789.60 | -$200.00 | | Pending |
+| Blood Incantation - March 26 - April 10, 2026 | 29352 | $57,249.80 | $56,099.80 | -$1,150.00 | ST has $1,150 Per Diem on trailer record — data entry error (per diem shouldn't be on trailers) | Fixed: Added $1,150 Miscellaneous line item on trailer in Bravo to match. May remove later and accept discrepancy. |
+| Tyler Farr - March 11 - 15, 2026 | 30460 | $9,142.60 | $8,217.60 | -$925.00 | ST has BusDays=0 / BusRate=$0 (driver-only/services quote). Transformer uses busDays for per-day service quantities (Satellite, Internet, Insurance, IFTA/DOT), so all got qty 0. Missing $925 = 5 × ($35+$50+$50+$50). | Manual fix in Bravo. |
+| Kip Moore - March 5 - 8 | 29337 | $4,989.60 | $4,789.60 | -$200.00 | ST has DriverRate=$0 but still includes 5 days × $50 Per Diem ($250 minus payroll = $200). Transformer skips Driver Per Diem when DriverRate=0. | Fixed manually: added Per Diem line item in Bravo, auto-populated to 5 days. |
+| Kip Moore - March 26 - 29, 2026 | 29338 | $4,989.60 | $4,789.60 | -$200.00 | Same as 29337 — DriverRate=$0 but Per Diem still expected. | Fixed manually: added Per Diem line item in Bravo, auto-populated to 5 days. |
 
 ### Close Matches
 
-| Quote | ST Tour ID | Difference | Root Cause | Resolution |
-|-------|-----------|------------|------------|------------|
-| Zach Williams | 29326 | -$0.02 | | Pending |
+_None._
+
+### Transformer Fix Applied
+
+- **Bug:** `isLongTerm()` in `src/transformer.js` and `src/App.jsx` checked `driverDays === 0 && tourDays > 60` across all vehicle rows via `.some()`. Trailer rows naturally have `DriverDays = 0`, which false-positived multi-vehicle quotes with trailers and 60+ tour days as Long Term.
+- **Fix:** Exclude trailer rows (identified by `TRAILER_PREFIXES`) from the `driverDays === 0` check. Applied to both `transformer.js` (line 393) and `App.jsx` (line 170).
+- **Affected quote:** 30476 (Animals As Leaders) — was classified Long Term, all monthly quantities set to 0. Re-transformed as Short Term with correct daily quantities.
 
 ### Manual Fixes Applied
 
-_None yet._
+- Deleted quote 30476 from dev and re-imported with corrected Short Term data. Spliced fixed rows from `bravo-import/animals as leaders tour_bravo/` into batch CSVs. Validated: $0.01 diff (rounding).
 
 ---
 

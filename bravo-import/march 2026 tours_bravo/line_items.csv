@@ -850,18 +850,6 @@ external_id,vehicle_name,vehicle_index,item_type,quantity,rate,unit_type,billing
 30460,Phantom,0,Miscellaneous,1,0,Flat Rate,Contracted
 30460,Phantom,0,"Co-Driver Rate, Daily",2,500,Per Day,Contracted
 30460,Phantom,0,Co-Driver Per Diems,2,50,Per Day,Contracted
-30476,Attitude,0,"Coach Rate, Monthly",0,600,Per Month,Contracted
-30476,Attitude,0,"Driver Rate, Daily",0,500,Per Day,Contracted
-30476,Attitude,0,"Satellite Service, Monthly",0,35,Per Month,Contracted
-30476,Attitude,0,"Internet Service, Monthly",0,50,Per Month,Contracted
-30476,Attitude,0,"Insurance, Monthly",0,50,Per Month,Contracted
-30476,Attitude,0,"IFTA/DOT Fee, Monthly",0,50,Per Month,Contracted
-30476,Attitude,0,Fuel Estimate,0,1.3,Per Mile,Contracted
-30476,Attitude,0,Engine Services,0,0.5,Per Mile,Contracted
-30476,Attitude,0,Generator Services,0,195,Per Week,Contracted
-30476,Attitude,0,Admin Fee,1,0,Flat Rate,Contracted
-30476,Attitude,0,Miscellaneous,1,0,Flat Rate,Contracted
-30476,CC9043,1,"Trailer Rate, Monthly",0,90,Per Month,Contracted
 30477,CC9049,0,"Trailer Rate, Daily",31,75,Per Day,Contracted
 30477,Liberty,1,"Coach Rate, Daily",31,600,Per Day,Contracted
 30477,Liberty,1,"Driver Rate, Daily",31,500,Per Day,Contracted
@@ -938,3 +926,27 @@ external_id,vehicle_name,vehicle_index,item_type,quantity,rate,unit_type,billing
 30484,The Rig,1,Miscellaneous,1,0,Flat Rate,Contracted
 30484,The Rig,1,"Co-Driver Rate, Daily",1,500,Per Day,Contracted
 30484,The Rig,1,Co-Driver Per Diems,1,50,Per Day,Contracted
+30476,Attitude,0,"Coach Rate, Daily",70,600,Per Day,Contracted
+30476,Attitude,0,"Driver Rate, Daily",70,500,Per Day,Contracted
+30476,Attitude,0,"Satellite Service, Daily",70,35,Per Day,Contracted
+30476,Attitude,0,"Internet Service, Daily",70,50,Per Day,Contracted
+30476,Attitude,0,"Insurance, Daily",70,50,Per Day,Contracted
+30476,Attitude,0,"IFTA/DOT Fee, Daily",70,50,Per Day,Contracted
+30476,Attitude,0,Fuel Estimate,17215,1.3,Per Mile,Contracted
+30476,Attitude,0,Engine Services,17215,0.5,Per Mile,Contracted
+30476,Attitude,0,Weekly Generator Services,9,195,Per Week,Contracted
+30476,Attitude,0,Interior Cleanings,9,95,Per Week,Contracted
+30476,Attitude,0,Weekly Coach Wash,9,140,Per Week,Contracted
+30476,Attitude,0,Linen Cleanings,9,75,Per Week,Contracted
+30476,Attitude,0,End of Tour Cleaning,1,600,Flat Rate,Contracted
+30476,Attitude,0,Upholstery Cleaning,1,0,Flat Rate,Contracted
+30476,Attitude,0,Bed Kit Install / Bunk Change Fee,1,0,Flat Rate,Contracted
+30476,Attitude,0,Tolls,1,1395,Flat Rate,Contracted
+30476,Attitude,0,Driver Overdrives,10,500,Per Quantity,Contracted
+30476,Attitude,0,Driver Hotel Buy Outs,5,150,Per Quantity,Contracted
+30476,Attitude,0,Driver Per Diem,70,50,Per Day,Contracted
+30476,Attitude,0,Admin Fee,1,0,Flat Rate,Contracted
+30476,Attitude,0,Miscellaneous,1,0,Flat Rate,Contracted
+30476,Attitude,0,"Co-Driver Rate, Daily",3,500,Per Day,Contracted
+30476,Attitude,0,Co-Driver Per Diems,3,50,Per Day,Contracted
+30476,CC9043,1,"Trailer Rate, Daily",70,90,Per Day,Contracted
