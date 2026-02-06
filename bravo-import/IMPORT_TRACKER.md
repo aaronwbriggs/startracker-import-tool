@@ -271,6 +271,54 @@ _None yet._
 
 ---
 
+## Batch: may tours_bravo
+
+- **Quotes:** 22 (20 new + 2 skipped as duplicates)
+- **Source:** StarTracker May 2026 tour data
+- **Exported:** 2026-02-06
+
+| Environment | Imported | Status Applied | Notes |
+|-------------|----------|----------------|-------|
+| dev         | 2026-02-06 | — | 20 quotes inserted as Draft. 2 skipped (Tucker Wetmore 29319, Jordan Davis 29327 — already exist). 8 new artists created. 9 contacts, 9 artist-contact links. |
+| prod        | Not yet  | —              | — |
+
+### Import Results (dev)
+
+- **Quotes inserted:** 20
+- **Quotes skipped (duplicates):** 2 (29319 Tucker Wetmore, 29327 Jordan Davis)
+- **Coaches linked:** 43
+- **Trailers linked:** 4
+- **Line items created:** 792 (680 auto-generated deleted first)
+- **Entity notes created:** 4 (2 skipped — already exist on duplicate quotes)
+- **Contacts created:** 9
+- **Artist-contact links:** 9
+- **New artists:** Brothers Osborne, The Warning, Mac Demarco, LCD Soundsystem, Young The Giant, Yellowcard, Stone Temple Pilots, Underworld, The Mountain Goats, Muscadine Bloodline
+
+### Validation Summary (dev)
+
+- **Exact match:** 18 of 22 (81.8%)
+- **Close match (< $100):** 0
+- **Mismatch (>= $100):** 4
+
+### Mismatched Quotes
+
+| Quote | ST Tour ID | StarTracker Total | Bravo Total | Difference | Root Cause | Resolution |
+|-------|-----------|-------------------|-------------|------------|------------|------------|
+| Megan Moroney - May 28 - August 19, 2026 | 29384 | $645,120.00 | $0.00 | -$645,120 (-100.0%) | Different from Animals As Leaders — no trailers involved. 8 coaches, 84 days, no drivers (DriverDays=0). `isLongTerm()` condition `driverDays === 0 && tourDays > 60` tripped on every row. BusRateType="Per Day" confirms it's short-term. | Transformer fix: added `busRateType !== 'Per Day'` guard to driverDays heuristic in both transformer.js and App.jsx. Needs re-export and re-import. |
+| Tucker Wetmore - January 1 - December 31, 2026 | 29319 | $230,800.00 | $572,400.00 | +$341,600 (148.0%) | Known from Jan/Feb batch: ST quote has third coach (Bills RV) with partial duration not supported in Bravo. CSV source total differs from current Bravo state (long-term quote updated since initial import). | |
+| Jordan Davis - April 1 - December 31, 2026 | 29327 | $176,681.00 | $246,150.00 | +$69,469 (39.3%) | Skipped quote — CSV source total likely stale vs current Bravo state (long-term quote updated since initial import). | |
+| Brothers Osborne - May 1 - Oct 31, 2026 | 29335 | $327,600.00 | $326,400.00 | -$1,200 (-0.4%) | | |
+
+### Warnings
+
+- State codes "NY" and "CA" not found in `states_provinces` for LCD Soundsystem, Young The Giant, Yellowcard, Stone Temple Pilots. Artists created without state linkage.
+
+### Manual Fixes Applied
+
+_None yet._
+
+---
+
 <!-- TEMPLATE: Copy this section for new batches
 
 ## Batch: <batch-name>

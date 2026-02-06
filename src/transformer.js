@@ -393,7 +393,9 @@ export const isLongTerm = (rows) => {
     const vehicleName = r.BusTrailer || r.Bus || '';
     // Exclude trailer rows from driverDays check — trailers naturally have 0 driver days
     const isTrailerRow = isTrailer(vehicleName);
-    return busRate >= 2000 || billedMonths >= 6 || (!isTrailerRow && driverDays === 0 && tourDays > 60);
+    // If BusRateType is "Per Day", it's explicitly short-term — don't let driverDays heuristic override
+    const busRateType = (r.BusRateType || '').trim();
+    return busRate >= 2000 || billedMonths >= 6 || (!isTrailerRow && driverDays === 0 && tourDays > 60 && busRateType !== 'Per Day');
   });
 };
 
