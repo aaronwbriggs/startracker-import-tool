@@ -218,6 +218,59 @@ _None._
 
 ---
 
+## Batch: april 2026 tours_bravo
+
+- **Quotes:** 34
+- **Source:** StarTracker April 2026 tour data
+- **Exported:** 2026-02-06
+
+| Environment | Imported | Status Applied | Notes |
+|-------------|----------|----------------|-------|
+| dev         | 2026-02-06 | 2026-02-06 | All 34 quotes inserted as Draft. 9 new artists created. Coach name fixes applied. Statuses applied (17 updated, 17 skipped). |
+| prod        | 2026-02-06 | 2026-02-06 | All 34 quotes inserted as Draft. 9 contacts created, 16 artist-contact links. Validated 33/34 match. Statuses applied (17 updated, 17 skipped). |
+
+### Import Results (dev)
+
+- **Quotes inserted:** 34
+- **Coaches linked:** 54
+- **Trailers linked:** 18
+- **Line items created:** 1,030
+- **Entity notes created:** 7
+- **Contacts created:** 9
+- **Artist-contact links:** 16
+- **New artists:** Riley Green, Chet Faker, Ella Langley, Biffy Clyro, Street Execs Management LLC, CAIN, Anabolic Entertainment, Triumph, The Architects
+
+### Coach Name Fixes (applied to CSV before import)
+
+| CSV Value | Corrected Bravo Name | Issue |
+|-----------|---------------------|-------|
+| Rebel ( Jana) | Rebel | Extra parenthetical from StarTracker |
+| Miss Behavin | Miss Behavin\u2019 | Straight apostrophe in CSV vs smart apostrophe (U+2019) in Bravo |
+| Route 66 | Route-66 | Space vs hyphen |
+
+### Import Issues & Fixes
+
+1. **Partial first run created 12 orphan quotes** — Initial import ran before coach names were fixed. Created quote shells with no line items. Deleted all 12 and re-imported cleanly.
+2. **Miss Behavin' smart apostrophe** — Bravo DB stores `Miss Behavin\u2019` (U+2019 RIGHT SINGLE QUOTATION MARK) but CSV had straight apostrophe `'` (U+0027). Fixed CSV with correct Unicode character.
+
+### Validation Summary (dev)
+
+- **Exact match:** 33 of 34 (97.1%)
+- **Close match (< $100):** 0
+- **Mismatch (>= $100):** 1
+
+### Mismatched Quotes
+
+| Quote | ST Tour ID | StarTracker Total | Bravo Total | Difference | Root Cause | Resolution |
+|-------|-----------|-------------------|-------------|------------|------------|------------|
+| Street Execs Management, LLC - April 10 - 27, 2026 | 30445 | $35,665.40 | $31,965.40 | -$3,700.00 (-10.4%) | Same as Tyler Farr 30460: driver-only/services quote with BusRate=$0 but BusDays=20. Transformer uses BusDays for per-day service quantities, so Satellite/Internet/Insurance/IFTA all got qty 0. Missing $3,700 = 20 × ($35+$50+$50+$50). | Manual fix in Bravo. |
+
+### Manual Fixes Applied
+
+_None yet._
+
+---
+
 <!-- TEMPLATE: Copy this section for new batches
 
 ## Batch: <batch-name>
