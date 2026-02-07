@@ -279,8 +279,8 @@ _None yet._
 
 | Environment | Imported | Status Applied | Notes |
 |-------------|----------|----------------|-------|
-| dev         | 2026-02-06 | — | 20 quotes inserted as Draft. 2 skipped (Tucker Wetmore 29319, Jordan Davis 29327 — already exist). 8 new artists created. 9 contacts, 9 artist-contact links. |
-| prod        | Not yet  | —              | — |
+| dev         | 2026-02-06 | 2026-02-06 | 20 quotes inserted as Draft. 2 skipped (Tucker Wetmore 29319, Jordan Davis 29327 — already exist). 8 new artists created. 9 contacts, 9 artist-contact links. Statuses applied (6 updated, 16 skipped). |
+| prod        | 2026-02-06 | 2026-02-06 | 20 quotes inserted as Draft. 2 skipped. 9 contacts, 9 artist-contact links. Validated 19/22 match (same 3 known mismatches as dev). Statuses applied (6 updated, 16 skipped). Brothers Osborne needs manual End of Tour Cleaning fix. |
 
 ### Import Results (dev)
 
@@ -294,28 +294,84 @@ _None yet._
 - **Artist-contact links:** 9
 - **New artists:** Brothers Osborne, The Warning, Mac Demarco, LCD Soundsystem, Young The Giant, Yellowcard, Stone Temple Pilots, Underworld, The Mountain Goats, Muscadine Bloodline
 
-### Validation Summary (dev)
+### Validation Summary (dev) — after Megan Moroney fix
 
-- **Exact match:** 18 of 22 (81.8%)
+- **Exact match:** 19 of 22 (86.4%)
 - **Close match (< $100):** 0
-- **Mismatch (>= $100):** 4
+- **Mismatch (>= $100):** 3
 
 ### Mismatched Quotes
 
 | Quote | ST Tour ID | StarTracker Total | Bravo Total | Difference | Root Cause | Resolution |
 |-------|-----------|-------------------|-------------|------------|------------|------------|
-| Megan Moroney - May 28 - August 19, 2026 | 29384 | $645,120.00 | $0.00 | -$645,120 (-100.0%) | Different from Animals As Leaders — no trailers involved. 8 coaches, 84 days, no drivers (DriverDays=0). `isLongTerm()` condition `driverDays === 0 && tourDays > 60` tripped on every row. BusRateType="Per Day" confirms it's short-term. | Transformer fix: added `busRateType !== 'Per Day'` guard to driverDays heuristic in both transformer.js and App.jsx. Needs re-export and re-import. |
-| Tucker Wetmore - January 1 - December 31, 2026 | 29319 | $230,800.00 | $572,400.00 | +$341,600 (148.0%) | Known from Jan/Feb batch: ST quote has third coach (Bills RV) with partial duration not supported in Bravo. CSV source total differs from current Bravo state (long-term quote updated since initial import). | |
-| Jordan Davis - April 1 - December 31, 2026 | 29327 | $176,681.00 | $246,150.00 | +$69,469 (39.3%) | Skipped quote — CSV source total likely stale vs current Bravo state (long-term quote updated since initial import). | |
-| Brothers Osborne - May 1 - Oct 31, 2026 | 29335 | $327,600.00 | $326,400.00 | -$1,200 (-0.4%) | | |
+| Megan Moroney - May 28 - August 19, 2026 | 29384 | $645,120.00 | $0.00 | -$645,120 (-100.0%) | Different from Animals As Leaders — no trailers involved. 8 coaches, 84 days, no drivers (DriverDays=0). `isLongTerm()` condition `driverDays === 0 && tourDays > 60` tripped on every row. BusRateType="Per Day" confirms it's short-term. | **Fixed.** Transformer updated with `busRateType !== 'Per Day'` guard. Re-exported, spliced into batch, deleted and re-imported. Now matches exactly. |
+| Tucker Wetmore - January 1 - December 31, 2026 | 29319 | $230,800.00 | $572,400.00 | +$341,600 (148.0%) | Multiple vehicles on LT quote with different durations. Bravo doesn't yet support per-vehicle duration on LT quotes. | Known limitation — no action for now. |
+| Jordan Davis - April 1 - December 31, 2026 | 29327 | $176,681.00 | $246,150.00 | +$69,469 (39.3%) | Same as Tucker Wetmore: multiple vehicles on LT quote with different durations. Bravo doesn't yet support per-vehicle duration on LT quotes. | Known limitation — no action for now. |
+| Brothers Osborne - May 1 - Oct 31, 2026 | 29335 | $327,600.00 | $326,400.00 | -$1,200 (-0.4%) | End of Tour Cleaning line item present in ST but not imported to LT quote. Same issue as Carrie Underwood (29330) from Jan/Feb batch. | Fixed manually: added End of Tour Cleaning line item in Bravo. Now matches. |
 
 ### Warnings
 
 - State codes "NY" and "CA" not found in `states_provinces` for LCD Soundsystem, Young The Giant, Yellowcard, Stone Temple Pilots. Artists created without state linkage.
 
+### Transformer Fix Applied
+
+- **Bug:** `isLongTerm()` condition `driverDays === 0 && tourDays > 60` false-positived on driverless short-term quotes with 60+ day tours. Megan Moroney (29384): 8 coaches, 84 days, no drivers, BusRateType="Per Day" — clearly short-term but classified Long Term, zeroing all quantities.
+- **Fix:** Added `busRateType !== 'Per Day'` guard. If StarTracker explicitly says "Per Day", the driverDays heuristic cannot override it. Applied to both `src/transformer.js` (line 397) and `src/App.jsx` (line 175).
+- **Resolution:** Re-exported from web app with fixed transformer, spliced corrected rows into batch CSVs, deleted quote from dev, re-imported. Now matches exactly.
+
 ### Manual Fixes Applied
 
-_None yet._
+- Brothers Osborne (29335): Added End of Tour Cleaning line item manually in Bravo to match ST total.
+
+---
+
+## Batch: june july 2026 tours_bravo
+
+- **Quotes:** 27
+- **Source:** StarTracker June-July 2026 tour data
+- **Exported:** 2026-02-07
+
+| Environment | Imported | Status Applied | Notes |
+|-------------|----------|----------------|-------|
+| dev         | 2026-02-07 | 2026-02-07 | All 27 quotes inserted as Draft. 6 new artists created. 5 contacts, 5 artist-contact links. Coach fuzzy matching fix applied. Required re-import of 8 orphaned quotes (see Manual Fixes). Statuses applied (16 updated, 11 skipped). |
+| prod        | 2026-02-07 | 2026-02-07 | All 27 quotes inserted as Draft. 6 new artists, 5 contacts, 5 artist-contact links. Coach fuzzy matching worked (Miss Behavin, Rebel). Validated 27/27 (100%). Statuses applied (16 updated, 11 skipped). |
+
+### Import Results (dev)
+
+- **Quotes inserted:** 27 (19 initially + 8 re-imported after orphan fix)
+- **Coaches linked:** 59
+- **Trailers linked:** 12
+- **Line items created:** 1,199
+- **Entity notes created:** 7
+- **Contacts created:** 5 (Marcia Szabo, Josh Briand, Mike Gonzales, Anna Marsh, Alex Kopp)
+- **Artist-contact links:** 5 (Live Nation, Sarah Mclachlan, Cypress Hill, Maren Morris, Icona Pop)
+- **New artists:** Live Nation, Richy Mitch, Pussycat Dolls, Maren Morris, Icona Pop, Slushy Noobz
+
+### Script Fix Applied
+
+- **Coach fuzzy matching** — `getCoach()` in `import-to-supabase.js` now has 3-step matching: (1) exact case-insensitive, (2) strip parenthetical annotations and wildcard match (e.g. "Rebel ( Jana)" → "Rebel"), (3) trailing wildcard for punctuation differences (e.g. "Miss Behavin" → "Miss Behavin'").
+
+### Validation Summary (dev)
+
+- **Exact match:** 27 of 27 (100%)
+- **Close match (< $100):** 0
+- **Mismatch (>= $100):** 0
+
+### Close Matches
+
+_None — the two initially flagged close matches (Live Nation $0.01, Pussycat Dolls $0.04) confirmed as exact matches due to rounding in StarTracker/Bravo._
+
+### Mismatched Quotes
+
+_None._
+
+### Warnings
+
+- State codes "MI" and "TN" not found in `states_provinces` for Live Nation and Maren Morris. Artists created without state linkage.
+
+### Manual Fixes Applied
+
+- **Orphaned quotes fix:** First live import run was interrupted before line items were imported, leaving 8 quote shells with no line items (29323, 29333, 29339, 29349, 29365, 29374, 29383, 29387). Deleted the 8 orphan quotes and re-ran import. All 8 re-created with full line items. Validation now shows 25/27 exact match + 2 rounding close matches.
 
 ---
 

@@ -1,0 +1,9 @@
+external_id,vehicle_name,vehicle_index,use_custom_tour_data,custom_tour_start_date,custom_tour_end_date,custom_total_estimated_miles,custom_tour_days,custom_billed_bus_days,custom_main_driver_days
+29384,Anonymous,0,false,,,,,,
+29384,Aspen,1,false,,,,,,
+29384,Gypsy,2,false,,,,,,
+29384,Havana,3,false,,,,,,
+29384,Hickory,4,false,,,,,,
+29384,Liberty,5,false,,,,,,
+29384,Temptation,6,false,,,,,,
+29384,Velocity,7,false,,,,,,

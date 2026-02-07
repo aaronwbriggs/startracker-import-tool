@@ -320,11 +320,15 @@ async function importContacts(supabase, contacts, artistContacts, artistIdMap) {
 }
 
 /**
- * Lookup coach by name
+ * Lookup coach by name, with fallback fuzzy matching.
+ * Handles cases like:
+ *   CSV "Miss Behavin" → Bravo "Miss Behavin'" (trailing punctuation)
+ *   CSV "Rebel ( Jana)" → Bravo "Rebel" (parenthetical annotations)
  */
 async function getCoach(supabase, coachName) {
   if (!coachName) return null;
 
+  // Try exact match first (case-insensitive)
   const { data, error } = await supabase
     .from('coaches')
     .select('id')
@@ -332,12 +336,41 @@ async function getCoach(supabase, coachName) {
     .limit(1)
     .single();
 
-  if (error || !data) {
-    log('yellow', `  Coach not found: ${coachName}`);
-    return null;
+  if (data) return data.id;
+
+  // Fallback: strip parenthetical annotations and try wildcard match
+  // e.g. "Rebel ( Jana)" → base name "Rebel", search "Rebel%"
+  const baseName = coachName.replace(/\s*\(.*\)\s*$/, '').trim();
+  if (baseName && baseName !== coachName) {
+    const { data: fuzzyData } = await supabase
+      .from('coaches')
+      .select('id')
+      .ilike('name', `${baseName}%`)
+      .limit(1)
+      .single();
+
+    if (fuzzyData) {
+      log('cyan', `  Coach fuzzy matched: "${coachName}" → found via "${baseName}"`);
+      return fuzzyData.id;
+    }
   }
 
-  return data.id;
+  // Fallback: try wildcard match to catch trailing punctuation differences
+  // e.g. "Miss Behavin" matches "Miss Behavin'" via "Miss Behavin%"
+  const { data: wildcardData } = await supabase
+    .from('coaches')
+    .select('id')
+    .ilike('name', `${coachName}%`)
+    .limit(1)
+    .single();
+
+  if (wildcardData) {
+    log('cyan', `  Coach fuzzy matched: "${coachName}" → found via "${coachName}%"`);
+    return wildcardData.id;
+  }
+
+  log('yellow', `  Coach not found: ${coachName}`);
+  return null;
 }
 
 /**

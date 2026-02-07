@@ -1,0 +1,10 @@
+external_id,vehicle_name,vehicle_index,use_custom_tour_data,custom_tour_start_date,custom_tour_end_date,custom_total_estimated_miles,custom_tour_days,custom_billed_bus_days,custom_main_driver_days
+29350,CC9033,1,false,,,,,,
+29350,CC9038,2,false,,,,,,
+29351,CC9012,1,false,,,,,,
+29351,CC9033,2,false,,,,,,
+30444,CC9017,0,false,,,,,,
+30447,CC9012,0,false,,,,,,
+30473,CC9017,0,false,,,,,,
+30490,CC9033,1,false,,,,,,
+30490,CC9038,2,false,,,,,,
